@@ -27,6 +27,7 @@ import shlex
 import sys
 from urllib import parse as urllib_parse
 
+from packaging.requirements import Requirement, InvalidRequirement
 
 MYPY_CHECK_RUNNING = True
 if MYPY_CHECK_RUNNING:
@@ -104,16 +105,29 @@ class RequirementLine(ParsedLine):
         filename,  # type: str
         lineno,  # type: int
         raw_line,  # type: str
-        requirement,  # type: str
+        req_str,  # type: str
         is_editable,  # type: bool
         is_constraint,  # type: bool
         options,  # type: List[str]
     ):
         super().__init__(filename, lineno, raw_line)
-        self.requirement = requirement
+        self.req_str = req_str
         self.is_editable = is_editable
         self.is_constraint = is_constraint
         self.options = options
+        self.requirement = None  # type: Requirement
+        if self.is_editable:
+            # Editables are not PEP 508 requirements, they are links.
+            pass
+        else:
+            # In all other cases, let's try to parse it as a PEP 508
+            # requirement. If that fails, assume it's a link.
+            # TODO pip has a complex algorithm to parse non PEP 508
+            #      requirements, let's ignore that for the moment
+            try:
+                self.requirement = Requirement(req_str)
+            except InvalidRequirement:
+                pass
 
 
 class NestedRequirementsLine(ParsedLine):
@@ -203,7 +217,7 @@ def _parse_file(filename, constraints, strict, session):
                 filename,
                 lineno,
                 raw_line,
-                requirement=args_str,
+                req_str=args_str,
                 is_editable=False,
                 is_constraint=constraints,
                 options=other_opts,
@@ -213,28 +227,27 @@ def _parse_file(filename, constraints, strict, session):
                 filename,
                 lineno,
                 raw_line,
-                requirement=opts.editables[0],
+                req_str=opts.editables[0],
                 is_editable=True,
                 is_constraint=constraints,
-                options=[],
+                options=[],  # TODO or other_opts?
             )
-        elif opts.requirements or opts.constraints:
-            if opts.requirements:
-                yield NestedRequirementsLine(
-                    filename,
-                    lineno,
-                    raw_line,
-                    requirements=opts.requirements[0],
-                    is_constraint=False,
-                )
-            else:
-                yield NestedRequirementsLine(
-                    filename,
-                    lineno,
-                    raw_line,
-                    requirements=opts.constraints[0],
-                    is_constraint=True,
-                )
+        elif opts.requirements:
+            yield NestedRequirementsLine(
+                filename,
+                lineno,
+                raw_line,
+                requirements=opts.requirements[0],
+                is_constraint=False,
+            )
+        elif opts.constraints:
+            yield NestedRequirementsLine(
+                filename,
+                lineno,
+                raw_line,
+                requirements=opts.constraints[0],
+                is_constraint=True,  # TODO this could be `constraints` instead of True
+            )
         elif other_opts:
             yield OptionsLine(
                 filename, lineno, raw_line, options=other_opts,

@@ -28,7 +28,7 @@ setup(
     package_dir={"": "src"},
     packages=["pip_deepfreeze"],
     python_requires=">=3.6",
-    install_requires=["typer[all]"],
+    install_requires=["packaging", "typer[all]"],
     extras_require={"test": ["pytest", "pytest-cov", "virtualenv"]},
     entry_points={
         "console_scripts": [
