@@ -28,7 +28,7 @@ def test_basic(tmp_path):
     )
     lines = list(parse(str(reqs)))
     assert all(isinstance(line, RequirementLine) for line in lines)
-    assert [line.req_str for line in lines] == [
+    assert [line.requirement for line in lines] == [
         "req1",
         "req2==1.0.0",
         "req3 @ https://e.c/req3.tgz",
@@ -53,9 +53,9 @@ def test_recurse(tmp_path):
     subreqs.write_text("req2")
     lines = list(parse(str(reqs)))
     assert all(isinstance(line, RequirementLine) for line in lines)
-    assert [line.req_str for line in lines] == ["req1", "req2"]
+    assert [line.requirement for line in lines] == ["req1", "req2"]
     lines = list(parse(str(reqs), recurse=False))
-    assert [line.req_str for line in lines] == ["req1"]
+    assert [line.requirement for line in lines] == ["req1"]
 
 
 def test_file_url(tmp_path):
@@ -76,9 +76,9 @@ def test_file_url(tmp_path):
     subreqs.write_text("req2")
     lines = list(parse(str(reqs)))
     assert all(isinstance(line, RequirementLine) for line in lines)
-    assert [line.req_str for line in lines] == ["req1", "req2"]
+    assert [line.requirement for line in lines] == ["req1", "req2"]
     lines = list(parse(str(reqs), recurse=False))
-    assert [line.req_str for line in lines] == ["req1"]
+    assert [line.requirement for line in lines] == ["req1"]
 
 
 def test_subreq_notfound(tmp_path):
@@ -111,7 +111,7 @@ def test_relative_file(tmp_path):
     )
     subsubreqs.write_text("req3")
     lines = list(parse(str(reqs)))
-    assert [line.req_str for line in lines] == ["req1", "req2", "req3"]
+    assert [line.requirement for line in lines] == ["req1", "req2", "req3"]
 
 
 def test_relative_file_uri(tmp_path):
@@ -141,7 +141,7 @@ def test_relative_file_uri(tmp_path):
     )
     subsubreqs.write_text("req3")
     lines = list(parse(str(reqs)))
-    assert [line.req_str for line in lines] == ["req1", "req2", "req3"]
+    assert [line.requirement for line in lines] == ["req1", "req2", "req3"]
 
 
 def test_editable(tmp_path):
@@ -157,7 +157,7 @@ def test_editable(tmp_path):
     )
     lines = list(parse(str(reqs)))
     assert all(isinstance(line, RequirementLine) for line in lines)
-    assert [line.req_str for line in lines] == ["req1", "./req2"]
+    assert [line.requirement for line in lines] == ["req1", "./req2"]
     assert [line.is_editable for line in lines] == [False, True]
 
 
@@ -172,7 +172,7 @@ def test_multiline_req(tmp_path):
         )
     )
     lines = list(parse(str(reqs)))
-    assert [line.req_str for line in lines] == ["req @ ./req.tgz"]
+    assert [line.requirement for line in lines] == ["req @ ./req.tgz"]
 
 
 @pytest.mark.xfail(reason="hash parsing not implemented")
@@ -188,7 +188,7 @@ def test_hashes(tmp_path):
         )
     )
     lines = list(parse(str(reqs)))
-    assert [line.req_str for line in lines] == ["req @ ./req.tgz"]
+    assert [line.requirement for line in lines] == ["req @ ./req.tgz"]
     assert lines[0].options["hashes"] == ["sha1:62bd26d758...703a094285", "sha2:xyz"]
 
 
@@ -205,7 +205,7 @@ def test_last_line_continuation(tmp_path):
     )
     lines = list(parse(str(reqs)))
     assert all(isinstance(line, RequirementLine) for line in lines)
-    assert [line.req_str for line in lines] == ["req1", "req2"]
+    assert [line.requirement for line in lines] == ["req1", "req2"]
 
 
 def test_env_var(tmp_path, monkeypatch):
@@ -225,7 +225,7 @@ def test_env_var(tmp_path, monkeypatch):
     )
     lines = list(parse(str(reqs)))
     assert all(isinstance(line, RequirementLine) for line in lines)
-    assert [line.req_str for line in lines] == [
+    assert [line.requirement for line in lines] == [
         "https://toto@e.c/req.tgz",
         "https://toto:lehéro@e.c/req.tgz",
         "https://${Y_USER}@e.c/req.tgz",
@@ -292,26 +292,6 @@ def test_options(line, expected, tmp_path):
     lines = list(parse(str(reqs), reqs_only=False, recurse=False))
     assert len(lines) == 1
     assert lines[0].options == expected
-
-
-def test_packing_req(tmp_path):
-    reqs = tmp_path / "reqs.txt"
-    reqs.write_text(
-        textwrap.dedent(
-            """\
-            pkga
-            pkgb[foo]>=2,<3; python_version>"2.0" --hash h:v
-            ./packaging-1.0.0.tar.gz
-            """
-        )
-    )
-    reqs = [
-        line.requirement for line in parse(str(reqs), reqs_only=False, recurse=False)
-    ]
-    assert reqs[0].name == "pkga"
-    assert reqs[1].name == "pkgb"
-    assert reqs[1].extras == {"foo"}
-    assert reqs[2] is None
 
 
 # TODO test session
