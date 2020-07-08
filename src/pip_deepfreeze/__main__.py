@@ -1,3 +1,4 @@
+import shutil
 from typing import List
 
 import typer
@@ -33,15 +34,11 @@ def sync(
         "-e",
         "--extra",
         metavar="EXTRA",
-        help=(
-            "Extra to install. :all: can be used to install all extras "
-            "provided by the application (note the colons). "
-            "This option can be repeated."
-        ),
+        help=("Extra to install. This option can be repeated."),
     ),
     editable: bool = typer.Option(True, help="Install the project in editable mode.",),
     uninstall: bool = typer.Option(
-        True, help=("Uninstall dependencies that are not needed anymore.")
+        False, help=("Uninstall dependencies that are not needed anymore.")
     ),
 ):
     typer.echo(extra)
@@ -49,7 +46,7 @@ def sync(
 
 
 @app.command()
-def appfreeze():
+def freeze():
     ...
 
 
@@ -61,7 +58,6 @@ def callback(
     """
     A better pip freeze workflow for Python application developers.
     """
-    pass
 
 
 if __name__ == "__main__":

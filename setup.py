@@ -7,12 +7,13 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 setup(
     name="pip-deepfreeze",
     use_scm_version=True,
-    description="A pip better freeze workflow for Python application developers.",
+    description="A better pip freeze workflow for Python application developers.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/sbidoul/pip-deepfreeze",
     author="Stéphane Bidoul",
     author_email="stephane.bidoul@gmail.com",
+    # TODO license key?
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -28,7 +29,7 @@ setup(
     package_dir={"": "src"},
     packages=["pip_deepfreeze"],
     python_requires=">=3.6",
-    install_requires=["packaging", "typer[all]"],
+    install_requires=["httpx", "packaging", "typer[all]"],
     extras_require={"test": ["pytest", "pytest-cov", "virtualenv"]},
     entry_points={
         "console_scripts": [
@@ -39,5 +40,6 @@ setup(
     project_urls={
         "Bug Reports": "https://github.com/sbidoul/pip-deepfreeze/issues",
         "Source": "https://github.com/sbidoul/pip-deepfreeze/",
+        # TODO changelog
     },
 )
