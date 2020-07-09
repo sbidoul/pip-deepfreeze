@@ -6,14 +6,21 @@ This currently assumes pkg_resources is installed.
 This script must be python 2 compatible.
 """
 
+try:
+    from typing import Iterable
+except ImportError:
+    pass  # python 2
+
 import pkg_resources
 
 
 def main(distname):
+    # type: (str) -> None
     res = set()
     seen = set()
 
     def add(deps):
+        # type: (Iterable[pkg_resources.Requirement]) -> None
         for dep in deps:
             seen_key = (dep.key, dep.extras)
             if seen_key in seen:
@@ -23,7 +30,7 @@ def main(distname):
             add(d for d in pkg_resources.get_distribution(dep).requires(dep.extras))
 
     req = pkg_resources.Requirement.parse(distname)
-    add(d for d in pkg_resources.get_distribution(req.name).requires(req.extras))
+    add(d for d in pkg_resources.get_distribution(req).requires(req.extras))
 
     for r in sorted(res):
         print(r)
