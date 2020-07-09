@@ -1,6 +1,6 @@
 import pytest
 
-from pip_deepfreeze.merge import merge
+from pip_deepfreeze.merge import prepare_frozen_reqs_for_update
 
 
 @pytest.mark.parametrize(
@@ -41,24 +41,20 @@ def test_merge(in_reqs, frozen_reqs, update_all, to_update, expected, tmp_path):
     in_filename.write_text("\n".join(in_reqs))
     frozen_filename = tmp_path / "requirements.txt"
     frozen_filename.write_text("\n".join(frozen_reqs))
-    # TODO remove str() when parse accepts Paths
     assert (
-        set(merge(str(in_filename), str(frozen_filename), update_all, to_update))
+        set(prepare_frozen_reqs_for_update(frozen_filename, update_all, to_update))
         == expected
     )
 
 
 def test_merge_missing_in(tmp_path):
-    in_filename = tmp_path / "requirements.txt.in"
     frozen_filename = tmp_path / "requirements.txt"
     frozen_filename.write_text("pkga==1.0.0")
-    # TODO remove str() when parse accepts Paths
-    assert set(merge(str(in_filename), str(frozen_filename))) == {"pkga==1.0.0"}
+    assert set(prepare_frozen_reqs_for_update(frozen_filename)) == {"pkga==1.0.0"}
 
 
 def test_merge_missing_frozen(tmp_path):
     in_filename = tmp_path / "requirements.txt.in"
     in_filename.write_text("pkga")
     frozen_filename = tmp_path / "requirements.txt"
-    # TODO remove str() when parse accepts Paths
-    assert set(merge(str(in_filename), str(frozen_filename))) == {"pkga"}
+    assert set(prepare_frozen_reqs_for_update(frozen_filename)) == {"pkga"}

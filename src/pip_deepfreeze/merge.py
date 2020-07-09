@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 import shlex
 from typing import Dict, Iterable, Iterator, Optional
 
@@ -8,9 +8,8 @@ from .req_file_parser import parse, RequirementLine, OptionsLine
 from .req_parser import canonicalize_name, get_req_name
 
 
-def merge(
-    in_filename: str,
-    frozen_filename: str,
+def prepare_frozen_reqs_for_update(
+    frozen_filename: Path,
     update_all: bool = False,
     to_update: Optional[Iterable[str]] = None,
 ) -> Iterator[str]:
@@ -18,9 +17,10 @@ def merge(
     in_reqs: Dict[str, str] = {}
     frozen_reqs: Dict[str, str] = {}
     # 1. emit options from in_filename, collect in_reqs
-    if os.path.exists(in_filename):
+    in_filename = frozen_filename.with_name(frozen_filename.name + ".in")
+    if in_filename.is_file():
         for in_req in parse(
-            in_filename, recurse=True, reqs_only=False, strict=True, session=httpx
+            str(in_filename), recurse=True, reqs_only=False, strict=True, session=httpx
         ):
             if isinstance(in_req, OptionsLine):
                 yield shlex.join(in_req.options)
@@ -31,9 +31,9 @@ def merge(
                     continue
                 in_reqs[req_name] = in_req.requirement
     # 2. emit frozen_reqs unless update_all or it is in to_update
-    if os.path.exists(frozen_filename):
+    if frozen_filename.is_file():
         for frozen_req in parse(
-            frozen_filename, recurse=False, reqs_only=True, strict=False
+            str(frozen_filename), recurse=False, reqs_only=True, strict=False
         ):
             assert isinstance(frozen_req, RequirementLine)
             req_name = get_req_name(frozen_req.requirement)
