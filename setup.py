@@ -29,7 +29,7 @@ setup(
     package_dir={"": "src"},
     packages=["pip_deepfreeze"],
     python_requires=">=3.6",
-    install_requires=["httpx", "packaging", "typer[all]"],
+    install_requires=["httpx", "packaging", "pep517", "typer[all]"],
     extras_require={"test": ["pytest", "pytest-cov", "virtualenv"], "mypy": ["mypy"]},
     entry_points={
         "console_scripts": [
