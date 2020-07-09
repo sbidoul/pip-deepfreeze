@@ -30,11 +30,11 @@ setup(
     packages=["pip_deepfreeze"],
     python_requires=">=3.6",
     install_requires=["httpx", "packaging", "typer[all]"],
-    extras_require={"test": ["pytest", "pytest-cov", "virtualenv"]},
+    extras_require={"test": ["pytest", "pytest-cov", "virtualenv"], "mypy": ["mypy"]},
     entry_points={
         "console_scripts": [
-            "pip-df=pip_deepfreeze.__main__:app",
-            "pip-deepfreeze=pip_deepfreeze.__main__:app",
+            "pip-df=pip_deepfreeze.__main__:main",
+            "pip-deepfreeze=pip_deepfreeze.__main__:main",
         ]
     },
     project_urls={
