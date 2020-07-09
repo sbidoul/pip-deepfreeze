@@ -59,15 +59,17 @@ _URL_SLASH_DRIVE_RE = re.compile(r"/*([a-z])\|", re.I)
 _ENV_VAR_RE = re.compile(r"(?P<var>\$\{(?P<name>[A-Z0-9_]+)\})")
 
 
-class UrlGetterResponse(Protocol):
-    text: str
+class HttpResponse(Protocol):
+    @property
+    def text(self) -> str:
+        """The text content of the response"""
 
     def raise_for_status(self) -> None:
         """Raise if the response has an http error status"""
 
 
-class UrlGetter(Protocol):
-    def get(self, url: str) -> UrlGetterResponse:
+class HttpClient(Protocol):
+    def get(self, url: str) -> HttpResponse:
         """HTTP GET the URL"""
 
 
@@ -160,7 +162,7 @@ def parse(
     reqs_only=True,  # type: bool
     strict=False,  # type: bool
     constraints=False,  # type: bool
-    session=None,  # type: Optional[UrlGetter]
+    session=None,  # type: Optional[HttpClient]
 ):
     # type: (...) -> Iterator[ParsedLine]
     """
@@ -193,7 +195,7 @@ def parse(
 
 
 def _parse_file(filename, constraints, strict, session):
-    # type: (str, bool, bool, Optional[UrlGetter]) -> Iterator[ParsedLine]
+    # type: (str, bool, bool, Optional[HttpClient]) -> Iterator[ParsedLine]
     content = _get_file_content(filename, session)
     for lineno, line, raw_line in _preprocess(content):
         args_str, opts, other_opts = _parse_line(line, filename, lineno, strict)
@@ -417,12 +419,12 @@ def _get_url_scheme(url):
 
 
 def _get_file_content(url, session):
-    # type: (str, Optional[UrlGetter]) -> Text
+    # type: (str, Optional[HttpClient]) -> Text
     """Gets the content of a file as unicode; it may be a filename, file: URL, or
     http: URL. Respects # -*- coding: declarations on the retrieved files.
 
     :param url:         File path or url.
-    :param session:     UrlGetter instance.
+    :param session:     HttpClient instance.
     """
     scheme = _get_url_scheme(url)
 

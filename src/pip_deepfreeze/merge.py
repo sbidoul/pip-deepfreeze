@@ -20,7 +20,11 @@ def prepare_frozen_reqs_for_update(
     in_filename = frozen_filename.with_name(frozen_filename.name + ".in")
     if in_filename.is_file():
         for in_req in parse(
-            str(in_filename), recurse=True, reqs_only=False, strict=True, session=httpx
+            str(in_filename),
+            recurse=True,
+            reqs_only=False,
+            strict=True,
+            session=httpx.Client(),
         ):
             if isinstance(in_req, OptionsLine):
                 yield shlex.join(in_req.options)
