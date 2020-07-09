@@ -1,13 +1,23 @@
+from pathlib import Path
 import shutil
+import subprocess
+import tempfile
 from typing import List
 
 import typer
 
+from .merge import prepare_frozen_reqs_for_update
+
 app = typer.Typer()
+
+
+class MainOptions:
+    python: str
 
 
 @app.command()
 def sync(
+    ctx: typer.Context,
     upgrade: List[str] = typer.Option(
         None,
         "--upgrade",
@@ -40,25 +50,52 @@ def sync(
     uninstall: bool = typer.Option(
         False, help=("Uninstall dependencies that are not needed anymore.")
     ),
-):
-    typer.echo(extra)
-    typer.echo(upgrade)
+) -> None:
+    with tempfile.NamedTemporaryFile(
+        dir=".", prefix="requirements.df", suffix=".txt", mode="w", encoding="utf-8"
+    ) as f:
+        for req_line in prepare_frozen_reqs_for_update(
+            Path("requirements.txt"), update_all=upgrade_all, to_update=upgrade
+        ):
+            print(req_line, file=f)
+        f.flush()
+        install_cmd = [ctx.obj.python, "-m", "pip", "install", "-r", f.name]
+        if editable:
+            install_cmd.append("-e")
+        if extra:
+            raise NotImplementedError()
+            extra_str = ",".join(extra)
+            install_cmd.append(f".[{extra_str}]")
+        else:
+            install_cmd.append(".")
+        subprocess.check_call(install_cmd)
+        if uninstall:
+            raise NotImplementedError()
 
 
 @app.command()
-def freeze():
+def freeze() -> None:
     ...
 
 
 @app.callback()
 def callback(
+    ctx: typer.Context,
     python: str = typer.Option(default="python", show_default=True, metavar="PYTHON"),
     verbose: bool = typer.Option(False, "--verbose", "-v"),
-):
+) -> None:
     """
     A better pip freeze workflow for Python application developers.
     """
+    python_abspath = shutil.which(python)
+    # TODO error if not python_abspath
+    ctx.obj.python = python_abspath
+    # TODO prompt if python is same as sys.executable
+
+
+def main() -> None:
+    app(obj=MainOptions())
 
 
 if __name__ == "__main__":
-    app()
+    main()
