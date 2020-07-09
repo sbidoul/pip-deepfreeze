@@ -6,7 +6,7 @@ from typing import List
 
 import typer
 
-from .merge import prepare_frozen_reqs_for_update
+from .req_merge import prepare_frozen_reqs_for_update
 
 app = typer.Typer()
 

@@ -1,6 +1,6 @@
 import pytest
 
-from pip_deepfreeze.merge import prepare_frozen_reqs_for_update
+from pip_deepfreeze.req_merge import prepare_frozen_reqs_for_update
 
 
 @pytest.mark.parametrize(
