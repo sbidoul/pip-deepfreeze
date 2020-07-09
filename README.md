@@ -6,8 +6,12 @@ A better pip freeze workflow for Python application developers.
 
 Using [pip](https://pypi.org/project/pip/):
 
-  pip install --user pip-deepfreeze
+```console
+pip install --user pip-deepfreeze
+```
 
 Using [pipx](https://pypi.org/project/pipx/):
 
-  pipx install pip-deepfreeze
+```console
+pipx install pip-deepfreeze
+```
