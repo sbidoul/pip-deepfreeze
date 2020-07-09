@@ -29,8 +29,15 @@ setup(
     package_dir={"": "src"},
     packages=["pip_deepfreeze"],
     python_requires=">=3.6",
-    install_requires=["httpx", "packaging", "pep517", "typer[all]"],
+    install_requires=[
+        "httpx",
+        "packaging",
+        "pep517",
+        "typer[all]",
+        'typing-extensions ; python_version<"3.8"',  # for Protocol
+    ],
     extras_require={"test": ["pytest", "pytest-cov", "virtualenv"], "mypy": ["mypy"]},
+    setup_requires=["setuptools_scm"],
     entry_points={
         "console_scripts": [
             "pip-df=pip_deepfreeze.__main__:main",

@@ -2,6 +2,14 @@ from pathlib import Path
 import shlex
 from typing import Dict, Iterable, Iterator, Optional
 
+try:
+    from shlex import join as shlex_join
+except ImportError:
+    # python < 3.8
+    def shlex_join(split_command: Iterable[str]) -> str:
+        return " ".join(shlex.quote(s) for s in split_command)
+
+
 import httpx
 
 from .req_file_parser import parse, RequirementLine, OptionsLine
@@ -27,7 +35,7 @@ def prepare_frozen_reqs_for_update(
             session=httpx.Client(),
         ):
             if isinstance(in_req, OptionsLine):
-                yield shlex.join(in_req.options)
+                yield shlex_join(in_req.options)
             elif isinstance(in_req, RequirementLine):
                 req_name = get_req_name(in_req.requirement)
                 if not req_name:
