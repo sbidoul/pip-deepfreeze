@@ -41,7 +41,6 @@ setup(
         "test": ["pytest", "pytest-cov", "pytest-xdist", "virtualenv"],
         "mypy": ["mypy"],
     },
-    setup_requires=["setuptools_scm"],
     entry_points={
         "console_scripts": [
             "pip-df=pip_deepfreeze.__main__:main",
