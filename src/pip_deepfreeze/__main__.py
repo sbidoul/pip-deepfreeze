@@ -18,7 +18,7 @@ class MainOptions:
 @app.command()
 def sync(
     ctx: typer.Context,
-    upgrade: List[str] = typer.Option(
+    to_upgrade: List[str] = typer.Option(
         None,
         "--upgrade",
         "-u",
@@ -55,7 +55,7 @@ def sync(
         dir=".", prefix="requirements.df", suffix=".txt", mode="w", encoding="utf-8"
     ) as f:
         for req_line in prepare_frozen_reqs_for_update(
-            Path("requirements.txt"), update_all=upgrade_all, to_update=upgrade
+            Path("requirements.txt"), upgrade_all, to_upgrade
         ):
             print(req_line, file=f)
         f.flush()

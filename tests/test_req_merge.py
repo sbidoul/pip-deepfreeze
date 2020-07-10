@@ -4,7 +4,7 @@ from pip_deepfreeze.req_merge import prepare_frozen_reqs_for_update
 
 
 @pytest.mark.parametrize(
-    "in_reqs,frozen_reqs,update_all,to_update,expected",
+    "in_reqs,frozen_reqs,upgrade_all,to_upgrade,expected",
     [
         ([], [], False, None, set()),
         (
@@ -36,13 +36,13 @@ from pip_deepfreeze.req_merge import prepare_frozen_reqs_for_update
         ),
     ],
 )
-def test_merge(in_reqs, frozen_reqs, update_all, to_update, expected, tmp_path):
+def test_merge(in_reqs, frozen_reqs, upgrade_all, to_upgrade, expected, tmp_path):
     in_filename = tmp_path / "requirements.txt.in"
     in_filename.write_text("\n".join(in_reqs))
     frozen_filename = tmp_path / "requirements.txt"
     frozen_filename.write_text("\n".join(frozen_reqs))
     assert (
-        set(prepare_frozen_reqs_for_update(frozen_filename, update_all, to_update))
+        set(prepare_frozen_reqs_for_update(frozen_filename, upgrade_all, to_upgrade))
         == expected
     )
 
