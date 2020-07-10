@@ -36,7 +36,10 @@ setup(
         "typer[all]",
         'typing-extensions ; python_version<"3.8"',  # for Protocol
     ],
-    extras_require={"test": ["pytest", "pytest-cov", "virtualenv"], "mypy": ["mypy"]},
+    extras_require={
+        "test": ["pytest", "pytest-cov", "pytest-xdist", "virtualenv"],
+        "mypy": ["mypy"],
+    },
     setup_requires=["setuptools_scm"],
     entry_points={
         "console_scripts": [
