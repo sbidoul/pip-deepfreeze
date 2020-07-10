@@ -1,15 +1,15 @@
-from pathlib import Path
 import subprocess
+from pathlib import Path
 from typing import Iterable, Optional
 
 from .list_depends import list_depends
+from .project_name import get_project_name
 from .req_file_parser import (
     NestedRequirementsLine,
     RequirementLine,
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .project_name import get_project_name
 from .utils import split_lines
 
 

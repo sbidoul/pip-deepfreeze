@@ -1,9 +1,9 @@
-from pathlib import Path
 import subprocess
+from pathlib import Path
 from typing import Set
 
-from .utils import split_lines
 from .req_parser import canonicalize_name
+from .utils import split_lines
 
 
 def list_depends(python: str, project_name: str) -> Set[str]:

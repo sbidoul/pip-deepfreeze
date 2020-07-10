@@ -1,6 +1,6 @@
-from pip_deepfreeze.utils import split_lines
-
 import pytest
+
+from pip_deepfreeze.utils import split_lines
 
 
 @pytest.mark.parametrize(

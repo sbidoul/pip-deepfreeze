@@ -1,8 +1,7 @@
 import re
 from typing import Optional
 
-from packaging.requirements import Requirement, InvalidRequirement
-
+from packaging.requirements import InvalidRequirement, Requirement
 
 _canonicalize_regex = re.compile(r"[-_.]+")
 

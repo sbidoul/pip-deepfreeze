@@ -3,10 +3,10 @@ import textwrap
 import pytest
 
 from pip_deepfreeze.req_file_parser import (
-    parse,
-    RequirementsFileParserError,
     OptionParsingError,
     RequirementLine,
+    RequirementsFileParserError,
+    parse,
 )
 
 

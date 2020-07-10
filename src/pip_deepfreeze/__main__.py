@@ -1,12 +1,11 @@
-from pathlib import Path
 import shutil
 import tempfile
+from pathlib import Path
 from typing import List
 
 import typer
 
 from .pip import pip_upgrade_project
-
 from .req_merge import prepare_frozen_reqs_for_upgrade
 
 app = typer.Typer()

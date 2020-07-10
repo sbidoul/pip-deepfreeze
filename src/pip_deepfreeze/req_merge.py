@@ -1,6 +1,11 @@
-from pathlib import Path
 import shlex
+from pathlib import Path
 from typing import Dict, Iterable, Iterator, Optional
+
+import httpx
+
+from .req_file_parser import OptionsLine, RequirementLine, parse
+from .req_parser import canonicalize_name, get_req_name
 
 try:
     from shlex import join as shlex_join
@@ -8,12 +13,6 @@ except ImportError:
     # python < 3.8
     def shlex_join(split_command: Iterable[str]) -> str:
         return " ".join(shlex.quote(s) for s in split_command)
-
-
-import httpx
-
-from .req_file_parser import parse, RequirementLine, OptionsLine
-from .req_parser import canonicalize_name, get_req_name
 
 
 def prepare_frozen_reqs_for_upgrade(
