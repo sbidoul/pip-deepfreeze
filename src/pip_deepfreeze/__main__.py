@@ -59,6 +59,10 @@ def sync(
         ):
             print(req_line, file=f)
         f.flush()
+        # TODO we need to pass --upgrade if there are direct URL requirements
+        #      https://github.com/pypa/pip/issues/5780
+        #      https://github.com/pypa/pip/issues/7678
+        #      Also check if the new resolver does the right thing.
         install_cmd = [ctx.obj.python, "-m", "pip", "install", "-r", f.name]
         if editable:
             install_cmd.append("-e")
