@@ -45,7 +45,7 @@ def prepare_frozen_reqs_for_upgrade(
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
     if frozen_filename.is_file():
         for frozen_req in parse(
-            str(frozen_filename), recurse=False, reqs_only=True, strict=False
+            str(frozen_filename), recurse=True, reqs_only=True, strict=True
         ):
             assert isinstance(frozen_req, RequirementLine)
             req_name = get_req_name(frozen_req.requirement)
