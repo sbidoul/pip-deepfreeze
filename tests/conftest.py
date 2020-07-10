@@ -1,3 +1,4 @@
+from pathlib import Path
 import subprocess
 import sys
 
@@ -10,3 +11,8 @@ def virtualenv_python(tmp_path):
     venv = tmp_path / "venv"
     subprocess.check_call([sys.executable, "-m", "virtualenv", venv])
     return venv / "bin" / "python"
+
+
+@pytest.fixture(scope="session")
+def testpkgs():
+    return Path(__file__).parent / "testpkgs"
