@@ -14,7 +14,7 @@ setup(
     url="https://github.com/sbidoul/pip-deepfreeze",
     author="Stéphane Bidoul",
     author_email="stephane.bidoul@gmail.com",
-    # TODO license key?
+    licence="MIT",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -50,6 +50,6 @@ setup(
     project_urls={
         "Bug Reports": "https://github.com/sbidoul/pip-deepfreeze/issues",
         "Source": "https://github.com/sbidoul/pip-deepfreeze/",
-        # TODO changelog
+        # TODO Changelog
     },
 )
