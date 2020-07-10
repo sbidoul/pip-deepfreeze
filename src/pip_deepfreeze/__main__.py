@@ -6,7 +6,7 @@ from typing import List
 
 import typer
 
-from .req_merge import prepare_frozen_reqs_for_update
+from .req_merge import prepare_frozen_reqs_for_upgrade
 
 app = typer.Typer()
 
@@ -54,7 +54,7 @@ def sync(
     with tempfile.NamedTemporaryFile(
         dir=".", prefix="requirements.df", suffix=".txt", mode="w", encoding="utf-8"
     ) as f:
-        for req_line in prepare_frozen_reqs_for_update(
+        for req_line in prepare_frozen_reqs_for_upgrade(
             Path("requirements.txt"), upgrade_all, to_upgrade
         ):
             print(req_line, file=f)

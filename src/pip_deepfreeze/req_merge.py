@@ -16,7 +16,7 @@ from .req_file_parser import parse, RequirementLine, OptionsLine
 from .req_parser import canonicalize_name, get_req_name
 
 
-def prepare_frozen_reqs_for_update(
+def prepare_frozen_reqs_for_upgrade(
     frozen_filename: Path,
     upgrade_all: bool = False,
     to_upgrade: Optional[Iterable[str]] = None,
