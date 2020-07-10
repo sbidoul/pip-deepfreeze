@@ -1,10 +1,11 @@
 from pathlib import Path
 import shutil
-import subprocess
 import tempfile
 from typing import List
 
 import typer
+
+from .pip import pip_upgrade_project
 
 from .req_merge import prepare_frozen_reqs_for_upgrade
 
@@ -52,49 +53,19 @@ def sync(
     ),
 ) -> None:
     with tempfile.NamedTemporaryFile(
-        dir=".", prefix="requirements.df", suffix=".txt", mode="w", encoding="utf-8"
-    ) as f:
+        dir=".", prefix="requirements.", suffix=".txt.df", mode="w", encoding="utf-8"
+    ) as constraints:
         for req_line in prepare_frozen_reqs_for_upgrade(
             Path("requirements.txt"), upgrade_all, to_upgrade
         ):
-            print(req_line, file=f)
-        f.flush()
-        # TODO we need to pass --upgrade for direct URL requirements
-        #      otherwise pip will not upgrade them even if they did change
-        #      https://github.com/pypa/pip/issues/5780
-        #      https://github.com/pypa/pip/issues/7678
-        #      Also check if the new resolver does the right thing.
-        # TODO we need to pass --upgrade for regular requirements otherwise
-        #      pip will not attempt to install them (requirement already
-        #      satisfied)
-        # TODO optimization idea: do a first pass with all reqs without
-        #      --upgrade then a second pass with --upgrade for all reqs which
-        #      do not have == or direct urls which have changed
-        install_cmd = [
-            ctx.obj.python,
-            "-m",
-            "pip",
-            "install",
-            "-r",
-            f.name,
-            "--upgrade",
-        ]
-        if editable:
-            install_cmd.append("-e")
-        if extras:
-            raise NotImplementedError("--extra not implemented yet")
-            extras_str = ",".join(extras)
-            install_cmd.append(f".[{extras_str}]")
-        else:
-            install_cmd.append(".")
-        subprocess.check_call(install_cmd)
+            print(req_line, file=constraints)
+        constraints.flush()
+        pip_upgrade_project(
+            ctx.obj.python, Path(constraints.name), editable=editable, extras=extras
+        )
         if uninstall:
             raise NotImplementedError("--uninstall not implemented yet")
-
-
-@app.command()
-def freeze() -> None:
-    ...
+        # TODO freeze dependencies, + options
 
 
 @app.callback()
