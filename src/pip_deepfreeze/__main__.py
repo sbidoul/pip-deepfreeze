@@ -39,7 +39,7 @@ def sync(
         ),
         show_default=False,
     ),
-    extra: List[str] = typer.Option(
+    extras: List[str] = typer.Option(
         None,
         "-e",
         "--extra",
@@ -59,22 +59,37 @@ def sync(
         ):
             print(req_line, file=f)
         f.flush()
-        # TODO we need to pass --upgrade if there are direct URL requirements
+        # TODO we need to pass --upgrade for direct URL requirements
+        #      otherwise pip will not upgrade them even if they did change
         #      https://github.com/pypa/pip/issues/5780
         #      https://github.com/pypa/pip/issues/7678
         #      Also check if the new resolver does the right thing.
-        install_cmd = [ctx.obj.python, "-m", "pip", "install", "-r", f.name]
+        # TODO we need to pass --upgrade for regular requirements otherwise
+        #      pip will not attempt to install them (requirement already
+        #      satisfied)
+        # TODO optimization idea: do a first pass with all reqs without
+        #      --upgrade then a second pass with --upgrade for all reqs which
+        #      do not have == or direct urls which have changed
+        install_cmd = [
+            ctx.obj.python,
+            "-m",
+            "pip",
+            "install",
+            "-r",
+            f.name,
+            "--upgrade",
+        ]
         if editable:
             install_cmd.append("-e")
-        if extra:
-            raise NotImplementedError()
-            extra_str = ",".join(extra)
-            install_cmd.append(f".[{extra_str}]")
+        if extras:
+            raise NotImplementedError("--extra not implemented yet")
+            extras_str = ",".join(extras)
+            install_cmd.append(f".[{extras_str}]")
         else:
             install_cmd.append(".")
         subprocess.check_call(install_cmd)
         if uninstall:
-            raise NotImplementedError()
+            raise NotImplementedError("--uninstall not implemented yet")
 
 
 @app.command()
