@@ -17,21 +17,21 @@ def pip_upgrade_project(
     #   (need to check if the new resolver does the right thing).
     # - we need to pass --upgrade for regular requirements otherwise
     #   pip will not attempt to install them (requirement already satisfied)
-    # - passing --upgrade to pip makes it very slow
+    # - passing --upgrade to pip makes it slow
     # TODO smart upgrade algorithm
     #      - list installed dependencies of project (pip_freeze_dependencies)
     #      - dependencies that are different or not in requirements_filename
     #        must be uninstalled
     #      - then install project
-    cmd = [python, "-m", "pip", "install", "-r", requirements_filename]
+    cmd = [python, "-m", "pip", "install", "-r", f"{requirements_filename}"]
     if editable:
         cmd.append("-e")
     if extras:
         extras_str = ",".join(extras)
-        cmd.append(str(project_root) + f"[{extras_str}]")
+        cmd.append(f"{project_root}[{extras_str}]")
     else:
-        cmd.append(str(project_root))
-    subprocess.check_call(cmd)  # type: ignore
+        cmd.append(f"{project_root}")
+    subprocess.check_call(cmd)
 
 
 def pip_freeze(python: str) -> Iterable[str]:
