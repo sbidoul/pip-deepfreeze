@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-"""List dependencies of a distribution.
+"""List installed dependencies of a distribution.
 
 This currently assumes pkg_resources is installed.
 
 This script must be python 2 compatible.
 """
-
-try:
-    from typing import Iterable
-except ImportError:
-    pass  # python 2
 
 import pkg_resources
 
@@ -19,18 +14,24 @@ def main(distname):
     res = set()
     seen = set()
 
-    def add(deps):
-        # type: (Iterable[pkg_resources.Requirement]) -> None
-        for dep in deps:
-            seen_key = (dep.key, dep.extras)
-            if seen_key in seen:
-                continue
-            seen.add(seen_key)
-            res.add(dep.key)
-            add(d for d in pkg_resources.get_distribution(dep).requires(dep.extras))
+    def add(req, deps_only):
+        # type: (pkg_resources.Requirement, bool) -> None
+        seen_key = (req.key, req.extras)
+        if seen_key in seen:
+            return
+        seen.add(seen_key)
+        try:
+            dist = pkg_resources.get_distribution(req)
+        except pkg_resources.DistributionNotFound:
+            return
+        else:
+            if not deps_only:
+                res.add(req.key)
+            for dep in dist.requires(req.extras):
+                add(dep, deps_only=False)
 
     req = pkg_resources.Requirement.parse(distname)
-    add(d for d in pkg_resources.get_distribution(req).requires(req.extras))
+    add(req, deps_only=True)
 
     for r in sorted(res):
         print(r)

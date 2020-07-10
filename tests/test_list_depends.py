@@ -13,7 +13,12 @@ LIST_DEPENDS = os.path.join(HERE, "..", "src", "pip_deepfreeze", "_list_depends.
 
 @pytest.mark.parametrize(
     "to_install, distribution, expected",
-    [(["pkga"], "pkga", []), (["pkgb"], "pkgb", ["pkga"]), (["pkgb"], "pkga", [])],
+    [
+        (["pkga"], "pkga", []),
+        (["pkgb"], "pkgb", ["pkga"]),
+        (["pkgb"], "pkga", []),
+        (["--no-deps", "pkgb"], "pkgb", []),
+    ],
 )
 def test_list_depends(to_install, distribution, expected, tmp_path):
     venv = tmp_path / "venv"
