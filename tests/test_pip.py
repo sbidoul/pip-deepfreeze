@@ -73,21 +73,26 @@ def test_pip_freeze_dependencies(
 
 @pytest.mark.parametrize(
     "to_install, to_uninstall, expected",
-    [(["pkga==0.0.0"], ["pkga"], []), (["pkgb==0.0.0"], ["pkga"], ["pkgb==0.0.0"])],
+    [
+        (["pkga==0.0.0"], ["pkga"], []),
+        (["pkgb==0.0.0"], ["pkga"], ["pkgb==0.0.0"]),
+        ([], [], []),
+    ],
 )
 def test_pip_uninstall(to_install, to_uninstall, expected, virtualenv_python, testpkgs):
-    subprocess.call(
-        [
-            virtualenv_python,
-            "-m",
-            "pip",
-            "install",
-            "--no-index",
-            "--find-links",
-            testpkgs,
-        ]
-        + to_install
-    )
+    if to_install:
+        subprocess.call(
+            [
+                virtualenv_python,
+                "-m",
+                "pip",
+                "install",
+                "--no-index",
+                "--find-links",
+                testpkgs,
+            ]
+            + to_install
+        )
     pip_uninstall(virtualenv_python, to_uninstall)
     assert list(pip_freeze(virtualenv_python)) == expected
 
