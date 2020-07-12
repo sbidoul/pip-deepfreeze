@@ -17,6 +17,7 @@ except ImportError:
 
 def prepare_frozen_reqs_for_upgrade(
     frozen_filename: Path,
+    in_filename: Path,
     upgrade_all: bool = False,
     to_upgrade: Optional[Iterable[str]] = None,
 ) -> Iterator[str]:
@@ -24,7 +25,6 @@ def prepare_frozen_reqs_for_upgrade(
     in_reqs: Dict[str, str] = {}
     frozen_reqs: Dict[str, str] = {}
     # 1. emit options from in_filename, collect in_reqs
-    in_filename = frozen_filename.with_name(frozen_filename.name + ".in")
     if in_filename.is_file():
         for in_req in parse(
             str(in_filename),
@@ -42,7 +42,7 @@ def prepare_frozen_reqs_for_upgrade(
                     continue
                 in_reqs[req_name] = in_req.requirement
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
-    if frozen_filename.is_file():
+    if frozen_filename.is_file() and not upgrade_all:
         for frozen_req in parse(
             str(frozen_filename), recurse=True, reqs_only=True, strict=True
         ):
@@ -51,7 +51,7 @@ def prepare_frozen_reqs_for_upgrade(
             if not req_name:
                 # TODO warn or error
                 continue
-            if upgrade_all or req_name in to_upgrade_set:
+            if req_name in to_upgrade_set:
                 continue
             frozen_reqs[req_name] = frozen_req.requirement
             yield frozen_req.requirement

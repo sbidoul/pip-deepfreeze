@@ -42,19 +42,28 @@ def test_merge(in_reqs, frozen_reqs, upgrade_all, to_upgrade, expected, tmp_path
     frozen_filename = tmp_path / "requirements.txt"
     frozen_filename.write_text("\n".join(frozen_reqs))
     assert (
-        set(prepare_frozen_reqs_for_upgrade(frozen_filename, upgrade_all, to_upgrade))
+        set(
+            prepare_frozen_reqs_for_upgrade(
+                frozen_filename, in_filename, upgrade_all, to_upgrade
+            )
+        )
         == expected
     )
 
 
 def test_merge_missing_in(tmp_path):
+    in_filename = tmp_path / "requirements.txt.in"
     frozen_filename = tmp_path / "requirements.txt"
     frozen_filename.write_text("pkga==1.0.0")
-    assert set(prepare_frozen_reqs_for_upgrade(frozen_filename)) == {"pkga==1.0.0"}
+    assert set(prepare_frozen_reqs_for_upgrade(frozen_filename, in_filename)) == {
+        "pkga==1.0.0"
+    }
 
 
 def test_merge_missing_frozen(tmp_path):
     in_filename = tmp_path / "requirements.txt.in"
     in_filename.write_text("pkga")
     frozen_filename = tmp_path / "requirements.txt"
-    assert set(prepare_frozen_reqs_for_upgrade(frozen_filename)) == {"pkga"}
+    assert set(prepare_frozen_reqs_for_upgrade(frozen_filename, in_filename)) == {
+        "pkga"
+    }
