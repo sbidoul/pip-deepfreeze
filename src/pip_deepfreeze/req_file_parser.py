@@ -225,7 +225,7 @@ def _parse_file(filename, constraints, strict, session):
                 lineno,
                 raw_line,
                 requirements=opts.requirements[0],
-                is_constraint=False,
+                is_constraint=False,  # TODO this could be `constraints`
             )
         elif opts.constraints:
             yield NestedRequirementsLine(
@@ -233,7 +233,7 @@ def _parse_file(filename, constraints, strict, session):
                 lineno,
                 raw_line,
                 requirements=opts.constraints[0],
-                is_constraint=True,  # TODO this could be `constraints` instead of True
+                is_constraint=True,
             )
         elif other_opts:
             yield OptionsLine(
