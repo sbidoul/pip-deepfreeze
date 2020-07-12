@@ -20,24 +20,31 @@ def pip_upgrade_project(
     extras: Optional[Iterable[str]] = None,
     editable: bool = True,
 ) -> None:
-    # Ideally, this should be a native pip feature but
-    # - pip has difficulties upgrading direct URL requirements
-    #   https://github.com/pypa/pip/issues/5780
-    #   https://github.com/pypa/pip/issues/7678
-    #   (need to check if the new resolver does the right thing).
-    # - we need to pass --upgrade for regular requirements otherwise
-    #   pip will not attempt to install them (requirement already satisfied)
-    # - passing --upgrade to pip makes it slow
-    #
-    # In the meantime, here is our upgrade algorithm
-    # - list installed dependencies of project (pip_freeze_dependencies)
-    # - dependencies that are different or not in constraints
-    #   are uninstalled, to make sure they will be reinstalled according
-    #   to the provided constraints or to the latest available version
-    # - install project
-    # With this mechanism, one can upgrade a dependency by removing
-    # it from requirements.txt, and reinstalling the project with this
-    # algorithm.
+    """Upgrade a project.
+
+    Make sure a project is installed with all its dependencies, and that all
+    dependencies are at the latest version allowed by constraints.
+
+    Ideally, this should be a native pip feature but
+    - pip has difficulties upgrading direct URL requirements
+      https://github.com/pypa/pip/issues/5780, https://github.com/pypa/pip/issues/7678
+      (need to check if the new resolver does the exepected thing).
+    - We need to pass --upgrade for regular requirements otherwise pip will not attempt
+      to install them (requirement already satisfied).
+    - Passing --upgrade to pip makes it too slow to my taste (need to check performance
+      with the new resolver).
+
+    In the meantime, here is our upgrade algorithm:
+    1. List installed dependencies of project (pip_freeze_dependencies).
+    2. Dependencies that are installed with a different version, or are not in
+       constraints are uninstalled, to make sure they will be reinstalled according to
+       the provided constraints or to the latest available version.
+    3. Install project.
+
+    This means one can upgrade a dependency by removing it from requirements.txt or
+    update the version specifier in requirements.txt, and reinstalling the project with
+    this function.
+    """
     if extras:
         raise NotImplementedError("extras not implemented")
     # 1. parse constraints
@@ -80,6 +87,7 @@ def pip_upgrade_project(
 
 
 def pip_freeze(python: str) -> Iterable[str]:
+    """Run pip freeze."""
     cmd = [python, "-m", "pip", "freeze"]
     return split_lines(subprocess.check_output(cmd, universal_newlines=True))
 
@@ -87,6 +95,7 @@ def pip_freeze(python: str) -> Iterable[str]:
 def pip_freeze_dependencies(
     python: str, project_root: Path = Path("."), extras: Optional[Iterable[str]] = None
 ) -> Iterable[str]:
+    """Run pip freeze, returning only dependencies of the project."""
     project_name = get_project_name(project_root)
     dependencies = list_depends(python, project_name)
     frozen = pip_freeze(python)
@@ -99,5 +108,7 @@ def pip_freeze_dependencies(
 
 
 def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
-    cmd = [python, "-m", "pip", "uninstall", "--yes"] + list(requirements)
-    subprocess.check_call(cmd)
+    """Uninstall packages."""
+    if list(requirements):
+        cmd = [python, "-m", "pip", "uninstall", "--yes"] + list(requirements)
+        subprocess.check_call(cmd)
