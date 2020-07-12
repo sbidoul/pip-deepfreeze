@@ -28,7 +28,6 @@ def test_list_depends_script(
             "-m",
             "pip",
             "install",
-            "--no-index",
             "--find-links",
             testpkgs,
             "pytest-cov",
