@@ -21,6 +21,9 @@ def testpkgs(tmp_path_factory):
     testpkgs_kw = [
         dict(name="pkga"),
         dict(name="pkgb", install_requires=["pkga"]),
+        dict(name="pkgc", version="0.0.1"),
+        dict(name="pkgc", version="0.0.2"),
+        dict(name="pkgc", version="0.0.3"),
     ]
 
     testpkgs_dir = tmp_path_factory.mktemp("testpkgs")
