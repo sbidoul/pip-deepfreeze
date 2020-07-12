@@ -4,9 +4,8 @@ import subprocess
 import pytest
 
 # /!\ this test file must be python 2 compatible /!\
-HERE = os.path.dirname(__file__)
-LIST_DEPENDS = os.path.join(
-    HERE, "..", "src", "pip_deepfreeze", "list_depends_script.py"
+LIST_DEPENDS_SCRIPT = os.path.join(
+    os.path.dirname(__file__), "..", "src", "pip_deepfreeze", "list_depends_script.py"
 )
 
 
@@ -24,12 +23,22 @@ def test_list_depends_script(
 ):
     # We need to install pytest-cov so subprocess coverage works.
     subprocess.check_call(
-        [virtualenv_python, "-m", "pip", "install", "-f", testpkgs, "pytest-cov"]
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--find-links",
+            testpkgs,
+            "pytest-cov",
+        ]
         + to_install
     )
     depends = (
         subprocess.check_output(
-            [virtualenv_python, LIST_DEPENDS, distribution], universal_newlines=True,
+            [virtualenv_python, LIST_DEPENDS_SCRIPT, distribution],
+            universal_newlines=True,
         )
         .strip()
         .split()
