@@ -16,7 +16,15 @@ from pip_deepfreeze.pip import pip_freeze, pip_freeze_dependencies, pip_uninstal
 )
 def test_pip_freeze(to_install, expected, virtualenv_python, testpkgs):
     subprocess.call(
-        [virtualenv_python, "-m", "pip", "install", "--no-index", "-f", testpkgs]
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--find-links",
+            testpkgs,
+        ]
         + to_install
     )
     assert list(pip_freeze(virtualenv_python)) == expected
@@ -49,7 +57,7 @@ def test_pip_freeze_dependencies(
             "pip",
             "install",
             "--no-index",
-            "-f",
+            "--find-links",
             testpkgs,
             "-e",
             tmp_path,
@@ -64,8 +72,19 @@ def test_pip_freeze_dependencies(
 )
 def test_pip_uninstall(to_install, to_uninstall, expected, virtualenv_python, testpkgs):
     subprocess.call(
-        [virtualenv_python, "-m", "pip", "install", "--no-index", "-f", testpkgs]
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--find-links",
+            testpkgs,
+        ]
         + to_install
     )
     pip_uninstall(virtualenv_python, to_uninstall)
     assert list(pip_freeze(virtualenv_python)) == expected
+
+
+# def test_pip_upgrade_project(virtualenv_python, testpkgs)

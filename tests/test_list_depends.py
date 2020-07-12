@@ -13,7 +13,7 @@ def test_list_depends(virtualenv_python, testpkgs):
             "pip",
             "install",
             "--no-index",
-            "-f",
+            "--find-links",
             testpkgs,
             "pkgb",
         ]
