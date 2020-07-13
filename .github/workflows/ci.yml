@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+      - uses: pre-commit/action@v2.0.0
+  tests:
+    name: "Test with python ${{ matrix.python-version }}"
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        include:
+          - python-version: "2.7"
+            env: TOXENV=py27
+          - python-version: "3.6"
+            env: TOXENV=py36
+          - python-version: "3.7"
+            env: TOXENV=py37
+          - python-version: "3.8"
+            env: TOXENV=py38
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v1"
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: "Install dependencies"
+        run: |
+          set -xe
+          python -VV
+          python -m site
+          python -m pip install --U pip setuptools wheel virtualenv tox
+      - name: "Run tox targets for ${{ matrix.python-version }}"
+        run: "python -m tox"
