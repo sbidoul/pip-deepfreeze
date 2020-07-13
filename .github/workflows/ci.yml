@@ -17,15 +17,7 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        include:
-          - python-version: "2.7"
-            env: TOXENV=py27
-          - python-version: "3.6"
-            env: TOXENV=py36
-          - python-version: "3.7"
-            env: TOXENV=py37
-          - python-version: "3.8"
-            env: TOXENV=py38
+        python-version: ["2.7", "3.6", "3.7", "3.8"]
     steps:
       - uses: "actions/checkout@v2"
       - uses: "actions/setup-python@v1"
@@ -36,6 +28,6 @@ jobs:
           set -xe
           python -VV
           python -m site
-          python -m pip install -U pip setuptools wheel virtualenv tox
+          python -m pip install -U pip setuptools wheel virtualenv tox tox-gh-actions
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: "python -m tox"
