@@ -191,7 +191,7 @@ def test_pip_upgrade_vcs_url(virtualenv_python, tmp_path):
         )
     )
     # install tag 0.10.0
-    constraints.write_text("toml @ git+https://github.com/uiri/toml@0.10.0")
+    constraints.write_text("--no-index\ntoml @ git+https://github.com/uiri/toml@0.10.0")
     pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)
     assert list(_freeze_filter(pip_freeze(virtualenv_python))) == [
         "toml @ git+https://github.com/uiri/toml"
