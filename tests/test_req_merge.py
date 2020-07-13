@@ -34,6 +34,14 @@ from pip_deepfreeze.req_merge import prepare_frozen_reqs_for_upgrade
             None,
             {"-f './wheel house'", "pkga==1.0.0", "pkgb==1.0.0"},
         ),
+        # repeated req in constraints, with different env marker
+        (
+            ['pkga>=3.0 ; python_version>="3"', 'pkga<3 ; python_version<"3"'],
+            [],
+            False,
+            None,
+            {'pkga>=3.0 ; python_version>="3"', 'pkga<3 ; python_version<"3"'},
+        ),
     ],
 )
 def test_merge(in_reqs, frozen_reqs, upgrade_all, to_upgrade, expected, tmp_path):
