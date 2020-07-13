@@ -36,19 +36,21 @@ def sync(
         ),
         show_default=False,
     ),
-    extras: List[str] = typer.Option(
-        None,
-        "-e",
-        "--extra",
-        metavar="EXTRA",
-        help=("Extra to install. This option can be repeated."),
-    ),
+    # extras: List[str] = typer.Option(
+    #     None,
+    #     "-e",
+    #     "--extra",
+    #     metavar="EXTRA",
+    #     help=("Extra to install. This option can be repeated."),
+    # ),
     editable: bool = typer.Option(True, help="Install the project in editable mode.",),
-    uninstall: bool = typer.Option(
-        False, help=("Uninstall dependencies that are not needed anymore.")
-    ),
+    # uninstall: bool = typer.Option(
+    #     False, help=("Uninstall dependencies that are not needed anymore.")
+    # ),
 ) -> None:
-    sync_operation(ctx.obj.python, upgrade_all, to_upgrade, editable, extras, uninstall)
+    sync_operation(
+        ctx.obj.python, upgrade_all, to_upgrade, editable, extras=[], uninstall=False
+    )
 
 
 @app.callback()
