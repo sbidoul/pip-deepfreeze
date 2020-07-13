@@ -81,7 +81,7 @@ def pip_upgrade_project(
     #      sync's --uninstall option remove what we don't need.
     cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
     if editable:
-        # TODO if not editblae, uninstall project
+        # TODO if not editable, uninstall project
         cmd.append("-e")
     if extras:
         extras_str = ",".join(extras)
