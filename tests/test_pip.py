@@ -155,3 +155,21 @@ def test_pip_upgrade_project(virtualenv_python, testpkgs, tmp_path):
     constraints.write_text(f"--no-index\n--find-links {testpkgs}")
     pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)
     assert list(_freeze_filter(pip_freeze(virtualenv_python))) == ["pkgc==0.0.3"]
+
+
+def test_pip_upgrade_constraint_not_a_dep(virtualenv_python, testpkgs, tmp_path):
+    """Test upgrading does not install constraints that are not dependencies."""
+    constraints = tmp_path / "requirements.txt.df"
+    # First install, pkgc frozen to 0.0.1.
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """
+            from setuptools import setup
+
+            setup(name="theproject")
+            """
+        )
+    )
+    constraints.write_text(f"--no-index\n--find-links {testpkgs}\npkgc==0.0.1")
+    pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)
+    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == []
