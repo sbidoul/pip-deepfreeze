@@ -36,6 +36,6 @@ jobs:
           set -xe
           python -VV
           python -m site
-          python -m pip install --U pip setuptools wheel virtualenv tox
+          python -m pip install -U pip setuptools wheel virtualenv tox
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: "python -m tox"
