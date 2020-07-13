@@ -173,3 +173,34 @@ def test_pip_upgrade_constraint_not_a_dep(virtualenv_python, testpkgs, tmp_path)
     constraints.write_text(f"--no-index\n--find-links {testpkgs}\npkgc==0.0.1")
     pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)
     assert list(_freeze_filter(pip_freeze(virtualenv_python))) == []
+
+
+def test_pip_upgrade_vcs_url(virtualenv_python, tmp_path):
+    """Test upgrading a VCS URL."""
+    constraints = tmp_path / "requirements.txt.df"
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """
+            from setuptools import setup
+
+            setup(
+                name="theproject",
+                install_requires=["toml"],
+            )
+            """
+        )
+    )
+    # install tag 0.10.0
+    constraints.write_text("toml @ git+https://github.com/uiri/toml@0.10.0")
+    pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)
+    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == [
+        "toml @ git+https://github.com/uiri/toml"
+        "@4935f616ef78c35a968b2473e806d7049eba9af1"
+    ]
+    # upgrade to tag 0.10.1
+    constraints.write_text("toml @ git+https://github.com/uiri/toml@0.10.1")
+    pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)
+    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == [
+        "toml @ git+https://github.com/uiri/toml"
+        "@a86fc1fbd650a19eba313c3f642c9e2c679dc8d6"
+    ]
