@@ -33,7 +33,6 @@ setup(
     install_requires=[
         "httpx",
         "packaging",
-        "pep517",
         "typer[all]",
         'typing-extensions ; python_version<"3.8"',  # for Protocol
     ],

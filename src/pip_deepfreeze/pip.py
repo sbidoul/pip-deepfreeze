@@ -101,7 +101,7 @@ def pip_freeze_dependencies(
     python: str, project_root: Path = Path("."), extras: Optional[Iterable[str]] = None
 ) -> Iterable[str]:
     """Run pip freeze, returning only dependencies of the project."""
-    project_name = get_project_name(project_root)
+    project_name = get_project_name(python, project_root)
     dependencies = list_depends(python, project_name)
     frozen = pip_freeze(python)
     for frozen_req in frozen:

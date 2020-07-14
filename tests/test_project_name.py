@@ -1,3 +1,4 @@
+import sys
 import textwrap
 
 from pip_deepfreeze.project_name import get_project_name
@@ -14,7 +15,7 @@ def test_project_name_setup_py(tmp_path):
             """
         )
     )
-    assert get_project_name(tmp_path) == "foobar"
+    assert get_project_name(sys.executable, tmp_path) == "foobar"
 
 
 def test_project_name_flit(tmp_path):
@@ -39,4 +40,4 @@ def test_project_name_flit(tmp_path):
             """
         )
     )
-    assert get_project_name(tmp_path) == "foobar"
+    assert get_project_name(sys.executable, tmp_path) == "foobar"
