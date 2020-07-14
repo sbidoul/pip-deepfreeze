@@ -16,7 +16,7 @@ def virtualenv_python(tmp_path):
 
 @pytest.fixture(scope="session")
 def testpkgs(tmp_path_factory):
-    """ Create test wheels and return the temp dir where they are stored."""
+    """Create test wheels and return the temp dir where they are stored."""
     # setup.py keywords for wheels to create
     testpkgs_kw = [
         dict(name="pkga"),

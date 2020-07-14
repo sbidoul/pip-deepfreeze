@@ -23,10 +23,10 @@ def prepare_frozen_reqs_for_upgrade(
 ) -> Iterator[str]:
     """Merge frozen requirements and constraints.
 
-    pip options are taken from the constraints file.
-    All frozen requirements are preserved, unless an upgrade is explicitly
-    requested via ``upgrade_all`` or ``to_upgrade``.
-    Other constraints not in frozen requirements are added.
+    pip options are taken from the constraints file. All frozen
+    requirements are preserved, unless an upgrade is explicitly
+    requested via ``upgrade_all`` or ``to_upgrade``. Other constraints
+    not in frozen requirements are added.
     """
     to_upgrade_set = {canonicalize_name(r) for r in to_upgrade or []}
     in_reqs: List[Tuple[str, str]] = []

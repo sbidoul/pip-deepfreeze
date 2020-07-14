@@ -1,5 +1,4 @@
-"""
-Requirements file parsing
+"""Requirements file parsing.
 
 This comes from pip.
 
@@ -62,15 +61,15 @@ _ENV_VAR_RE = re.compile(r"(?P<var>\$\{(?P<name>[A-Z0-9_]+)\})")
 class HttpResponse(Protocol):
     @property
     def text(self) -> str:
-        """The text content of the response"""
+        """The text content of the response."""
 
     def raise_for_status(self) -> None:
-        """Raise if the response has an http error status"""
+        """Raise if the response has an http error status."""
 
 
 class HttpClient(Protocol):
     def get(self, url: str) -> HttpResponse:
-        """HTTP GET the URL"""
+        """HTTP GET the URL."""
 
 
 class RequirementsFileParserError(Exception):
@@ -145,7 +144,7 @@ class OptionsLine(ParsedLine):
 
 def _preprocess(content):
     # type: (Text) -> ReqFileLines
-    """Split, filter, and join lines, and return a line iterator
+    """Split, filter, and join lines, and return a line iterator.
 
     :param content: the content of the requirements file
     """
@@ -165,9 +164,7 @@ def parse(
     session=None,  # type: Optional[HttpClient]
 ):
     # type: (...) -> Iterator[ParsedLine]
-    """
-    Parse a given file or URL, yielding parsed lines.
-    """
+    """Parse a given file or URL, yielding parsed lines."""
     if base_filename:
         # original file is over http
         if _SCHEME_RE.search(base_filename):
@@ -287,9 +284,10 @@ def _parse_line(line, filename, lineno, strict):
 
 def _break_args_options(line):
     # type: (Text) -> Tuple[str, Text]
-    """Break up the line into an args and options string.  We only want to shlex
-    (and then optparse) the options, not the args.  args can contain markers
-    which are corrupted by shlex.
+    """Break up the line into an args and options string.
+
+    We only want to shlex (and then optparse) the options, not the args.
+    args can contain markers which are corrupted by shlex.
     """
     tokens = line.split(" ")
     args = []
@@ -306,7 +304,9 @@ def _break_args_options(line):
 def _join_lines(lines_enum):
     # type: (Iterator[Tuple[int, Text]]) -> ReqFileLines
     """Joins a line ending in '\' with the previous line (except when following
-    comments).  The joined line takes on the index of the first line.
+    comments).
+
+    The joined line takes on the index of the first line.
     """
     primary_line_number = None
     new_lines = []  # type: List[Text]
@@ -343,9 +343,7 @@ def _join_lines(lines_enum):
 
 def _remove_comments(lines_enum):
     # type: (ReqFileLines) -> ReqFileLines
-    """
-    Strips comments and filter empty lines.
-    """
+    """Strips comments and filter empty lines."""
     for line_number, line, raw_line in lines_enum:
         line = _COMMENT_RE.sub("", line)
         line = line.strip()
@@ -395,9 +393,11 @@ _ENCODING_RE = re.compile(br"coding[:=]\s*([-\w.]+)")
 
 def _auto_decode(data):
     # type: (bytes) -> Text
-    """Check a bytes string for a BOM to correctly detect the encoding
+    """Check a bytes string for a BOM to correctly detect the encoding.
 
-    Fallback to locale.getpreferredencoding(False) like open() on Python3"""
+    Fallback to locale.getpreferredencoding(False) like open() on
+    Python3
+    """
     for bom, encoding in _BOMS:
         if data.startswith(bom):
             return data[len(bom) :].decode(encoding)

@@ -59,9 +59,7 @@ def callback(
     python: str = typer.Option(default="python", show_default=True, metavar="PYTHON"),
     verbose: bool = typer.Option(False, "--verbose", "-v"),
 ) -> None:
-    """
-    A better pip freeze workflow for Python application developers.
-    """
+    """A better pip freeze workflow for Python application developers."""
     python_abspath = shutil.which(python)
     # TODO error if not python_abspath
     ctx.obj.python = python_abspath

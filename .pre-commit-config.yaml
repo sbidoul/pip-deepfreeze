@@ -28,3 +28,8 @@ repos:
     rev: v5.0.7
     hooks:
       - id: isort
+  - repo: https://github.com/myint/docformatter
+    rev: v1.3.1
+    hooks:
+      - id: docformatter
+        args: ["--in-place", "--wrap-summaries=88"]
