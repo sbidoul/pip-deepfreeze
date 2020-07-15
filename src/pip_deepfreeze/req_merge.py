@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
 import httpx
+import typer
 
 from .req_file_parser import OptionsLine, RequirementLine, parse
 from .req_parser import canonicalize_name, get_req_name
@@ -45,7 +46,11 @@ def prepare_frozen_reqs_for_upgrade(
             elif isinstance(in_req, RequirementLine):
                 req_name = get_req_name(in_req.requirement)
                 if not req_name:
-                    # TODO warn or error
+                    typer.secho(
+                        f"Ignoring unnamed constraint {in_req.requirement!r}.",
+                        fg=typer.colors.RED,
+                        err=True,
+                    )
                     continue
                 in_reqs.append((req_name, in_req.requirement))
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
@@ -56,7 +61,11 @@ def prepare_frozen_reqs_for_upgrade(
             assert isinstance(frozen_req, RequirementLine)
             req_name = get_req_name(frozen_req.requirement)
             if not req_name:
-                # TODO warn or error
+                typer.secho(
+                    f"Ignoring unnamed frozen requirement {frozen_req.requirement!r}.",
+                    fg=typer.colors.RED,
+                    err=True,
+                )
                 continue
             if req_name in to_upgrade_set:
                 continue
