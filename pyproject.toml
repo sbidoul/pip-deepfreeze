@@ -13,3 +13,8 @@ line_length = 88
 known_first_party = "pip_deepfreeze"
 sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 default_section = "THIRDPARTY"
+
+[tool.towncrier]
+filename = "HISTORY.rst"
+directory = "news"
+issue_format = "`#{issue} <https://github.com/sbidoul/pip-deepfreeze/issues/{issue}>`_"

@@ -174,3 +174,10 @@ This project uses `pre-commit <https://pre-commit.com/>`__ to enforce linting
 To make sure linters run locally on each of your commits, install pre-commit
 (``pipx install pre-commit`` is recommended), and run ``pre-commit install`` in
 your local clone of the ``pip-deepfreeze`` repository.
+
+To release:
+
+- Select the next version number of the form ``x.y.z``.
+- ``towncrier --version x.y.z``.
+- Inspect and commit the updated ``HISTORY.rst``.
+- ``git tag x.y.z ; git push --tags``.
