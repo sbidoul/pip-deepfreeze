@@ -18,6 +18,11 @@ def test_canonicalize_name(req_name, expected):
         ("PkgA", "pkga"),
         ("pkga @ https://e.c/pkga.tgz", "pkga"),
         ("./pkga.tgz", None),
+        ("git+https://g.c/o/r@1.0#egg=Pkga&subdirectory=python", "pkga"),
+        ("git+https://g.c/o/r@1.0#egg=P&subdirectory=python", "p"),
+        ("git+https://g.c/o/r@1.0#egg=P.&subdirectory=python", None),
+        ("git+https://g.c/o/r@1.0#egg=P", "p"),
+        ("git+https://g.c/o/r@1.0#egg=P.a", "p-a"),
     ],
 )
 def test_get_req_name(requirement, expected):
