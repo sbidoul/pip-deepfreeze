@@ -79,9 +79,9 @@ def pip_upgrade_project(
     #      If we can't make pip handle direct URLs as constraints,
     #      then the second best approach is to use -r here, and let
     #      sync's --uninstall option remove what we don't need.
+    #      But the REQUESTED metadata will be incorrect.
     cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
     if editable:
-        # TODO if not editable, uninstall project
         cmd.append("-e")
     if extras:
         extras_str = ",".join(extras)
