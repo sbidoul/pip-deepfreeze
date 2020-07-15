@@ -3,14 +3,14 @@ import pathlib
 from setuptools import setup
 
 here = pathlib.Path(__file__).parent.resolve()
-long_description = (here / "README.md").read_text(encoding="utf-8")
+long_description = (here / "README.rst").read_text(encoding="utf-8")
 
 setup(
     name="pip-deepfreeze",
     use_scm_version=True,
     description="A better pip freeze workflow for Python application developers.",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
     url="https://github.com/sbidoul/pip-deepfreeze",
     author="Stéphane Bidoul",
     author_email="stephane.bidoul@gmail.com",
