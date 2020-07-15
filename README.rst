@@ -22,9 +22,11 @@ pinning dependencies of Python applications (not libraries) in a virtual environ
 -  It is small, simple, with good test coverage and hopefully easy to
    maintain.
 
-While ``pip-deepfreeze`` is functional already (see `roadmap below <#roadmap>`__), this
-is to be considered as alpha software for a little while, until we have gathered some
-feedback on the CLI options.
+.. warning::
+
+   While ``pip-deepfreeze`` is functional already (see `roadmap below <#roadmap>`__), this
+   is to be considered as alpha software for a little while, until we have gathered some
+   feedback on the CLI options.
 
 Installation
 ------------
@@ -41,11 +43,13 @@ Using `pip <https://pypi.org/project/pip/>`__:
 
     pip install --user pip-deepfreeze
 
-It is *not* recommended to install ``pip-deepfreeze`` in the same environment as your
-application, so its dependencies do not interfere with your app. By default it works
-with the ``python`` found in your ``PATH`` (which does what you normally expect in an
-activated virtualenv), but you can ask it to work within another environment using the
-``--python`` option.
+.. note::
+
+   It is *not* recommended to install ``pip-deepfreeze`` in the same environment as your
+   application, so its dependencies do not interfere with your app. By default it works
+   with the ``python`` found in your ``PATH`` (which does what you normally expect in an
+   activated virtualenv), but you can ask it to work within another environment using
+   the ``--python`` option.
 
 Quick start
 -----------
