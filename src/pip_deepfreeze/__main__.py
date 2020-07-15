@@ -17,7 +17,7 @@ def sync(
     ctx: typer.Context,
     to_upgrade: List[str] = typer.Option(
         None,
-        "--upgrade",
+        "--update",
         "-u",
         metavar="DEPENDENCY",
         help=(
@@ -29,9 +29,9 @@ def sync(
     ),
     upgrade_all: bool = typer.Option(
         False,
-        "--upgrade-all",
+        "--update-all",
         help=(
-            "Upgrade all dependencies of your application to "
+            "Upgrade (or downgrade) all dependencies of your application to "
             "the latest allowed version."
         ),
         show_default=False,
