@@ -9,10 +9,18 @@ and pinning dependencies of Python applications (not libraries) in a virtual env
 
 - It is easy to use.
 - It is fast.
+- It relies on the documented `pip` command line interface and its ubiquitous
+  [requirements file
+  format](https://pip.pypa.io/en/stable/user_guide/?highlight=requirements#requirements-files).
+- It assumes your project is configured using a PEP 517 compliant build backend
+  but otherwise makes no assumption on the specific backend used.
 - It is written in Python 3.6+, yet works in any virtual environment that has
   `pip` installed, including python 2.
-- It relies on the documented `pip` CLI and requirements file format.
 - It is small, simple, with good test coverage and hopefully easy to maintain.
+
+While `pip-deepfreeze` is functional already (see [roadmap below](#roadmap)),
+this is to be considered as alpha software for a little while, until we have
+gathered some feedback on the CLI options.
 
 ## Installation
 
@@ -50,6 +58,12 @@ Install your project in editable mode in the active virtual environment:
 pip-df sync
 ```
 
+or, if your project does not support editable installs:
+
+```console
+pip-df sync --no-editable
+```
+
 If you don't have one yet, this will generate a file named `requirements.txt`,
 containing the exact version of all your application dependencies, as they were
 installed.
@@ -70,7 +84,8 @@ pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
 
 - Initial install (create a venv, and run `pip-df sync` which will install
   and generate `requirements.txt`)
-- Add pip options (`--find-links`, `--extra-index-url`, etc: in `requirements.txt.in`)
+- Add pip options (`--find-links`, `--extra-index-url`, etc: in
+  `requirements.txt.in`)
 - Add a dependency that is published in an index or accessible via
   `--find-links` (add it in `setup.py`)
 - Install dependencies from direct URLs such as git (add it in `setup.py` and
@@ -129,9 +144,26 @@ Options:
 
 ## Roadmap
 
+- Stabilize CLI options.
+- Better UX if the project does not support editable installs (install in
+  editable mode if possible, with automatic fallback to non-editable mode).
 - Optionally uninstall unneeded dependencies.
 - Support extras (e.g. for a `test` extra, we would have
   `requirements-test.txt` which includes `requirements.txt` and
   optionally `requirements-test.txt.in`).
 - Support different target environements for the same project (e.g. different
   python versions, which may result in different packages being installed). Is this actually useful in practice ?
+
+## Development
+
+To run tests, use `tox`. You will get a test coverage report in
+`htmlcov/index.html`. An easy way to install tox is `pipx install tox`.
+
+This project uses [pre-commit](https://pre-commit.com/) to enforce linting
+(among which [black](https://pypi.org/project/black/) for code formating,
+[isort](https://pypi.org/project/isort/) for sorting imports, and
+[mypy](https://pypi.org/project/mypy/) for type checking).
+
+To make sure linters run locally on each of your commits, install
+pre-commit (`pipx install pre-commit` is recommended), and run `pre-commit
+install` in your local clone of the `pip-deepfreeze` repository.
