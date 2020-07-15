@@ -34,10 +34,12 @@ pip-df sync
 ```
 
 If you don't have one yet, this will generate a file named `requirements.txt`,
-containing the exact version of all your application dependencies, as they were installed.
+containing the exact version of all your application dependencies, as they were
+installed.
 
-When you add or remove dependencies to your project' `setup.py` (or your favorite build backend configuration), run `pip-df sync` again to update your environement and
-`requirements.txt`.
+When you add or remove dependencies to your project' `setup.py` (or favorite
+build backend configuration), run `pip-df sync` again to update your
+environement and `requirements.txt`.
 
 To update a dependency to the latest allowed version, run:
 
@@ -50,7 +52,7 @@ pip-df sync --update package
 (TODO)
 
 - Initial install
-- Add pip options (--find-links, --extra-index-url, etc)
+- Add pip options (`--find-links`, `--extra-index-url`, etc)
 - Add a dependency
 - Remove a dependency
 - Update a dependency to the most recent version
@@ -62,13 +64,13 @@ pip-df sync --update package
 
 ## About
 
-pip-deepfreeze aims at doing one thing and doing it well, namely pin dependencies of Python application to enable reproducible installs. It is:
+`pip-deepfreeze` aims at doing one thing and doing it well, namely install and
+pin dependencies of Python application, to enable reproducible installs.
 
-- simple,
-- easy to maintain,
-- relies on the documented `pip` CLI only,
-- written in Python 3.6+, yet works in any virtual environment that has pip
-  installed (including python 2, pypy, etc).
+- It is small, simple, and hopefully easy to maintain.
+- It relies on the documented `pip` CLI only.
+- It is written in Python 3.6+, yet works in any virtual environment that has
+  `pip` installed (including python 2, pypy, etc).
 
 ## CLI reference
 
@@ -77,6 +79,7 @@ pip-deepfreeze aims at doing one thing and doing it well, namely pin dependencie
 ## Roadmap
 
 - support extras
+- optionally uninstall unneeded dependencies
 
 ## Under the hood
 
