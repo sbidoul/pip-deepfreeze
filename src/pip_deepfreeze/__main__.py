@@ -1,8 +1,9 @@
 import shutil
-from typing import List
+from typing import List, Optional
 
 import typer
 
+from .detect import supports_editable
 from .sync import sync as sync_operation
 
 app = typer.Typer()
@@ -43,11 +44,27 @@ def sync(
     #     metavar="EXTRA",
     #     help=("Extra to install. This option can be repeated."),
     # ),
-    editable: bool = typer.Option(True, help="Install the project in editable mode.",),
+    editable: Optional[bool] = typer.Option(
+        None,
+        help=(
+            "Install the project in editable mode. "
+            "Defaults to editable if the project supports it."
+        ),
+        show_default=False,
+    ),
     # uninstall: bool = typer.Option(
     #     False, help=("Uninstall dependencies that are not needed anymore.")
     # ),
 ) -> None:
+    if editable is None:
+        editable = supports_editable()
+    elif editable and not supports_editable():
+        typer.secho(
+            "The project does not support editable installation.",
+            fg=typer.colors.RED,
+            err=True,
+        )
+        raise typer.Exit(1)
     sync_operation(
         ctx.obj.python, upgrade_all, to_upgrade, editable, extras=[], uninstall=False
     )
@@ -65,7 +82,7 @@ def callback(
         typer.secho(
             f"Python interpreter {python!r} not found.", fg=typer.colors.RED, err=True
         )
-        raise typer.Exit()
+        raise typer.Exit(1)
     ctx.obj.python = python_abspath
     # TODO prompt if python is same as sys.executable
 

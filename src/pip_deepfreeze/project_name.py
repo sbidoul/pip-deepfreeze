@@ -6,7 +6,7 @@ from tempfile import TemporaryDirectory
 
 
 @lru_cache(maxsize=1)
-def get_project_name(python: str, root: Path) -> str:
+def get_project_name(python: str, project_root: Path) -> str:
     """Get a project name building metadata using pep517.
 
     We build in a separate process so we support python 2 builds.
@@ -32,7 +32,7 @@ def get_project_name(python: str, root: Path) -> str:
                 "-c",
                 "from pep517.meta import load; import sys; "
                 "sys.stdout.write(load(sys.argv[1]).metadata['Name'])",
-                str(root),
+                str(project_root),
             ],
             env=dict(os.environ, PYTHONPATH=pep517_install_dir),
             universal_newlines=True,

@@ -136,8 +136,8 @@ Options:
   --update-all                Upgrade (or downgrade) all dependencies of your
                               application to the latest allowed version.
 
-  --editable / --no-editable  Install the project in editable mode.  [default:
-                              True]
+  --editable / --no-editable  Install the project in editable mode. Defaults
+                              to editable if the project supports it.
 
   --help                      Show this message and exit.
 ```
@@ -145,8 +145,6 @@ Options:
 ## Roadmap
 
 - Stabilize CLI options.
-- Better UX if the project does not support editable installs (install in
-  editable mode if possible, with automatic fallback to non-editable mode).
 - Optionally uninstall unneeded dependencies.
 - Support extras (e.g. for a `test` extra, we would have
   `requirements-test.txt` which includes `requirements.txt` and
