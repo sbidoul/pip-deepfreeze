@@ -61,7 +61,11 @@ def callback(
 ) -> None:
     """A simple pip freeze workflow for Python application developers."""
     python_abspath = shutil.which(python)
-    # TODO error if not python_abspath
+    if not python_abspath:
+        typer.secho(
+            f"Python interpreter {python!r} not found.", fg=typer.colors.RED, err=True
+        )
+        raise typer.Exit()
     ctx.obj.python = python_abspath
     # TODO prompt if python is same as sys.executable
 
