@@ -49,6 +49,8 @@ setup(
     project_urls={
         "Bug Reports": "https://github.com/sbidoul/pip-deepfreeze/issues",
         "Source": "https://github.com/sbidoul/pip-deepfreeze/",
-        # TODO Changelog
+        "Changelog": (
+            "https://github.com/sbidoul/pip-deepfreeze/blob/master/HISTORY.rst"
+        ),
     },
 )
