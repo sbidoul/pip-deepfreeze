@@ -157,6 +157,7 @@ def test_pip_upgrade_project(virtualenv_python, testpkgs, tmp_path):
     assert list(_freeze_filter(pip_freeze(virtualenv_python))) == ["pkgc==0.0.3"]
 
 
+@pytest.mark.xfail(reason="we don't use constraints for now.")
 def test_pip_upgrade_constraint_not_a_dep(virtualenv_python, testpkgs, tmp_path):
     """Test upgrading does not install constraints that are not dependencies."""
     constraints = tmp_path / "requirements.txt.df"

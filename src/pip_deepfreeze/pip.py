@@ -74,13 +74,14 @@ def pip_upgrade_project(
     if to_uninstall:
         pip_uninstall(python, to_uninstall)
     # 4. install project with constraints
-    # TODO Using -c here will break with the new pip resolver:
-    #      https://github.com/pypa/pip/issues/8253.
+    # TODO Using -c here would break with the new pip resolver:
+    #      https://github.com/pypa/pip/issues/8253 and in some other
+    #      situations with the legacy resolver.
     #      If we can't make pip handle direct URLs as constraints,
     #      then the second best approach is to use -r here, and let
     #      sync's --uninstall option remove what we don't need.
     #      But the REQUESTED metadata will be incorrect.
-    cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
+    cmd = [python, "-m", "pip", "install", "-r", f"{constraints_filename}"]
     if editable:
         cmd.append("-e")
     if extras:
