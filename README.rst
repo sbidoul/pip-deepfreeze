@@ -9,18 +9,19 @@ About
 ``pip-deepfreeze`` aims at doing one thing and doing it well, namely installing and
 pinning dependencies of Python applications (not libraries) in a virtual environment.
 
--  It is easy to use.
--  It is fast.
--  It relies on the documented ``pip`` command line interface and its
-   ubiquitous `requirements file
-   format <https://pip.pypa.io/en/stable/user_guide/?highlight=requirements#requirements-files>`__.
--  It assumes your project is configured using a PEP 517 compliant build
-   backend but otherwise makes no assumption on the specific backend
-   used.
--  It is written in Python 3.6+, yet works in any virtual environment
-   that has ``pip`` installed, including python 2.
--  It is small, simple, with good test coverage and hopefully easy to
-   maintain.
+- It is easy to use.
+- It is fast.
+- It relies on the documented ``pip`` command line interface and its
+  ubiquitous `requirements file
+  format <https://pip.pypa.io/en/stable/user_guide/?highlight=requirements#requirements-files>`__.
+- It assumes your project is configured using a PEP 517 compliant build
+  backend but otherwise makes no assumption on the specific backend
+  used.
+- It has first class support for VCS references.
+- It is written in Python 3.6+, yet works in any virtual environment
+  that has ``pip`` installed, including python 2.
+- It is small, simple, with good test coverage and hopefully easy to
+  maintain.
 
 .. warning::
 
@@ -62,17 +63,12 @@ Make sure your application declares its dependencies using `setuptools
 
 Create and activate a virtual environment.
 
-Install your project in editable mode in the active virtual environment:
+To install your project (in editable mode if supported) in the active virtual
+environment, go to your project root directory and run:
 
 .. code:: console
 
     pip-df sync
-
-or, if your project does not support editable installs:
-
-.. code:: console
-
-    pip-df sync --no-editable
 
 If you don't have one yet, this will generate a file named ``requirements.txt``,
 containing the exact version of all your application dependencies, as they were
@@ -87,6 +83,13 @@ To update one or more dependencies to the latest allowed version, run:
 .. code:: console
 
     pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
+
+If you need to install a dependency from a VCS branch, add it to your
+dependencies like this: ``somepkg @ git+https://g.c/org/somepkg@branch``. Then
+run ``pip-df sync`` again. It will update ``requirements.txt`` with a VCS
+reference pinned at the exact commit that was installed (you need pip version
+20.1 or greater for this to work). If later you need to update to the HEAD of
+the same branch, simply use ``pip-df sync --update somepkg``.
 
 How to
 ------
@@ -107,6 +110,8 @@ How to
 -  Update all dependencies to the latest version
    (``pip-df sync --update-all`` or remove ``requirements.txt`` and run
    ``pip-df sync``)
+-  Pass options to pip (via ``requirements.txt.in`` or via ``PIP_*``
+   environment variables)
 -  Deploy my project
    (``pip wheel --no-deps requirements.txt -e .   --wheel-dir=release``,
    ship the release directory then run
