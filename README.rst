@@ -3,6 +3,8 @@ pip-deepfreeze
 
 A simple pip freeze workflow for Python application developers.
 
+.. contents::
+
 About
 -----
 
@@ -74,9 +76,8 @@ If you don't have one yet, this will generate a file named ``requirements.txt``,
 containing the exact version of all your application dependencies, as they were
 installed.
 
-When you add or remove dependencies of your project (via ``setup.py`` or favorite build
-backend configuration), run ``pip-df sync`` again to update your environment and
-``requirements.txt``.
+When you add or remove dependencies of your project, run ``pip-df sync`` again
+to update your environment and ``requirements.txt``.
 
 To update one or more dependencies to the latest allowed version, run:
 
