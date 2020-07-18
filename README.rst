@@ -129,7 +129,6 @@ Global options::
 
     Options:
       --python PYTHON       [default: python]
-      -v, --verbose         [default: False]
       --install-completion  Install completion for the current shell.
       --show-completion     Show completion for the current shell, to copy it or
                             customize the installation.

@@ -71,7 +71,7 @@ def sync(
 def callback(
     ctx: typer.Context,
     python: str = typer.Option(default="python", show_default=True, metavar="PYTHON"),
-    verbose: bool = typer.Option(False, "--verbose", "-v"),
+    # verbose: bool = typer.Option(False, "--verbose", "-v"),
 ) -> None:
     """A simple pip freeze workflow for Python application developers."""
     python_abspath = shutil.which(python)
