@@ -1,5 +1,8 @@
+from __future__ import unicode_literals
+
 import os
 import subprocess
+import textwrap
 
 import pytest
 
@@ -43,3 +46,58 @@ def test_list_depends_script(
         .split()
     )
     assert depends == expected
+
+
+def test_list_depends_script_downgrade_dep(tmp_path, virtualenv_python, testpkgs):
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+
+            setup(name="theproject", install_requires=["pkgc>=0.0.3"])
+            """
+        )
+    )
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "-e",
+            str(tmp_path),
+            "-f",
+            str(testpkgs),
+        ]
+    )
+    depends = (
+        subprocess.check_output(
+            [virtualenv_python, LIST_DEPENDS_SCRIPT, "theproject"],
+            universal_newlines=True,
+        )
+        .strip()
+        .split()
+    )
+    assert depends == ["pkgc"]
+    # Change to ask for downgrade of pkgc and try list depends again.
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+
+            setup(name="theproject", install_requires=["pkgc<0.0.3"])
+            """
+        )
+    )
+    subprocess.check_call(
+        [virtualenv_python, "setup.py", "egg_info"], cwd=str(tmp_path)
+    )
+    depends = (
+        subprocess.check_output(
+            [virtualenv_python, LIST_DEPENDS_SCRIPT, "theproject"],
+            universal_newlines=True,
+        )
+        .strip()
+        .split()
+    )
+    assert depends == ["pkgc"]
