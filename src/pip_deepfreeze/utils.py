@@ -1,7 +1,11 @@
 import contextlib
 import shlex
+import subprocess
 from pathlib import Path
-from typing import IO, Any, Iterable, Iterator, List
+from subprocess import CalledProcessError
+from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, Union
+
+import typer
 
 try:
     from shlex import join as shlex_join
@@ -37,3 +41,37 @@ def open_with_rollback(
         else:
             f.close()
             temp_filename.rename(filename)
+
+
+def log_info(msg: str) -> None:
+    typer.secho(msg, err=True)
+
+
+def log_warning(msg: str) -> None:
+    typer.secho(msg, fg=typer.colors.YELLOW, err=True)
+
+
+def log_error(msg: str) -> None:
+    typer.secho(msg, fg=typer.colors.RED, err=True)
+
+
+def check_call(cmd: Sequence[Union[str, Path]], cwd: Optional[Path] = None) -> int:
+    try:
+        return subprocess.check_call(cmd, cwd=cwd)
+    except CalledProcessError:
+        cmd_str = shlex_join(str(item) for item in cmd)
+        log_error(f"Error running: {cmd_str}.")
+        raise typer.Exit(1)
+
+
+def check_output(
+    cmd: Sequence[Union[str, Path]],
+    cwd: Optional[Path] = None,
+    env: Optional[Dict[str, str]] = None,
+) -> str:
+    try:
+        return subprocess.check_output(cmd, cwd=cwd, universal_newlines=True)
+    except CalledProcessError:
+        cmd_str = shlex_join(str(item) for item in cmd)
+        log_error(f"Error running: {cmd_str}.")
+        raise typer.Exit(1)
