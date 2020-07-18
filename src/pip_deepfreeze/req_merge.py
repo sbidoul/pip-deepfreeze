@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Optional, Tuple
+from typing import Iterable, Iterator, Optional
 
 import httpx
 
@@ -22,8 +22,8 @@ def prepare_frozen_reqs_for_upgrade(
     not in frozen requirements are added.
     """
     to_upgrade_set = {canonicalize_name(r) for r in to_upgrade or []}
-    in_reqs: List[Tuple[str, str]] = []
-    frozen_reqs: Dict[str, str] = {}
+    in_reqs = []
+    frozen_reqs = set()
     # 1. emit options from in_filename, collect in_reqs
     if in_filename.is_file():
         for in_req in parse(
@@ -55,7 +55,7 @@ def prepare_frozen_reqs_for_upgrade(
                 continue
             if req_name in to_upgrade_set:
                 continue
-            frozen_reqs[req_name] = frozen_req.requirement
+            frozen_reqs.add(req_name)
             yield frozen_req.requirement
     # 3. emit in_reqs that have not been emitted as frozen reqs
     for req_name, in_req_str in in_reqs:
