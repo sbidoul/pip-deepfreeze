@@ -1,8 +1,9 @@
 import os
-import subprocess
 from functools import lru_cache
 from pathlib import Path
 from tempfile import TemporaryDirectory
+
+from .utils import check_call, check_output
 
 
 @lru_cache(maxsize=1)
@@ -13,7 +14,7 @@ def get_project_name(python: str, project_root: Path) -> str:
     """
     with TemporaryDirectory() as pep517_install_dir:
         # first install pep517
-        subprocess.check_call(
+        check_call(
             [
                 python,
                 "-m",
@@ -26,7 +27,7 @@ def get_project_name(python: str, project_root: Path) -> str:
             ]
         )
         # TODO this uses an undocumented function of pep517
-        name = subprocess.check_output(
+        name = check_output(
             [
                 python,
                 "-c",
@@ -35,6 +36,5 @@ def get_project_name(python: str, project_root: Path) -> str:
                 str(project_root),
             ],
             env=dict(os.environ, PYTHONPATH=pep517_install_dir),
-            universal_newlines=True,
         )
         return name

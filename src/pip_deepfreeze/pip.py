@@ -1,4 +1,3 @@
-import subprocess
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -10,7 +9,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .utils import split_lines
+from .utils import check_call, check_output, split_lines
 
 
 def pip_upgrade_project(
@@ -89,13 +88,13 @@ def pip_upgrade_project(
         cmd.append(f"{project_root}[{extras_str}]")
     else:
         cmd.append(f"{project_root}")
-    subprocess.check_call(cmd)
+    check_call(cmd)
 
 
 def pip_freeze(python: str) -> Iterable[str]:
     """Run pip freeze."""
     cmd = [python, "-m", "pip", "freeze"]
-    return split_lines(subprocess.check_output(cmd, universal_newlines=True))
+    return split_lines(check_output(cmd))
 
 
 def pip_freeze_dependencies(
@@ -117,4 +116,4 @@ def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
     """Uninstall packages."""
     if list(requirements):
         cmd = [python, "-m", "pip", "uninstall", "--yes"] + list(requirements)
-        subprocess.check_call(cmd)
+        check_call(cmd)
