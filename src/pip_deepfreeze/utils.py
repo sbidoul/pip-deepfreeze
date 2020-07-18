@@ -43,8 +43,8 @@ def open_with_rollback(
             temp_filename.rename(filename)
 
 
-def log_info(msg: str) -> None:
-    typer.secho(msg, err=True)
+def log_info(msg: str, nl: bool = True) -> None:
+    typer.secho(msg, err=True, nl=nl)
 
 
 def log_warning(msg: str) -> None:
