@@ -1,6 +1,14 @@
 import contextlib
+import shlex
 from pathlib import Path
-from typing import IO, Any, Iterator, List
+from typing import IO, Any, Iterable, Iterator, List
+
+try:
+    from shlex import join as shlex_join
+except ImportError:
+    # python < 3.8
+    def shlex_join(split_command: Iterable[str]) -> str:
+        return " ".join(shlex.quote(s) for s in split_command)
 
 
 def split_lines(s: str) -> List[str]:

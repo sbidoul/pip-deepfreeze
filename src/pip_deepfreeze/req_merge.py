@@ -1,4 +1,3 @@
-import shlex
 from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
@@ -7,13 +6,7 @@ import typer
 
 from .req_file_parser import OptionsLine, RequirementLine, parse
 from .req_parser import canonicalize_name, get_req_name
-
-try:
-    from shlex import join as shlex_join
-except ImportError:
-    # python < 3.8
-    def shlex_join(split_command: Iterable[str]) -> str:
-        return " ".join(shlex.quote(s) for s in split_command)
+from .utils import shlex_join
 
 
 def prepare_frozen_reqs_for_upgrade(
