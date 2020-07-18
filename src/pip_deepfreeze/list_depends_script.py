@@ -21,7 +21,7 @@ def main(distname):
             return
         seen.add(seen_key)
         try:
-            dist = pkg_resources.get_distribution(req)
+            dist = pkg_resources.get_distribution(req.key)
         except pkg_resources.DistributionNotFound:
             return
         else:
