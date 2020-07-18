@@ -5,6 +5,7 @@ import typer
 
 from .detect import supports_editable
 from .sync import sync as sync_operation
+from .utils import log_error
 
 app = typer.Typer()
 
@@ -59,11 +60,7 @@ def sync(
     if editable is None:
         editable = supports_editable()
     elif editable and not supports_editable():
-        typer.secho(
-            "The project does not support editable installation.",
-            fg=typer.colors.RED,
-            err=True,
-        )
+        log_error("The project does not support editable installation.",)
         raise typer.Exit(1)
     sync_operation(
         ctx.obj.python, upgrade_all, to_upgrade, editable, extras=[], uninstall=False
@@ -79,9 +76,7 @@ def callback(
     """A simple pip freeze workflow for Python application developers."""
     python_abspath = shutil.which(python)
     if not python_abspath:
-        typer.secho(
-            f"Python interpreter {python!r} not found.", fg=typer.colors.RED, err=True
-        )
+        log_error(f"Python interpreter {python!r} not found.")
         raise typer.Exit(1)
     ctx.obj.python = python_abspath
     # TODO prompt if python is same as sys.executable
