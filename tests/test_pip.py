@@ -1,5 +1,6 @@
 import subprocess
 import textwrap
+from typing import Iterable, Iterator
 
 import pytest
 
@@ -97,7 +98,7 @@ def test_pip_uninstall(to_install, to_uninstall, expected, virtualenv_python, te
     assert list(pip_freeze(virtualenv_python)) == expected
 
 
-def _freeze_filter(reqs):
+def _freeze_filter(reqs: Iterable[str]) -> Iterator[str]:
     """Filter out comments and -e."""
     for req in reqs:
         if req.startswith("#"):
