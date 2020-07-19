@@ -4,9 +4,10 @@
 Features
 --------
 
-- Better reporting off subprocess errors. (`#6 <https://github.com/sbidoul/pip-deepfreeze/issues/6>`_)
-- For now we do not use ``pip install --constraints`` because it has limitations,
-  and does not work with the new pip resolver. (`#7 <https://github.com/sbidoul/pip-deepfreeze/issues/7>`_)
+- Better reporting of subprocess errors. (`#6 <https://github.com/sbidoul/pip-deepfreeze/issues/6>`_)
+- For now we do not use ``pip install --constraints`` because it has limitations
+  and does not support VCS references with the new pip resolver. (`#7
+  <https://github.com/sbidoul/pip-deepfreeze/issues/7>`_)
 
 
 Bugfixes
