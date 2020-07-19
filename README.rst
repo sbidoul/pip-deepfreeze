@@ -63,7 +63,9 @@ Make sure your application declares its dependencies using `setuptools
 <https://www.python.org/dev/peps/pep-0517/>`__ build backend such as `flit
 <https://pypi.org/project/flit/>`__.
 
-Create and activate a virtual environment.
+First of all, create and activate a virtual environment using your favorite
+tool. Run ``pip list`` to make sure ``pip``, ``setuptools`` and ``wheel`` are
+installed in the virtualenv.
 
 To install your project (in editable mode if supported) in the active virtual
 environment, go to your project root directory and run:
@@ -85,12 +87,21 @@ To update one or more dependencies to the latest allowed version, run:
 
     pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
 
-If you need to install a dependency from a VCS branch, add it to your
-dependencies like this: ``somepkg @ git+https://g.c/org/somepkg@branch``. Then
-run ``pip-df sync`` again. It will update ``requirements.txt`` with a VCS
+If you need to add some dependencies from VCS references (e.g. when a library
+with a patch you need is not available as a release on a package index), add
+the dependency as usual in your project, then add the VCS reference to a file
+named ``requirements.txt.in`` like this::
+
+   ``DEPENDENCYNAME @ git+https://g.c/org/project@branch``
+
+Then run ``pip-df sync``. It will update ``requirements.txt`` with a VCS
 reference pinned at the exact commit that was installed (you need pip version
 20.1 or greater for this to work). If later you need to update to the HEAD of
-the same branch, simply use ``pip-df sync --update somepkg``.
+the same branch, simply use ``pip-df sync --update DEPENDENCYNAME``.
+
+When, later again, your branch is merged upstream and the project has published
+a release, remove the line from ``requirements.txt.in`` and run ``pip-df sync
+--update DEPENDENCYNAME`` to update to the latest released version.
 
 How to
 ------
@@ -114,9 +125,8 @@ How to
 -  Pass options to pip (via ``requirements.txt.in`` or via ``PIP_*``
    environment variables)
 -  Deploy my project
-   (``pip wheel --no-deps requirements.txt -e .   --wheel-dir=release``,
-   ship the release directory then run
-   ``pip install   --no-index release/*.whl``).
+   (``pip wheel --no-deps requirements.txt -e . --wheel-dir=release``, ship the
+   release directory then run ``pip install   --no-index release/*.whl``).
 
 CLI reference
 -------------
