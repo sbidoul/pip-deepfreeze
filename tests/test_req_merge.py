@@ -75,3 +75,21 @@ def test_merge_missing_frozen(tmp_path):
     assert set(prepare_frozen_reqs_for_upgrade(frozen_filename, in_filename)) == {
         "pkga"
     }
+
+
+def test_req_merge_unnamed_in(tmp_path, capsys):
+    in_filename = tmp_path / "requirements.txt.in"
+    in_filename.write_text("-e .")
+    frozen_filename = tmp_path / "requirements.txt"
+    assert set(prepare_frozen_reqs_for_upgrade(frozen_filename, in_filename)) == set()
+    captured = capsys.readouterr()
+    assert "Ignoring unnamed constraint '-e .'" in captured.err
+
+
+def test_req_merge_unnamed_frozen(tmp_path, capsys):
+    in_filename = tmp_path / "requirements.txt.in"
+    frozen_filename = tmp_path / "requirements.txt"
+    frozen_filename.write_text("-e .")
+    assert set(prepare_frozen_reqs_for_upgrade(frozen_filename, in_filename)) == set()
+    captured = capsys.readouterr()
+    assert "Ignoring unnamed frozen requirement '-e .'" in captured.err
