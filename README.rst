@@ -1,6 +1,18 @@
 pip-deepfreeze
 ==============
 
+.. image:: https://img.shields.io/github/workflow/status/sbidoul/pip-deepfreeze/CI
+   :target: https://github.com/sbidoul/pip-deepfreeze/actions?query=workflow%3ACI
+   :alt: GitHub Workflow Status
+
+.. image:: https://img.shields.io/codecov/c/github/sbidoul/pip-deepfreeze
+   :target: https://codecov.io/gh/sbidoul/pip-deepfreeze
+   :alt: Codecov
+
+.. image:: https://img.shields.io/pypi/v/pip-deepfreeze?label=pypi%20package
+   :target: https://pypi.org/project/pip-deepfreeze/
+   :alt: PyPI
+
 A simple pip freeze workflow for Python application developers.
 
 .. contents::
