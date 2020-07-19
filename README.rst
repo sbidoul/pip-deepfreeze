@@ -84,11 +84,16 @@ environment, go to your project root directory and run:
 
 .. code:: console
 
-    pip-df sync
+    $ pip-df sync
 
 If you don't have one yet, this will generate a file named ``requirements.txt``,
 containing the exact version of all your application dependencies, as they were
 installed.
+
+You can then add this ``requirement.txt`` to version control, and other people
+collaborating on the project can install the project and its known good
+dependencies using ``pip-df sync`` (or ``pip install -r requirements.txt -e .``
+in a fresh virtualenv).
 
 When you add or remove dependencies of your project, run ``pip-df sync`` again
 to update your environment and ``requirements.txt``.
@@ -97,14 +102,14 @@ To update one or more dependencies to the latest allowed version, run:
 
 .. code:: console
 
-    pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
+    $ pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
 
 If you need to add some dependencies from VCS references (e.g. when a library
 with a patch you need is not available as a release on a package index), add
 the dependency as usual in your project, then add the VCS reference to a file
 named ``requirements.txt.in`` like this::
 
-   ``DEPENDENCYNAME @ git+https://g.c/org/project@branch``
+   DEPENDENCYNAME @ git+https://g.c/org/project@branch
 
 Then run ``pip-df sync``. It will update ``requirements.txt`` with a VCS
 reference pinned at the exact commit that was installed (you need pip version
