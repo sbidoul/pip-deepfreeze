@@ -101,3 +101,30 @@ def test_list_depends_script_downgrade_dep(tmp_path, virtualenv_python, testpkgs
         .split()
     )
     assert depends == ["pkgc"]
+
+
+def test_list_depends_script_missing_dep(virtualenv_python, testpkgs):
+    # We need to install pytest-cov so subprocess coverage works.
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--find-links",
+            testpkgs,
+            "pytest-cov",
+            "pkgb",
+        ]
+    )
+    subprocess.check_call(
+        [virtualenv_python, "-m", "pip", "uninstall", "--yes", "pkga"]
+    )
+    depends = (
+        subprocess.check_output(
+            [virtualenv_python, LIST_DEPENDS_SCRIPT, "pkgb"], universal_newlines=True,
+        )
+        .strip()
+        .split()
+    )
+    assert depends == []
