@@ -14,7 +14,7 @@ setup(
     url="https://github.com/sbidoul/pip-deepfreeze",
     author="Stéphane Bidoul",
     author_email="stephane.bidoul@gmail.com",
-    licence="MIT",
+    license="MIT",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
