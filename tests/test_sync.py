@@ -133,7 +133,7 @@ def test_not_editable_no_editable_install(virtualenv_python, not_editable_foobar
 def test_not_editable_editable_install(virtualenv_python, not_editable_foobar_path):
     # trying to force editable fails gracefully
     with pytest.raises(subprocess.CalledProcessError) as e:
-        subprocess.run(
+        subprocess.check_output(
             [
                 sys.executable,
                 "-m",
@@ -144,11 +144,10 @@ def test_not_editable_editable_install(virtualenv_python, not_editable_foobar_pa
                 "--editable",
             ],
             cwd=not_editable_foobar_path,
-            capture_output=True,
-            check=True,
             universal_newlines=True,
+            stderr=subprocess.STDOUT,
         )
-    assert "The project does not support editable installation." in e.value.stderr
+    assert "The project does not support editable installation." in e.value.output
 
 
 @pytest.fixture
