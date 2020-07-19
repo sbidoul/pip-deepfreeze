@@ -1,19 +1,12 @@
 import contextlib
-import shlex
 import subprocess
-import sys
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, Union
+from typing import IO, Any, Dict, Iterator, List, Optional, Sequence, Union
 
 import typer
 
-if sys.version_info >= (3, 8):
-    from shlex import join as shlex_join
-else:
-    # compat
-    def shlex_join(split_command: Iterable[str]) -> str:
-        return " ".join(shlex.quote(s) for s in split_command)
+from .compat import shlex_join
 
 
 def split_lines(s: str) -> List[str]:

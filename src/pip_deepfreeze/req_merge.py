@@ -3,9 +3,10 @@ from typing import Iterable, Iterator, Optional
 
 import httpx
 
+from .compat import shlex_join
 from .req_file_parser import OptionsLine, RequirementLine, parse
 from .req_parser import canonicalize_name, get_req_name
-from .utils import log_error, shlex_join
+from .utils import log_error
 
 
 def prepare_frozen_reqs_for_upgrade(
