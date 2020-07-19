@@ -32,6 +32,7 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "httpx",
+        'importlib_resources ; python_version<"3.9"',
         "packaging",
         "typer[all]",
         'typing-extensions ; python_version<"3.8"',  # for Protocol
