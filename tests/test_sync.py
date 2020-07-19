@@ -2,6 +2,7 @@ import subprocess
 import sys
 import textwrap
 
+import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
@@ -67,3 +68,73 @@ def test_python_not_found(tmp_path):
     result = runner.invoke(app, ["--python", "this-is-not-a-python", "sync"])
     assert result.exit_code != 0
     assert "Python interpreter 'this-is-not-a-python' not found" in result.output
+
+
+def test_not_editable(virtualenv_python, tmp_path):
+    (tmp_path / "pyproject.toml").write_text(
+        textwrap.dedent(
+            """
+            [build-system]
+            requires = ["flit_core >=2,<3"]
+            build-backend = "flit_core.buildapi"
+
+            [tool.flit.metadata]
+            module = "foobar"
+            author = "Toto"
+            """
+        )
+    )
+    (tmp_path / "foobar.py").write_text(
+        textwrap.dedent(
+            """
+            '''This is foobar'''
+            __version__ = '0.0.1'
+            """
+        )
+    )
+    # install not editable by default
+    subprocess.check_call(
+        [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
+        cwd=tmp_path,
+    )
+    assert "foobar @ file://" in subprocess.check_output(
+        [virtualenv_python, "-m", "pip", "freeze"],
+        cwd=tmp_path,
+        universal_newlines=True,
+    )
+    # force no-editable
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-m",
+            "pip_deepfreeze",
+            "--python",
+            virtualenv_python,
+            "sync",
+            "--no-editable",
+        ],
+        cwd=tmp_path,
+    )
+    assert "foobar @ file://" in subprocess.check_output(
+        [virtualenv_python, "-m", "pip", "freeze"],
+        cwd=tmp_path,
+        universal_newlines=True,
+    )
+    # trying to force editable fails gracefully
+    with pytest.raises(subprocess.CalledProcessError) as e:
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pip_deepfreeze",
+                "--python",
+                virtualenv_python,
+                "sync",
+                "--editable",
+            ],
+            cwd=tmp_path,
+            capture_output=True,
+            check=True,
+            universal_newlines=True,
+        )
+    assert "The project does not support editable installation." in e.value.stderr
