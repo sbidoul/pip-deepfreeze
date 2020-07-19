@@ -84,7 +84,7 @@ environment, go to your project root directory and run:
 
 .. code:: console
 
-    $ pip-df sync
+    pip-df sync
 
 If you don't have one yet, this will generate a file named ``requirements.txt``,
 containing the exact version of all your application dependencies, as they were
@@ -102,7 +102,7 @@ To update one or more dependencies to the latest allowed version, run:
 
 .. code:: console
 
-    $ pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
+    pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
 
 If you need to add some dependencies from VCS references (e.g. when a library
 with a patch you need is not available as a release on a package index), add
