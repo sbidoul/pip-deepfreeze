@@ -69,7 +69,7 @@ Using `pip <https://pypi.org/project/pip/>`__:
 Quick start
 -----------
 
-.. image:: docs/synopsis.png
+.. image:: https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/9ffc7b456bed1665deac0fc0eec09718beb4fcf7/docs/synopsis.png
    :alt: pip-deepfreeze synopsis
 
 Make sure your application declares its direct dependencies using `setuptools
@@ -186,6 +186,13 @@ Global options::
                                   to editable if the project supports it.
 
       --help                      Show this message and exit.
+
+
+.. note::
+
+   The command line interface is the only supported public interface. If you
+   find yourself writing ``import pip_deepfreeze``, please don't, as everything
+   may change without notice. Or rather, get in touch to discuss your needs.
 
 Roadmap
 -------
