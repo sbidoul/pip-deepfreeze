@@ -15,7 +15,7 @@ A simple pip freeze workflow for Python application developers.
    :target: https://pypi.org/project/pip-deepfreeze/
    :alt: PyPI
 
-.. contents::
+.. contents:: Table of contents
 
 About
 -----
@@ -69,7 +69,10 @@ Using `pip <https://pypi.org/project/pip/>`__:
 Quick start
 -----------
 
-Make sure your application declares its dependencies using `setuptools
+.. image:: docs/synopsis.png
+   :alt: pip-deepfreeze synopsis
+
+Make sure your application declares its direct dependencies using `setuptools
 <https://pypi.org/project/setuptools/>`__ (via the ``install_requires`` key in
 ``setup.py`` or ``setup.cfg``), or any other compliant `PEP 517
 <https://www.python.org/dev/peps/pep-0517/>`__ build backend such as `flit
