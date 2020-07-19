@@ -70,7 +70,8 @@ def test_python_not_found(tmp_path):
     assert "Python interpreter 'this-is-not-a-python' not found" in result.output
 
 
-def test_not_editable(virtualenv_python, tmp_path):
+@pytest.fixture
+def not_editable_foobar_path(tmp_path):
     (tmp_path / "pyproject.toml").write_text(
         textwrap.dedent(
             """
@@ -92,17 +93,23 @@ def test_not_editable(virtualenv_python, tmp_path):
             """
         )
     )
-    # install not editable by default
+    return tmp_path
+
+
+def test_not_editable_default_install(virtualenv_python, not_editable_foobar_path):
     subprocess.check_call(
         [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
-        cwd=tmp_path,
+        cwd=not_editable_foobar_path,
     )
+    # installed not editable by default
     assert "foobar @ file://" in subprocess.check_output(
         [virtualenv_python, "-m", "pip", "freeze"],
-        cwd=tmp_path,
+        cwd=not_editable_foobar_path,
         universal_newlines=True,
     )
-    # force no-editable
+
+
+def test_not_editable_no_editable_install(virtualenv_python, not_editable_foobar_path):
     subprocess.check_call(
         [
             sys.executable,
@@ -113,13 +120,17 @@ def test_not_editable(virtualenv_python, tmp_path):
             "sync",
             "--no-editable",
         ],
-        cwd=tmp_path,
+        cwd=not_editable_foobar_path,
     )
+    # installed no-editable as requested
     assert "foobar @ file://" in subprocess.check_output(
         [virtualenv_python, "-m", "pip", "freeze"],
-        cwd=tmp_path,
+        cwd=not_editable_foobar_path,
         universal_newlines=True,
     )
+
+
+def test_not_editable_editable_install(virtualenv_python, not_editable_foobar_path):
     # trying to force editable fails gracefully
     with pytest.raises(subprocess.CalledProcessError) as e:
         subprocess.run(
@@ -132,9 +143,79 @@ def test_not_editable(virtualenv_python, tmp_path):
                 "sync",
                 "--editable",
             ],
-            cwd=tmp_path,
+            cwd=not_editable_foobar_path,
             capture_output=True,
             check=True,
             universal_newlines=True,
         )
     assert "The project does not support editable installation." in e.value.stderr
+
+
+@pytest.fixture
+def editable_foobar_path(tmp_path):
+    setup_py = tmp_path / "setup.py"
+    setup_py.write_text(
+        textwrap.dedent(
+            """
+            from setuptools import setup
+
+            setup(name="foobar", version="0.0.1")
+            """
+        )
+    )
+    return tmp_path
+
+
+def test_editable_default_install(virtualenv_python, editable_foobar_path):
+    subprocess.check_call(
+        [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
+        cwd=editable_foobar_path,
+    )
+    # installed editable by default
+    assert f"-e {editable_foobar_path}" in subprocess.check_output(
+        [virtualenv_python, "-m", "pip", "freeze"],
+        cwd=editable_foobar_path,
+        universal_newlines=True,
+    )
+
+
+def test_editable_editable_install(virtualenv_python, editable_foobar_path):
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-m",
+            "pip_deepfreeze",
+            "--python",
+            virtualenv_python,
+            "sync",
+            "--editable",
+        ],
+        cwd=editable_foobar_path,
+    )
+    # installed editable as requested
+    assert f"-e {editable_foobar_path}" in subprocess.check_output(
+        [virtualenv_python, "-m", "pip", "freeze"],
+        cwd=editable_foobar_path,
+        universal_newlines=True,
+    )
+
+
+def test_editable_no_editable_install(virtualenv_python, editable_foobar_path):
+    # force no-editable
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-m",
+            "pip_deepfreeze",
+            "--python",
+            virtualenv_python,
+            "sync",
+            "--no-editable",
+        ],
+        cwd=editable_foobar_path,
+    )
+    assert "foobar @ file://" in subprocess.check_output(
+        [virtualenv_python, "-m", "pip", "freeze"],
+        cwd=editable_foobar_path,
+        universal_newlines=True,
+    )
