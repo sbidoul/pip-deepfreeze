@@ -1,6 +1,12 @@
 import pytest
 
-from pip_deepfreeze.utils import open_with_rollback, split_lines
+from pip_deepfreeze.utils import (
+    log_error,
+    log_info,
+    log_warning,
+    open_with_rollback,
+    split_lines,
+)
 
 
 @pytest.mark.parametrize(
@@ -25,3 +31,19 @@ def test_open_with_rollback(tmp_path):
         assert filename.read_text() == "a"
     else:
         raise AssertionError("should not be here")
+
+
+def test_log_info(capsys):
+    log_info("in", nl=False)
+    log_info("fo")
+    assert capsys.readouterr().err == "info\n"
+
+
+def test_log_warning(capsys):
+    log_warning("warning")
+    assert capsys.readouterr().err == "warning\n"
+
+
+def test_log_error(capsys):
+    log_error("error")
+    assert capsys.readouterr().err == "error\n"
