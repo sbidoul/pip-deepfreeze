@@ -1,6 +1,11 @@
+import sys
+
 import pytest
+import typer
 
 from pip_deepfreeze.utils import (
+    check_call,
+    check_output,
     log_error,
     log_info,
     log_warning,
@@ -47,3 +52,21 @@ def test_log_warning(capsys):
 def test_log_error(capsys):
     log_error("error")
     assert capsys.readouterr().err == "error\n"
+
+
+def test_check_call(capsys):
+    r = check_call([sys.executable, "-c", "print('toto')"])
+    assert r == 0
+    with pytest.raises(typer.Exit) as e:
+        check_call([sys.executable, "-c", "import sys; sys.exit(1)"])
+    assert e.value.exit_code == 1
+    "Error running: " in capsys.readouterr().err
+
+
+def test_check_output(capsys):
+    r = check_output([sys.executable, "-c", "print('toto')"])
+    assert r == "toto\n"
+    with pytest.raises(typer.Exit) as e:
+        check_output([sys.executable, "-c", "import sys; sys.exit(1)"])
+    assert e.value.exit_code == 1
+    "Error running: " in capsys.readouterr().err
