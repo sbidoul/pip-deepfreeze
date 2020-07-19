@@ -6,6 +6,8 @@ This currently assumes pkg_resources is installed.
 This script must be python 2 compatible.
 """
 
+import argparse
+
 import pkg_resources
 
 
@@ -37,12 +39,9 @@ def main(distname):
         print(r)
 
 
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="List dependencies of an installed distribution."
-    )
-    parser.add_argument("distname", metavar="DISTRIBUTION")
-    args = parser.parse_args()
-    main(args.distname)
+parser = argparse.ArgumentParser(
+    description="List dependencies of an installed distribution."
+)
+parser.add_argument("distname", metavar="DISTRIBUTION")
+args = parser.parse_args()
+main(args.distname)
