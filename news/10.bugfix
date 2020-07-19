@@ -1,2 +1,0 @@
-Fix pkg_resources.VersionConflict error when downgrading an already installed
-dependency.
