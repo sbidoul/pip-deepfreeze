@@ -8,7 +8,7 @@ long_description = (here / "README.rst").read_text(encoding="utf-8")
 setup(
     name="pip-deepfreeze",
     use_scm_version=True,
-    description="A better pip freeze workflow for Python application developers.",
+    description="A simple pip freeze workflow for Python application developers.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/sbidoul/pip-deepfreeze",
