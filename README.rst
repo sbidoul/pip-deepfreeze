@@ -78,9 +78,9 @@ Make sure your application declares its direct dependencies using `setuptools
 <https://www.python.org/dev/peps/pep-0517/>`__ build backend such as `flit
 <https://pypi.org/project/flit/>`__.
 
-First of all, create and activate a virtual environment using your favorite
-tool. Run ``pip list`` to make sure ``pip``, ``setuptools`` and ``wheel`` are
-installed in the virtualenv.
+Create and activate a virtual environment using your favorite tool. Run
+``pip list`` to make sure ``pip``, ``setuptools`` and ``wheel`` are installed
+in the virtualenv.
 
 To install your project (in editable mode if supported) in the active virtual
 environment, go to your project root directory and run:
