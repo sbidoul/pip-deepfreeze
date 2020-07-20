@@ -9,7 +9,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .utils import check_call, check_output, log_info, split_lines
+from .utils import check_call, check_output, log_info
 
 
 def pip_upgrade_project(
@@ -97,7 +97,7 @@ def pip_upgrade_project(
 def pip_freeze(python: str) -> Iterable[str]:
     """Run pip freeze."""
     cmd = [python, "-m", "pip", "freeze"]
-    return split_lines(check_output(cmd))
+    return check_output(cmd).splitlines()
 
 
 def pip_freeze_dependencies(

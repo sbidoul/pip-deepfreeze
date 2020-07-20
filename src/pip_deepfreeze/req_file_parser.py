@@ -24,7 +24,7 @@ import os
 import re
 import shlex
 import sys
-from typing import Iterator, List, NoReturn, Optional, Text, Tuple, Union
+from typing import Iterable, Iterator, List, NoReturn, Optional, Text, Tuple, Union
 from urllib import parse as urllib_parse
 from urllib.request import urlopen
 
@@ -137,13 +137,10 @@ class OptionsLine(ParsedLine):
         self.options = options
 
 
-def _preprocess(content):
-    # type: (Text) -> ReqFileLines
-    """Split, filter, and join lines, and return a line iterator.
-
-    :param content: the content of the requirements file
-    """
-    lines_enum = _join_lines(enumerate(content.splitlines(), start=1))
+def _preprocess_lines(lines):
+    # type: (Iterable[str]) -> ReqFileLines
+    """Split, filter, and join lines, and return a line iterator."""
+    lines_enum = _join_lines(enumerate(lines, start=1))
     lines_enum = _remove_comments(lines_enum)
     lines_enum = _expand_env_variables(lines_enum)
     return lines_enum
@@ -170,7 +167,8 @@ def parse(
             # do a join so relative paths work
             filename = os.path.join(os.path.dirname(base_filename), filename)
 
-    for line in _parse_file(filename, constraints, strict, session):
+    lines = _get_file_lines(filename, session)
+    for line in _parse_lines(lines, filename, constraints, strict):
         if not reqs_only or isinstance(line, RequirementLine):
             yield line
         if isinstance(line, NestedRequirementsLine) and recurse:
@@ -186,10 +184,14 @@ def parse(
                 yield inner_line
 
 
-def _parse_file(filename, constraints, strict, session):
-    # type: (str, bool, bool, Optional[HttpClient]) -> Iterator[ParsedLine]
-    content = _get_file_content(filename, session)
-    for lineno, line, raw_line in _preprocess(content):
+def _parse_lines(
+    lines,  # type: Iterable[str]
+    filename,  # type: str
+    constraints,  # type: bool
+    strict,  # type: bool
+):
+    # type: (...) -> Iterator[ParsedLine]
+    for lineno, line, raw_line in _preprocess_lines(lines):
         args_str, opts, other_opts = _parse_line(line, filename, lineno, strict)
         if args_str:
             yield RequirementLine(
@@ -413,8 +415,8 @@ def _get_url_scheme(url):
     return url.split(":", 1)[0].lower()
 
 
-def _get_file_content(url, session):
-    # type: (str, Optional[HttpClient]) -> Text
+def _get_file_lines(url, session):
+    # type: (str, Optional[HttpClient]) -> Iterable[str]
     """Gets the content of a file as unicode; it may be a filename, file: URL, or
     http: URL. Respects # -*- coding: declarations on the retrieved files.
 
@@ -422,7 +424,6 @@ def _get_file_content(url, session):
     :param session:     HttpClient instance.
     """
     scheme = _get_url_scheme(url)
-
     if scheme in ["http", "https"]:
         if not session:
             # FIXME better exception
@@ -437,8 +438,6 @@ def _get_file_content(url, session):
             raise RequirementsFileParserError(
                 "Could not open requirements file: {}".format(exc)
             )
-        return content
-
     elif scheme == "file":
         try:
             with urlopen(url) as f:
@@ -447,13 +446,12 @@ def _get_file_content(url, session):
             raise RequirementsFileParserError(
                 "Could not open requirements file: {}".format(exc)
             )
-        return content
-
-    try:
-        with open(url, "rb") as f:
-            content = _auto_decode(f.read())
-    except Exception as exc:
-        raise RequirementsFileParserError(
-            "Could not open requirements file: {}".format(exc)
-        )
-    return content
+    else:
+        try:
+            with open(url, "rb") as f:
+                content = _auto_decode(f.read())
+        except Exception as exc:
+            raise RequirementsFileParserError(
+                "Could not open requirements file: {}".format(exc)
+            )
+    return content.splitlines()

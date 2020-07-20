@@ -2,18 +2,11 @@ import contextlib
 import subprocess
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import IO, Any, Dict, Iterator, List, Optional, Sequence, Union
+from typing import IO, Any, Dict, Iterator, Optional, Sequence, Union
 
 import typer
 
 from .compat import shlex_join
-
-
-def split_lines(s: str) -> List[str]:
-    s = s.strip()
-    if not s:
-        return []
-    return s.split("\n")
 
 
 @contextlib.contextmanager
