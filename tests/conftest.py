@@ -52,4 +52,4 @@ def testpkgs(tmp_path_factory):
             ],
         )
 
-    return str(testpkgs_dir)
+    return testpkgs_dir.as_uri()
