@@ -15,7 +15,7 @@ from .utils import check_call, check_output, log_info, split_lines
 def pip_upgrade_project(
     python: str,
     constraints_filename: Path,
-    project_root: Path = Path("."),
+    project_root: Path,
     extras: Optional[Iterable[str]] = None,
     editable: bool = True,
 ) -> None:
@@ -101,7 +101,7 @@ def pip_freeze(python: str) -> Iterable[str]:
 
 
 def pip_freeze_dependencies(
-    python: str, project_root: Path = Path("."), extras: Optional[Iterable[str]] = None
+    python: str, project_root: Path, extras: Optional[Iterable[str]] = None
 ) -> Iterable[str]:
     """Run pip freeze, returning only dependencies of the project."""
     project_name = get_project_name(python, project_root)
