@@ -1,4 +1,5 @@
 import shutil
+from pathlib import Path
 from typing import List, Optional
 
 import typer
@@ -63,7 +64,13 @@ def sync(
         log_error("The project does not support editable installation.",)
         raise typer.Exit(1)
     sync_operation(
-        ctx.obj.python, upgrade_all, to_upgrade, editable, extras=[], uninstall=False
+        ctx.obj.python,
+        upgrade_all,
+        to_upgrade,
+        editable,
+        extras=[],
+        uninstall=False,
+        project_root=Path.cwd(),
     )
 
 

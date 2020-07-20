@@ -6,6 +6,8 @@ import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
+from pip_deepfreeze.pip import pip_freeze
+from pip_deepfreeze.sync import sync
 
 
 def test_sync(virtualenv_python, testpkgs, tmp_path):
@@ -102,11 +104,7 @@ def test_not_editable_default_install(virtualenv_python, not_editable_foobar_pat
         cwd=not_editable_foobar_path,
     )
     # installed not editable by default
-    assert "foobar @ file://" in subprocess.check_output(
-        [virtualenv_python, "-m", "pip", "freeze"],
-        cwd=not_editable_foobar_path,
-        universal_newlines=True,
-    )
+    assert "foobar @ file://" in "\n".join(pip_freeze(virtualenv_python))
 
 
 def test_not_editable_no_editable_install(virtualenv_python, not_editable_foobar_path):
@@ -123,11 +121,7 @@ def test_not_editable_no_editable_install(virtualenv_python, not_editable_foobar
         cwd=not_editable_foobar_path,
     )
     # installed no-editable as requested
-    assert "foobar @ file://" in subprocess.check_output(
-        [virtualenv_python, "-m", "pip", "freeze"],
-        cwd=not_editable_foobar_path,
-        universal_newlines=True,
-    )
+    assert "foobar @ file://" in "\n".join(pip_freeze(virtualenv_python))
 
 
 def test_not_editable_editable_install(virtualenv_python, not_editable_foobar_path):
@@ -171,11 +165,7 @@ def test_editable_default_install(virtualenv_python, editable_foobar_path):
         cwd=editable_foobar_path,
     )
     # installed editable by default
-    assert "-e " in subprocess.check_output(
-        [virtualenv_python, "-m", "pip", "freeze"],
-        cwd=editable_foobar_path,
-        universal_newlines=True,
-    )
+    assert "-e " in "\n".join(pip_freeze(virtualenv_python))
 
 
 def test_editable_editable_install(virtualenv_python, editable_foobar_path):
@@ -192,11 +182,7 @@ def test_editable_editable_install(virtualenv_python, editable_foobar_path):
         cwd=editable_foobar_path,
     )
     # installed editable as requested
-    assert "-e " in subprocess.check_output(
-        [virtualenv_python, "-m", "pip", "freeze"],
-        cwd=editable_foobar_path,
-        universal_newlines=True,
-    )
+    assert "-e " in "\n".join(pip_freeze(virtualenv_python))
 
 
 def test_editable_no_editable_install(virtualenv_python, editable_foobar_path):
@@ -213,8 +199,17 @@ def test_editable_no_editable_install(virtualenv_python, editable_foobar_path):
         ],
         cwd=editable_foobar_path,
     )
-    assert "foobar @ file://" in subprocess.check_output(
-        [virtualenv_python, "-m", "pip", "freeze"],
-        cwd=editable_foobar_path,
-        universal_newlines=True,
+    assert "foobar @ file://" in "\n".join(pip_freeze(virtualenv_python))
+
+
+def test_sync_project_root(virtualenv_python, editable_foobar_path):
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=[],
+        uninstall=False,
+        project_root=editable_foobar_path,
     )
+    assert (editable_foobar_path / "requirements.txt").exists()

@@ -17,12 +17,13 @@ def sync(
     editable: bool,
     extras: List[str],
     uninstall: bool,
+    project_root: Path,
 ) -> None:
-    requirements_frozen = Path("requirements.txt")
-    requirements_in = Path("requirements.txt.in")
+    requirements_frozen = project_root / "requirements.txt"
+    requirements_in = project_root / "requirements.txt.in"
     # upgrade project and its dependencies, if needed
     with tempfile.NamedTemporaryFile(
-        dir=".",
+        dir=project_root,
         prefix="requirements.",
         suffix=".txt.df",
         mode="w",
@@ -35,7 +36,9 @@ def sync(
             print(req_line, file=constraints)
     constraints_path = Path(constraints.name)
     try:
-        pip_upgrade_project(python, constraints_path, editable=editable, extras=extras)
+        pip_upgrade_project(
+            python, constraints_path, project_root, editable=editable, extras=extras,
+        )
     finally:
         constraints_path.unlink()
     # uninstall unneeded dependencies, if asked to do so
@@ -58,5 +61,5 @@ def sync(
                 if isinstance(parsed_req_line, OptionsLine):
                     print(parsed_req_line.raw_line, file=f)
         # output frozen dependencies of project
-        for req_line in pip_freeze_dependencies(python):
+        for req_line in pip_freeze_dependencies(python, project_root):
             print(req_line, file=f)
