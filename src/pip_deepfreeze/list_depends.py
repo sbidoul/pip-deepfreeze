@@ -11,7 +11,9 @@ def list_depends(python: str, project_name: str) -> Set[str]:
             "list_depends_script.py"
         )
     ) as list_depends_script:
+        # str(list_depends_script) seems necessary for python 3.6 compatibility
+        # on Winwdows.
         dependencies = split_lines(
-            check_output([python, list_depends_script, project_name])
+            check_output([python, str(list_depends_script), project_name])
         )
     return {canonicalize_name(d) for d in dependencies}

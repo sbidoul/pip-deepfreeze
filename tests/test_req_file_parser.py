@@ -81,19 +81,39 @@ def test_file_url(tmp_path):
     assert [line.requirement for line in lines] == ["req1"]
 
 
+def test_file_url_not_found(tmp_path):
+    reqs = tmp_path / "reqs.txt"
+    subreqs_uri = (tmp_path / "notfound.txt").as_uri()
+    assert subreqs_uri.startswith("file://")
+    reqs.write_text(f"--requirements {subreqs_uri}")
+    with pytest.raises(RequirementsFileParserError) as e:
+        list(parse(str(reqs)))
+    assert "Could not open requirements file" in str(e.value)
+    assert "notfound.txt" in str(e.value)
+
+
+class MockHttpResponse:
+    def __init__(self, url, text):
+        self.url = url
+        self.text = text
+
+    def raise_for_status(self):
+        if self.text is None:
+            raise RuntimeError(f"mock error opening {self.url}")
+
+
+class MockHttpSession:
+    def __init__(self, url, text):
+        self.url = url
+        self.text = text
+
+    def get(self, url):
+        assert url == self.url
+        return MockHttpResponse(self.url, self.text)
+
+
 def test_http_url(tmp_path):
     subreqs_url = "http://e.c/subreqs.txt"
-
-    class MockHttpResponse:
-        text = "req2"
-
-        def raise_for_status(self):
-            pass
-
-    class MockHttpSession:
-        def get(self, url):
-            assert url == subreqs_url
-            return MockHttpResponse()
 
     reqs = tmp_path / "reqs.txt"
     reqs.write_text(
@@ -109,18 +129,30 @@ def test_http_url(tmp_path):
     assert f"Cannot get {subreqs_url} because no http session is available" in str(
         e.value
     )
-    lines = list(parse(str(reqs), session=MockHttpSession()))
+    lines = list(parse(str(reqs), session=MockHttpSession(subreqs_url, "req2")))
     assert all(isinstance(line, RequirementLine) for line in lines)
     assert [line.requirement for line in lines] == ["req1", "req2"]
     lines = list(parse(str(reqs), recurse=False))
     assert [line.requirement for line in lines] == ["req1"]
 
 
+def test_http_url_notfound(tmp_path):
+    subreqs_url = "http://e.c/notfound.txt"
+    reqs = tmp_path / "reqs.txt"
+    reqs.write_text(f"-r {subreqs_url}")
+    with pytest.raises(RequirementsFileParserError) as e:
+        list(parse(str(reqs), session=MockHttpSession(subreqs_url, None)))
+    assert "Could not open requirements file" in str(e.value)
+    assert "notfound.txt" in str(e.value)
+
+
 def test_subreq_notfound(tmp_path):
     reqs = tmp_path / "reqs.txt"
     reqs.write_text("-r notfound.txt")
-    with pytest.raises(RequirementsFileParserError):
+    with pytest.raises(RequirementsFileParserError) as e:
         _ = list(parse(str(reqs)))
+    assert "Could not open requirements file" in str(e.value)
+    assert "notfound.txt" in str(e.value)
 
 
 def test_relative_file(tmp_path):

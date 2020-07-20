@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import os
 import subprocess
 import sys
 
@@ -11,7 +12,11 @@ def virtualenv_python(tmp_path):
     """Return a python executable path within an isolated virtualenv."""
     venv = tmp_path / "venv"
     subprocess.check_call([sys.executable, "-m", "virtualenv", str(venv)])
-    return str(venv / "bin" / "python")
+    if os.name == "nt":
+        python = venv / "Scripts" / "python.exe"
+    else:
+        python = venv / "bin" / "python"
+    return str(python)
 
 
 @pytest.fixture(scope="session")
@@ -47,4 +52,4 @@ def testpkgs(tmp_path_factory):
             ],
         )
 
-    return str(testpkgs_dir)
+    return testpkgs_dir.as_uri()

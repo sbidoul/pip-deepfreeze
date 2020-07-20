@@ -24,18 +24,13 @@ import os
 import re
 import shlex
 import sys
+from typing import Iterator, List, NoReturn, Optional, Text, Tuple, Union
 from urllib import parse as urllib_parse
+from urllib.request import urlopen
 
-MYPY_CHECK_RUNNING = True
-if MYPY_CHECK_RUNNING:
-    from typing import Iterator, List, NoReturn, Optional, Text, Tuple, Union
+from .compat import Protocol
 
-    try:
-        from typing import Protocol
-    except ImportError:
-        from typing_extensions import Protocol  # type: ignore
-
-    ReqFileLines = Iterator[Tuple[int, Text, Text]]
+ReqFileLines = Iterator[Tuple[int, Text, Text]]
 
 
 __all__ = [
@@ -434,28 +429,30 @@ def _get_file_content(url, session):
             raise RequirementsFileParserError(
                 "Cannot get {url} because no http session is available.".format(url=url)
             )
-
-        # FIXME: catch some errors
-        resp = session.get(url)
-        resp.raise_for_status()
-        return resp.text
+        try:
+            resp = session.get(url)
+            resp.raise_for_status()
+            content = resp.text
+        except Exception as exc:
+            raise RequirementsFileParserError(
+                "Could not open requirements file: {}".format(exc)
+            )
+        return content
 
     elif scheme == "file":
-        path = url.split(":", 1)[1]
-        path = path.replace("\\", "/")
-        match = _URL_SLASH_DRIVE_RE.match(path)
-        if match:
-            path = match.group(1) + ":" + path.split("|", 1)[1]
-        path = urllib_parse.unquote(path)
-        if path.startswith("/"):
-            path = "/" + path.lstrip("/")
-        url = path
+        try:
+            with urlopen(url) as f:
+                content = _auto_decode(f.read())
+        except Exception as exc:
+            raise RequirementsFileParserError(
+                "Could not open requirements file: {}".format(exc)
+            )
+        return content
 
     try:
         with open(url, "rb") as f:
             content = _auto_decode(f.read())
-    except IOError as exc:
-        # FIXME better exception
+    except Exception as exc:
         raise RequirementsFileParserError(
             "Could not open requirements file: {}".format(exc)
         )
