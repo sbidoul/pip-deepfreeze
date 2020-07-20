@@ -2,7 +2,7 @@ from typing import Set
 
 from .compat import resource_as_file, resource_files
 from .req_parser import canonicalize_name
-from .utils import check_output, split_lines
+from .utils import check_output
 
 
 def list_depends(python: str, project_name: str) -> Set[str]:
@@ -11,9 +11,7 @@ def list_depends(python: str, project_name: str) -> Set[str]:
             "list_depends_script.py"
         )
     ) as list_depends_script:
-        # str(list_depends_script) seems necessary for python 3.6 compatibility
-        # on Winwdows.
-        dependencies = split_lines(
-            check_output([python, str(list_depends_script), project_name])
-        )
+        dependencies = check_output(
+            [python, str(list_depends_script), project_name]
+        ).splitlines()
     return {canonicalize_name(d) for d in dependencies}
