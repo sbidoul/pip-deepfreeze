@@ -24,19 +24,13 @@ import os
 import re
 import shlex
 import sys
+from typing import Iterator, List, NoReturn, Optional, Text, Tuple, Union
 from urllib import parse as urllib_parse
 from urllib.request import urlopen
 
-MYPY_CHECK_RUNNING = True
-if MYPY_CHECK_RUNNING:
-    from typing import Iterator, List, NoReturn, Optional, Text, Tuple, Union
+from .compat import Protocol
 
-    try:
-        from typing import Protocol
-    except ImportError:
-        from typing_extensions import Protocol  # type: ignore
-
-    ReqFileLines = Iterator[Tuple[int, Text, Text]]
+ReqFileLines = Iterator[Tuple[int, Text, Text]]
 
 
 __all__ = [
