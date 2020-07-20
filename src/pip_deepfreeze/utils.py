@@ -38,7 +38,7 @@ def open_with_rollback(
 
 
 def log_info(msg: str, nl: bool = True) -> None:
-    typer.secho(msg, err=True, nl=nl)
+    typer.secho(msg, fg=typer.colors.BRIGHT_BLUE, err=True, nl=nl)
 
 
 def log_warning(msg: str) -> None:

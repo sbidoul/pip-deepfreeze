@@ -13,7 +13,7 @@ def get_project_name(python: str, project_root: Path) -> str:
     We build in a separate process so we support python 2 builds.
     """
     with TemporaryDirectory() as pep517_install_dir:
-        log_info(f"Getting project metadata in {str(project_root)!r} .", nl=False)
+        log_info("Getting project metadata..", nl=False)
         # first install pep517
         check_call(
             [
@@ -27,7 +27,7 @@ def get_project_name(python: str, project_root: Path) -> str:
                 "pep517==0.8.2",
             ]
         )
-        log_info(". ", nl=False)
+        log_info(".", nl=False)
         # TODO this uses an undocumented function of pep517
         name = check_output(
             [
@@ -39,5 +39,5 @@ def get_project_name(python: str, project_root: Path) -> str:
             ],
             env=dict(os.environ, PYTHONPATH=pep517_install_dir),
         )
-        log_info(name)
+        log_info(" " + name)
         return name

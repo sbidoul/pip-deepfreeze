@@ -9,7 +9,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .utils import check_call, check_output, split_lines
+from .utils import check_call, check_output, log_info, split_lines
 
 
 def pip_upgrade_project(
@@ -71,6 +71,8 @@ def pip_upgrade_project(
         elif installed_req != constraint_reqs[installed_req_name]:
             to_uninstall.add(installed_req_name)
     if to_uninstall:
+        to_uninstall_str = ",".join(to_uninstall)
+        log_info(f"Uninstalling dependencies to upgrade: {to_uninstall_str}")
         pip_uninstall(python, to_uninstall)
     # 4. install project with constraints
     # TODO Using -c here would break with the new pip resolver:
@@ -80,6 +82,7 @@ def pip_upgrade_project(
     #      then the second best approach is to use -r here, and let
     #      sync's --uninstall option remove what we don't need.
     #      But the REQUESTED metadata will be incorrect.
+    log_info("Installing project")
     cmd = [python, "-m", "pip", "install", "-r", f"{constraints_filename}"]
     if editable:
         cmd.append("-e")
