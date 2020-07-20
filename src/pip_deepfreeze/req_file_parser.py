@@ -10,11 +10,6 @@ moving this to a standalone library:
 - nested constraints?
 """
 
-# TODO accept pathlike or stream in parse(),
-#      but then what filename to return in ParsedLine, and how
-#      to handle base_filename
-# TODO better name than filename/base_filename
-
 from __future__ import absolute_import
 
 import argparse
@@ -35,6 +30,7 @@ ReqFileLines = Iterator[Tuple[int, Text, Text]]
 
 __all__ = [
     "parse",
+    "parse_lines",
     "RequirementsFileParserError",
     "OptionParsingError",
     "ParsedLine",
@@ -148,7 +144,48 @@ def _preprocess_lines(lines):
 
 def parse(
     filename,  # type: str
-    base_filename=None,  # type: Optional[str]
+    recurse=True,  # type: bool
+    reqs_only=True,  # type: bool
+    strict=False,  # type: bool
+    constraints=False,  # type: bool
+    session=None,  # type: Optional[HttpClient]
+):
+    # type: (...) -> Iterator[ParsedLine]
+    return _parse(
+        _get_file_lines(filename, session),
+        filename,
+        recurse=recurse,
+        reqs_only=reqs_only,
+        strict=strict,
+        constraints=constraints,
+        session=session,
+    )
+
+
+def parse_lines(
+    lines,  # type: Iterable[str]
+    filename,  # type: str
+    recurse=True,  # type: bool
+    reqs_only=True,  # type: bool
+    strict=False,  # type: bool
+    constraints=False,  # type: bool
+    session=None,  # type: Optional[HttpClient]
+):
+    # type: (...) -> Iterator[ParsedLine]
+    return _parse(
+        lines,
+        filename,
+        recurse=recurse,
+        reqs_only=reqs_only,
+        strict=strict,
+        constraints=constraints,
+        session=session,
+    )
+
+
+def _parse(
+    lines,  # type: Iterable[str]
+    filename,  # type: str
     recurse=True,  # type: bool
     reqs_only=True,  # type: bool
     strict=False,  # type: bool
@@ -157,24 +194,12 @@ def parse(
 ):
     # type: (...) -> Iterator[ParsedLine]
     """Parse a given file or URL, yielding parsed lines."""
-    if base_filename:
-        # original file is over http
-        if _SCHEME_RE.search(base_filename):
-            # do a url join so relative paths work
-            filename = urllib_parse.urljoin(base_filename, filename)
-        # original file and nested file are paths
-        elif not _SCHEME_RE.search(filename):
-            # do a join so relative paths work
-            filename = os.path.join(os.path.dirname(base_filename), filename)
-
-    lines = _get_file_lines(filename, session)
     for line in _parse_lines(lines, filename, constraints, strict):
         if not reqs_only or isinstance(line, RequirementLine):
             yield line
         if isinstance(line, NestedRequirementsLine) and recurse:
             for inner_line in parse(
-                filename=line.requirements,
-                base_filename=line.filename,
+                filename=_file_or_url_join(line.requirements, line.filename),
                 recurse=recurse,
                 reqs_only=reqs_only,
                 strict=strict,
@@ -182,6 +207,20 @@ def parse(
                 session=session,
             ):
                 yield inner_line
+
+
+def _file_or_url_join(filename: str, base_filename: Optional[str]) -> str:
+    if not base_filename:
+        return filename
+    # original file is over http
+    if _SCHEME_RE.search(base_filename):
+        # do a url join so relative paths work
+        return urllib_parse.urljoin(base_filename, filename)
+    # original file and nested file are paths
+    elif not _SCHEME_RE.search(filename):
+        # do a join so relative paths work
+        return os.path.join(os.path.dirname(base_filename), filename)
+    return filename
 
 
 def _parse_lines(
@@ -309,6 +348,7 @@ def _join_lines(lines_enum):
     new_lines = []  # type: List[Text]
     raw_lines = []  # type: List[Text]
     for line_number, raw_line in lines_enum:
+        raw_line = raw_line.rstrip("\n")  # in case lines comes from open()
         if not raw_line.endswith("\\") or _COMMENT_RE.match(raw_line):
             if _COMMENT_RE.match(raw_line):
                 # this ensures comments are always matched later
