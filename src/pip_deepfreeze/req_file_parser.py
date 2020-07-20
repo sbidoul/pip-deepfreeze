@@ -146,15 +146,6 @@ def _preprocess_lines(lines):
     return lines_enum
 
 
-def _preprocess(content):
-    # type: (Text) -> ReqFileLines
-    """Split, filter, and join lines, and return a line iterator.
-
-    :param content: the content of the requirements file
-    """
-    return _preprocess_lines(content.splitlines())
-
-
 def parse(
     filename,  # type: str
     base_filename=None,  # type: Optional[str]
@@ -194,8 +185,8 @@ def parse(
 
 def _parse_file(filename, constraints, strict, session):
     # type: (str, bool, bool, Optional[HttpClient]) -> Iterator[ParsedLine]
-    content = _get_file_content(filename, session)
-    for lineno, line, raw_line in _preprocess(content):
+    lines = _get_file_lines(filename, session)
+    for lineno, line, raw_line in _preprocess_lines(lines):
         args_str, opts, other_opts = _parse_line(line, filename, lineno, strict)
         if args_str:
             yield RequirementLine(
@@ -419,8 +410,8 @@ def _get_url_scheme(url):
     return url.split(":", 1)[0].lower()
 
 
-def _get_file_content(url, session):
-    # type: (str, Optional[HttpClient]) -> Text
+def _get_file_lines(url, session):
+    # type: (str, Optional[HttpClient]) -> Iterable[str]
     """Gets the content of a file as unicode; it may be a filename, file: URL, or
     http: URL. Respects # -*- coding: declarations on the retrieved files.
 
@@ -428,7 +419,6 @@ def _get_file_content(url, session):
     :param session:     HttpClient instance.
     """
     scheme = _get_url_scheme(url)
-
     if scheme in ["http", "https"]:
         if not session:
             # FIXME better exception
@@ -443,8 +433,6 @@ def _get_file_content(url, session):
             raise RequirementsFileParserError(
                 "Could not open requirements file: {}".format(exc)
             )
-        return content
-
     elif scheme == "file":
         try:
             with urlopen(url) as f:
@@ -453,13 +441,12 @@ def _get_file_content(url, session):
             raise RequirementsFileParserError(
                 "Could not open requirements file: {}".format(exc)
             )
-        return content
-
-    try:
-        with open(url, "rb") as f:
-            content = _auto_decode(f.read())
-    except Exception as exc:
-        raise RequirementsFileParserError(
-            "Could not open requirements file: {}".format(exc)
-        )
-    return content
+    else:
+        try:
+            with open(url, "rb") as f:
+                content = _auto_decode(f.read())
+        except Exception as exc:
+            raise RequirementsFileParserError(
+                "Could not open requirements file: {}".format(exc)
+            )
+    return content.splitlines()
