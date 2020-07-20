@@ -22,16 +22,22 @@ def sync(
     requirements_in = Path("requirements.txt.in")
     # upgrade project and its dependencies, if needed
     with tempfile.NamedTemporaryFile(
-        dir=".", prefix="requirements.", suffix=".txt.df", mode="w", encoding="utf-8"
+        dir=".",
+        prefix="requirements.",
+        suffix=".txt.df",
+        mode="w",
+        encoding="utf-8",
+        delete=False,
     ) as constraints:
         for req_line in prepare_frozen_reqs_for_upgrade(
             requirements_frozen, requirements_in, upgrade_all, to_upgrade
         ):
             print(req_line, file=constraints)
-        constraints.flush()
-        pip_upgrade_project(
-            python, Path(constraints.name), editable=editable, extras=extras
-        )
+    constraints_path = Path(constraints.name)
+    try:
+        pip_upgrade_project(python, constraints_path, editable=editable, extras=extras)
+    finally:
+        constraints_path.unlink()
     # uninstall unneeded dependencies, if asked to do so
     if uninstall:
         raise NotImplementedError("--uninstall not implemented yet")
