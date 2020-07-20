@@ -167,7 +167,8 @@ def parse(
             # do a join so relative paths work
             filename = os.path.join(os.path.dirname(base_filename), filename)
 
-    for line in _parse_file(filename, constraints, strict, session):
+    lines = _get_file_lines(filename, session)
+    for line in _parse_lines(lines, filename, constraints, strict):
         if not reqs_only or isinstance(line, RequirementLine):
             yield line
         if isinstance(line, NestedRequirementsLine) and recurse:
@@ -183,9 +184,13 @@ def parse(
                 yield inner_line
 
 
-def _parse_file(filename, constraints, strict, session):
-    # type: (str, bool, bool, Optional[HttpClient]) -> Iterator[ParsedLine]
-    lines = _get_file_lines(filename, session)
+def _parse_lines(
+    lines,  # type: Iterable[str]
+    filename,  # type: str
+    constraints,  # type: bool
+    strict,  # type: bool
+):
+    # type: (...) -> Iterator[ParsedLine]
     for lineno, line, raw_line in _preprocess_lines(lines):
         args_str, opts, other_opts = _parse_line(line, filename, lineno, strict)
         if args_str:
