@@ -81,6 +81,41 @@ def test_file_url(tmp_path):
     assert [line.requirement for line in lines] == ["req1"]
 
 
+def test_http_url(tmp_path):
+    subreqs_url = "http://e.c/subreqs.txt"
+
+    class MockHttpResponse:
+        text = "req2"
+
+        def raise_for_status(self):
+            pass
+
+    class MockHttpSession:
+        def get(self, url):
+            assert url == subreqs_url
+            return MockHttpResponse()
+
+    reqs = tmp_path / "reqs.txt"
+    reqs.write_text(
+        textwrap.dedent(
+            f"""\
+            req1
+            -r {subreqs_url}
+            """
+        )
+    )
+    with pytest.raises(RequirementsFileParserError) as e:
+        list(parse(str(reqs)))
+    assert f"Cannot get {subreqs_url} because no http session is available" in str(
+        e.value
+    )
+    lines = list(parse(str(reqs), session=MockHttpSession()))
+    assert all(isinstance(line, RequirementLine) for line in lines)
+    assert [line.requirement for line in lines] == ["req1", "req2"]
+    lines = list(parse(str(reqs), recurse=False))
+    assert [line.requirement for line in lines] == ["req1"]
+
+
 def test_subreq_notfound(tmp_path):
     reqs = tmp_path / "reqs.txt"
     reqs.write_text("-r notfound.txt")
@@ -294,7 +329,6 @@ def test_options(line, expected, tmp_path):
     assert lines[0].options == expected
 
 
-# TODO test session
 # TODO test constraints and nested constraints
 # TODO test req_only=False
 # TODO test parse with base_filename
