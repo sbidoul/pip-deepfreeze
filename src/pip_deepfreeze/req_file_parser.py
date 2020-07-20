@@ -35,6 +35,7 @@ ReqFileLines = Iterator[Tuple[int, Text, Text]]
 
 __all__ = [
     "parse",
+    "parse_lines",
     "RequirementsFileParserError",
     "OptionParsingError",
     "ParsedLine",
@@ -155,8 +156,49 @@ def parse(
     session=None,  # type: Optional[HttpClient]
 ):
     # type: (...) -> Iterator[ParsedLine]
+    return _parse(
+        _get_file_lines(filename, session),
+        filename,
+        recurse=recurse,
+        reqs_only=reqs_only,
+        strict=strict,
+        constraints=constraints,
+        session=session,
+    )
+
+
+def parse_lines(
+    lines,  # type: Iterable[str]
+    filename,  # type: str
+    recurse=True,  # type: bool
+    reqs_only=True,  # type: bool
+    strict=False,  # type: bool
+    constraints=False,  # type: bool
+    session=None,  # type: Optional[HttpClient]
+):
+    # type: (...) -> Iterator[ParsedLine]
+    return _parse(
+        lines,
+        filename,
+        recurse=recurse,
+        reqs_only=reqs_only,
+        strict=strict,
+        constraints=constraints,
+        session=session,
+    )
+
+
+def _parse(
+    lines,  # type: Iterable[str]
+    filename,  # type: str
+    recurse=True,  # type: bool
+    reqs_only=True,  # type: bool
+    strict=False,  # type: bool
+    constraints=False,  # type: bool
+    session=None,  # type: Optional[HttpClient]
+):
+    # type: (...) -> Iterator[ParsedLine]
     """Parse a given file or URL, yielding parsed lines."""
-    lines = _get_file_lines(filename, session)
     for line in _parse_lines(lines, filename, constraints, strict):
         if not reqs_only or isinstance(line, RequirementLine):
             yield line
@@ -311,6 +353,7 @@ def _join_lines(lines_enum):
     new_lines = []  # type: List[Text]
     raw_lines = []  # type: List[Text]
     for line_number, raw_line in lines_enum:
+        raw_line = raw_line.rstrip("\n")  # in case lines comes from open()
         if not raw_line.endswith("\\") or _COMMENT_RE.match(raw_line):
             if _COMMENT_RE.match(raw_line):
                 # this ensures comments are always matched later

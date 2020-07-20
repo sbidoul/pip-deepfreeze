@@ -8,6 +8,7 @@ from pip_deepfreeze.req_file_parser import (
     RequirementsFileParserError,
     _file_or_url_join,
     parse,
+    parse_lines,
 )
 
 
@@ -38,6 +39,18 @@ def test_basic(tmp_path):
         "req6 @ https://e.c/req6.tgz ; python_version < 3.7",
         "req6 ; python_version >= 3.7",
     ]
+    assert lines[0].raw_line == "req1"
+    assert lines[0].lineno == 2
+
+
+def test_parse_lines(tmp_path):
+    """Basic test for parse_lines."""
+    lines = ["req1\n", "-r subreqs.txt\n"]
+    (tmp_path / "subreqs.txt").write_text("req2")
+    parsed_lines = list(parse_lines(lines, filename=str(tmp_path / "req.txt")))
+    assert [line.requirement for line in parsed_lines] == ["req1", "req2"]
+    assert parsed_lines[0].raw_line == "req1"
+    assert parsed_lines[0].lineno == 1
 
 
 def test_recurse(tmp_path):
