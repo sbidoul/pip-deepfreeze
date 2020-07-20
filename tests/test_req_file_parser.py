@@ -1,3 +1,4 @@
+import os
 import textwrap
 
 import pytest
@@ -380,8 +381,8 @@ def test_options(line, expected, tmp_path):
     [
         ("sr.txt", "r.txt", "sr.txt"),
         ("sr.txt", None, "sr.txt"),
-        ("sr.txt", "a/r.txt", "a/sr.txt"),
-        ("b/sr.txt", "a/r.txt", "a/b/sr.txt"),
+        ("sr.txt", "a/r.txt", f"a{os.path.sep}sr.txt"),
+        ("b/sr.txt", "a/r.txt", f"a{os.path.sep}b/sr.txt"),
         ("file:///a/sr.txt", None, "file:///a/sr.txt"),
         ("file:///a/sr.txt", "r.txt", "file:///a/sr.txt"),
         ("file:///a/sr.txt", "file:///b/r.txt", "file:///a/sr.txt"),
