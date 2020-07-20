@@ -25,7 +25,6 @@ import re
 import shlex
 import sys
 from urllib import parse as urllib_parse
-from urllib.error import URLError
 from urllib.request import urlopen
 
 MYPY_CHECK_RUNNING = True
@@ -436,16 +435,21 @@ def _get_file_content(url, session):
             raise RequirementsFileParserError(
                 "Cannot get {url} because no http session is available.".format(url=url)
             )
-        # FIXME: catch some errors
-        resp = session.get(url)
-        resp.raise_for_status()
-        return resp.text
+        try:
+            resp = session.get(url)
+            resp.raise_for_status()
+            content = resp.text
+        except Exception as exc:
+            raise RequirementsFileParserError(
+                "Could not open requirements file: {}".format(exc)
+            )
+        return content
 
     elif scheme == "file":
         try:
             with urlopen(url) as f:
                 content = _auto_decode(f.read())
-        except URLError as exc:
+        except Exception as exc:
             raise RequirementsFileParserError(
                 "Could not open requirements file: {}".format(exc)
             )
@@ -454,7 +458,7 @@ def _get_file_content(url, session):
     try:
         with open(url, "rb") as f:
             content = _auto_decode(f.read())
-    except IOError as exc:
+    except Exception as exc:
         raise RequirementsFileParserError(
             "Could not open requirements file: {}".format(exc)
         )
