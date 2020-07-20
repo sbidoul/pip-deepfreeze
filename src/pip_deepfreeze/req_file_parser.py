@@ -10,11 +10,6 @@ moving this to a standalone library:
 - nested constraints?
 """
 
-# TODO accept pathlike or stream in parse(),
-#      but then what filename to return in ParsedLine, and how
-#      to handle base_filename
-# TODO better name than filename/base_filename
-
 from __future__ import absolute_import
 
 import argparse

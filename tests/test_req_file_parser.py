@@ -393,6 +393,4 @@ def test_file_or_url_join(filename, base_filename, expected):
 
 
 # TODO test constraints and nested constraints
-# TODO test req_only=False
-# TODO test parse with base_filename
 # TODO test auto-decode
