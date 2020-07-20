@@ -6,6 +6,7 @@ from pip_deepfreeze.req_file_parser import (
     OptionParsingError,
     RequirementLine,
     RequirementsFileParserError,
+    _file_or_url_join,
     parse,
 )
 
@@ -359,6 +360,23 @@ def test_options(line, expected, tmp_path):
     lines = list(parse(str(reqs), reqs_only=False, recurse=False))
     assert len(lines) == 1
     assert lines[0].options == expected
+
+
+@pytest.mark.parametrize(
+    "filename,base_filename,expected",
+    [
+        ("sr.txt", "r.txt", "sr.txt"),
+        ("sr.txt", None, "sr.txt"),
+        ("sr.txt", "a/r.txt", "a/sr.txt"),
+        ("b/sr.txt", "a/r.txt", "a/b/sr.txt"),
+        ("file:///a/sr.txt", None, "file:///a/sr.txt"),
+        ("file:///a/sr.txt", "r.txt", "file:///a/sr.txt"),
+        ("file:///a/sr.txt", "file:///b/r.txt", "file:///a/sr.txt"),
+        ("../sr.txt", "file:///b/r.txt", "file:///sr.txt"),
+    ],
+)
+def test_file_or_url_join(filename, base_filename, expected):
+    assert _file_or_url_join(filename, base_filename) == expected
 
 
 # TODO test constraints and nested constraints

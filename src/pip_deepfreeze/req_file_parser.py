@@ -157,16 +157,7 @@ def parse(
 ):
     # type: (...) -> Iterator[ParsedLine]
     """Parse a given file or URL, yielding parsed lines."""
-    if base_filename:
-        # original file is over http
-        if _SCHEME_RE.search(base_filename):
-            # do a url join so relative paths work
-            filename = urllib_parse.urljoin(base_filename, filename)
-        # original file and nested file are paths
-        elif not _SCHEME_RE.search(filename):
-            # do a join so relative paths work
-            filename = os.path.join(os.path.dirname(base_filename), filename)
-
+    filename = _file_or_url_join(filename, base_filename)
     lines = _get_file_lines(filename, session)
     for line in _parse_lines(lines, filename, constraints, strict):
         if not reqs_only or isinstance(line, RequirementLine):
@@ -182,6 +173,20 @@ def parse(
                 session=session,
             ):
                 yield inner_line
+
+
+def _file_or_url_join(filename: str, base_filename: Optional[str]) -> str:
+    if not base_filename:
+        return filename
+    # original file is over http
+    if _SCHEME_RE.search(base_filename):
+        # do a url join so relative paths work
+        return urllib_parse.urljoin(base_filename, filename)
+    # original file and nested file are paths
+    elif not _SCHEME_RE.search(filename):
+        # do a join so relative paths work
+        return os.path.join(os.path.dirname(base_filename), filename)
+    return filename
 
 
 def _parse_lines(
