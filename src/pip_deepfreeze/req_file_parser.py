@@ -25,6 +25,8 @@ import re
 import shlex
 import sys
 from urllib import parse as urllib_parse
+from urllib.error import URLError
+from urllib.request import urlopen
 
 MYPY_CHECK_RUNNING = True
 if MYPY_CHECK_RUNNING:
@@ -434,28 +436,25 @@ def _get_file_content(url, session):
             raise RequirementsFileParserError(
                 "Cannot get {url} because no http session is available.".format(url=url)
             )
-
         # FIXME: catch some errors
         resp = session.get(url)
         resp.raise_for_status()
         return resp.text
 
     elif scheme == "file":
-        path = url.split(":", 1)[1]
-        path = path.replace("\\", "/")
-        match = _URL_SLASH_DRIVE_RE.match(path)
-        if match:
-            path = match.group(1) + ":" + path.split("|", 1)[1]
-        path = urllib_parse.unquote(path)
-        if path.startswith("/"):
-            path = "/" + path.lstrip("/")
-        url = path
+        try:
+            with urlopen(url) as f:
+                content = _auto_decode(f.read())
+        except URLError as exc:
+            raise RequirementsFileParserError(
+                "Could not open requirements file: {}".format(exc)
+            )
+        return content
 
     try:
         with open(url, "rb") as f:
             content = _auto_decode(f.read())
     except IOError as exc:
-        # FIXME better exception
         raise RequirementsFileParserError(
             "Could not open requirements file: {}".format(exc)
         )
