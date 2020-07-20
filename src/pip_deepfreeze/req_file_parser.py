@@ -24,7 +24,7 @@ import os
 import re
 import shlex
 import sys
-from typing import Iterator, List, NoReturn, Optional, Text, Tuple, Union
+from typing import Iterable, Iterator, List, NoReturn, Optional, Text, Tuple, Union
 from urllib import parse as urllib_parse
 from urllib.request import urlopen
 
@@ -137,16 +137,22 @@ class OptionsLine(ParsedLine):
         self.options = options
 
 
+def _preprocess_lines(lines):
+    # type: (Iterable[str]) -> ReqFileLines
+    """Split, filter, and join lines, and return a line iterator."""
+    lines_enum = _join_lines(enumerate(lines, start=1))
+    lines_enum = _remove_comments(lines_enum)
+    lines_enum = _expand_env_variables(lines_enum)
+    return lines_enum
+
+
 def _preprocess(content):
     # type: (Text) -> ReqFileLines
     """Split, filter, and join lines, and return a line iterator.
 
     :param content: the content of the requirements file
     """
-    lines_enum = _join_lines(enumerate(content.splitlines(), start=1))
-    lines_enum = _remove_comments(lines_enum)
-    lines_enum = _expand_env_variables(lines_enum)
-    return lines_enum
+    return _preprocess_lines(content.splitlines())
 
 
 def parse(
