@@ -148,7 +148,6 @@ def _preprocess_lines(lines):
 
 def parse(
     filename,  # type: str
-    base_filename=None,  # type: Optional[str]
     recurse=True,  # type: bool
     reqs_only=True,  # type: bool
     strict=False,  # type: bool
@@ -157,15 +156,13 @@ def parse(
 ):
     # type: (...) -> Iterator[ParsedLine]
     """Parse a given file or URL, yielding parsed lines."""
-    filename = _file_or_url_join(filename, base_filename)
     lines = _get_file_lines(filename, session)
     for line in _parse_lines(lines, filename, constraints, strict):
         if not reqs_only or isinstance(line, RequirementLine):
             yield line
         if isinstance(line, NestedRequirementsLine) and recurse:
             for inner_line in parse(
-                filename=line.requirements,
-                base_filename=line.filename,
+                filename=_file_or_url_join(line.requirements, line.filename),
                 recurse=recurse,
                 reqs_only=reqs_only,
                 strict=strict,
