@@ -72,7 +72,7 @@ def test_check_call(capsys):
     with pytest.raises(typer.Exit) as e:
         check_call([sys.executable, "-c", "import sys; sys.exit(1)"])
     assert e.value.exit_code == 1
-    "Error running: " in capsys.readouterr().err
+    assert "Error running: " in capsys.readouterr().err
 
 
 def test_check_output(capsys):
@@ -81,4 +81,4 @@ def test_check_output(capsys):
     with pytest.raises(typer.Exit) as e:
         check_output([sys.executable, "-c", "import sys; sys.exit(1)"])
     assert e.value.exit_code == 1
-    "Error running: " in capsys.readouterr().err
+    assert "Error running: " in capsys.readouterr().err
