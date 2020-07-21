@@ -3,7 +3,9 @@ from typing import Optional
 
 from packaging.requirements import InvalidRequirement, Requirement
 
+# normalization regex from https://www.python.org/dev/peps/pep-0503/
 _canonicalize_regex = re.compile(r"[-_.]+")
+# regex adapted from https://packaging.python.org/specifications/core-metadata/#name
 _egg_name_regex = re.compile(
     r"egg=([A-Z0-9][A-Z0-9._-]*[A-Z0-9]|[A-Z0-9])([^A-Z0-9._-]|$)", re.I
 )
