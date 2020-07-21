@@ -6,6 +6,9 @@ import typer
 from pip_deepfreeze.utils import (
     check_call,
     check_output,
+    decrease_verbosity,
+    increase_verbosity,
+    log_debug,
     log_error,
     log_info,
     log_warning,
@@ -30,8 +33,14 @@ def test_open_with_rollback(tmp_path):
 
 
 def test_log_debug(capsys):
-    log_info("debug")
-    assert capsys.readouterr().err == "debug\n"
+    log_debug("debug")
+    assert "debug" not in capsys.readouterr().err
+    increase_verbosity()
+    try:
+        log_info("debug")
+        assert capsys.readouterr().err == "debug\n"
+    finally:
+        decrease_verbosity()
 
 
 def test_log_info(capsys):
