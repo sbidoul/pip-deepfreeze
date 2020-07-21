@@ -27,7 +27,8 @@ def open_with_rollback(
             raise
         else:
             f.close()
-            filename.unlink(missing_ok=True)
+            if filename.exists():
+                filename.unlink()
             temp_filename.rename(filename)
 
 
