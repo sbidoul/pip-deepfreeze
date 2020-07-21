@@ -30,6 +30,10 @@ def open_with_rollback(
             temp_filename.rename(filename)
 
 
+def log_debug(msg: str) -> None:
+    typer.secho(msg, dim=True)
+
+
 def log_info(msg: str, nl: bool = True) -> None:
     typer.secho(msg, fg=typer.colors.BRIGHT_BLUE, err=True, nl=nl)
 

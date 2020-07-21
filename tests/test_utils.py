@@ -29,6 +29,11 @@ def test_open_with_rollback(tmp_path):
         raise AssertionError("should not be here")
 
 
+def test_log_debug(capsys):
+    log_info("debug")
+    assert capsys.readouterr().err == "debug\n"
+
+
 def test_log_info(capsys):
     log_info("in", nl=False)
     log_info("fo")
