@@ -33,4 +33,4 @@ def test_get_req_name(requirement, expected):
     "requirements,expected", [(["pkga", "./pkga", "pkgb"], ["pkga", "pkgb"])]
 )
 def test_get_req_names(requirements, expected):
-    assert list(get_req_names(requirements)) == expected
+    assert get_req_names(requirements) == expected
