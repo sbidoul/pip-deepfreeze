@@ -1,16 +1,16 @@
 from pathlib import Path
-from typing import Iterable, Iterator, List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple
 
+from .compat import shlex_join
 from .list_depends import list_depends
 from .project_name import get_project_name
 from .req_file_parser import (
     NestedRequirementsLine,
     RequirementLine,
     parse as parse_req_file,
-    parse_lines as parse_req_file_lines,
 )
 from .req_parser import get_req_name
-from .utils import check_call, check_output, log_info
+from .utils import check_call, check_output, log_debug, log_info
 
 
 def pip_upgrade_project(
@@ -73,7 +73,7 @@ def pip_upgrade_project(
             to_uninstall.add(installed_req_name)
     if to_uninstall:
         to_uninstall_str = ",".join(to_uninstall)
-        log_info(f"Uninstalling dependencies to upgrade: {to_uninstall_str}")
+        log_info(f"Uninstalling dependencies to update: {to_uninstall_str}")
         pip_uninstall(python, to_uninstall)
     # 4. install project with constraints
     # TODO Using -c here would break with the new pip resolver:
@@ -83,7 +83,8 @@ def pip_upgrade_project(
     #      then the second best approach is to use -r here, and let
     #      sync's --uninstall option remove what we don't need.
     #      But the REQUESTED metadata will be incorrect.
-    log_info("Installing project")
+    project_name = get_project_name(python, project_root)
+    log_info(f"Installing/updating {project_name}")
     cmd = [python, "-m", "pip", "install", "-r", f"{constraints_filename}"]
     if editable:
         cmd.append("-e")
@@ -92,6 +93,10 @@ def pip_upgrade_project(
         cmd.append(f"{project_root}[{extras_str}]")
     else:
         cmd.append(f"{project_root}")
+    log_debug(f"Running {shlex_join(cmd)}")
+    log_debug(f"with {constraints_filename}:")
+    with open(constraints_filename) as f:
+        log_debug(f.read().strip())
     check_call(cmd)
 
 
@@ -133,33 +138,3 @@ def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
     if list(requirements):
         cmd = [python, "-m", "pip", "uninstall", "--yes"] + list(requirements)
         check_call(cmd)
-
-
-def _req_names(req_lines: Iterable[str]) -> Iterator[str]:
-    for req_line in parse_req_file_lines(req_lines, "<requirements>"):
-        if not isinstance(req_line, RequirementLine):
-            continue
-        req_name = get_req_name(req_line.requirement)
-        if not req_name:
-            continue
-        yield req_name
-
-
-def pip_uninstall_unneeded(
-    python: str, project_root: Path, extras: Optional[Iterable[str]]
-) -> None:
-    """Uninstall distributions that are not dependencies of project.
-
-    This removes {pip_freeze} - {pip_freeze_dependencies} - {project_name}
-    """
-    frozen = set(_req_names(pip_freeze(python)))
-    frozen_deps = set(
-        _req_names(pip_freeze_dependencies(python, project_root, extras)[0])
-    )
-    project_name = {get_project_name(python, project_root)}
-    to_uninstall = frozen - frozen_deps - project_name
-    to_uninstall = {r for r in to_uninstall if r is not None}  # filter out unnamed
-    if to_uninstall:
-        to_uninstall_str = ",".join(to_uninstall)
-        log_info(f"Uninstalling unneeded distributions: {to_uninstall_str}")
-        pip_uninstall(python, to_uninstall)
