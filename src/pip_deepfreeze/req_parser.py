@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Iterable, Iterator, Optional
 
 from packaging.requirements import InvalidRequirement, Requirement
 
@@ -30,3 +30,10 @@ def get_req_name(requirement: str) -> Optional[str]:
     if not name:
         return None
     return canonicalize_name(name)
+
+
+def get_req_names(requirements: Iterable[str]) -> Iterator[str]:
+    for requirement in requirements:
+        req_name = get_req_name(requirement)
+        if req_name:
+            yield req_name
