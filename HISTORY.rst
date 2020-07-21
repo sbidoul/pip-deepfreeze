@@ -1,3 +1,17 @@
+ 0.4.0 (2020-07-21)
+===================
+
+Features
+--------
+
+- Add ``--uninstall-unneeded`` option to uninstall distributions that are not
+  dependencies of the project. (`#11 <https://github.com/sbidoul/pip-deepfreeze/issues/11>`_)
+- More complete and visible logging. We log the main steps in blue to distinguish
+  them from pip logs. (`#16 <https://github.com/sbidoul/pip-deepfreeze/issues/16>`_)
+- Windows and macOS compatibility. (`#17 <https://github.com/sbidoul/pip-deepfreeze/issues/17>`_)
+- Add ``--verbose`` option. (`#22 <https://github.com/sbidoul/pip-deepfreeze/issues/22>`_)
+
+
 0.3.0 (2020-07-19)
 ==================
 
