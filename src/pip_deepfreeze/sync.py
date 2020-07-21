@@ -61,5 +61,5 @@ def sync(
                 if isinstance(parsed_req_line, OptionsLine):
                     print(parsed_req_line.raw_line, file=f)
         # output frozen dependencies of project
-        for req_line in pip_freeze_dependencies(python, project_root, extras):
+        for req_line in pip_freeze_dependencies(python, project_root, extras)[0]:
             print(req_line, file=f)

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable, Iterator, Optional
+from typing import Iterable, Iterator, List, Optional, Tuple
 
 from .list_depends import list_depends
 from .project_name import get_project_name
@@ -60,7 +60,7 @@ def pip_upgrade_project(
     # 2. get installed frozen dependencies of project
     installed_reqs = {
         get_req_name(req_line): req_line
-        for req_line in pip_freeze_dependencies(python, project_root, extras)
+        for req_line in pip_freeze_dependencies(python, project_root, extras)[0]
     }
     assert all(installed_reqs.keys())  # TODO user error instead?
     # 3. uninstall dependencies that do not match constraints
@@ -103,19 +103,29 @@ def pip_freeze(python: str) -> Iterable[str]:
 
 def pip_freeze_dependencies(
     python: str, project_root: Path, extras: Optional[Iterable[str]] = None
-) -> Iterable[str]:
-    """Run pip freeze, returning only dependencies of the project."""
+) -> Tuple[List[str], List[str]]:
+    """Run pip freeze, returning only dependencies of the project.
+
+    Return the list of dependencies, and the list of other dependencies
+    (except the project itself). Dependencies are returned in pip freeze
+    format. Unnamed requirements are ignored.
+    """
     project_name = get_project_name(python, project_root)
     if extras:
         raise NotImplementedError("extras")
-    dependencies = list_depends(python, project_name)
-    frozen = pip_freeze(python)
-    for frozen_req in frozen:
+    dependencies_names = list_depends(python, project_name)
+    frozen_reqs = pip_freeze(python)
+    dependencies_reqs = []
+    unneeded_reqs = []
+    for frozen_req in frozen_reqs:
         frozen_req_name = get_req_name(frozen_req)
         if not frozen_req_name:
             continue
-        if frozen_req_name in dependencies:
-            yield frozen_req
+        if frozen_req_name in dependencies_names:
+            dependencies_reqs.append(frozen_req)
+        elif frozen_req_name != project_name:
+            unneeded_reqs.append(frozen_req)
+    return dependencies_reqs, unneeded_reqs
 
 
 def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
@@ -143,7 +153,9 @@ def pip_uninstall_unneeded(
     This removes {pip_freeze} - {pip_freeze_dependencies} - {project_name}
     """
     frozen = set(_req_names(pip_freeze(python)))
-    frozen_deps = set(_req_names(pip_freeze_dependencies(python, project_root, extras)))
+    frozen_deps = set(
+        _req_names(pip_freeze_dependencies(python, project_root, extras)[0])
+    )
     project_name = {get_project_name(python, project_root)}
     to_uninstall = frozen - frozen_deps - project_name
     to_uninstall = {r for r in to_uninstall if r is not None}  # filter out unnamed
