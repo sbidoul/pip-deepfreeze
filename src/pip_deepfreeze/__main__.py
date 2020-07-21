@@ -6,7 +6,7 @@ import typer
 
 from .detect import supports_editable
 from .sync import sync as sync_operation
-from .utils import log_error
+from .utils import log_debug, log_error
 
 app = typer.Typer()
 
@@ -85,6 +85,7 @@ def callback(
     if not python_abspath:
         log_error(f"Python interpreter {python!r} not found.")
         raise typer.Exit(1)
+    log_debug(f"Using {python_abspath}")
     ctx.obj.python = python_abspath
     # TODO prompt if python is same as sys.executable
 
