@@ -27,7 +27,27 @@ def open_with_rollback(
             raise
         else:
             f.close()
+            if filename.exists():
+                filename.unlink()
             temp_filename.rename(filename)
+
+
+_verbosity = 0
+
+
+def increase_verbosity() -> None:
+    global _verbosity
+    _verbosity += 1
+
+
+def decrease_verbosity() -> None:
+    global _verbosity
+    _verbosity -= 1
+
+
+def log_debug(msg: str) -> None:
+    if _verbosity > 0:
+        typer.secho(msg, dim=True, err=True)
 
 
 def log_info(msg: str, nl: bool = True) -> None:

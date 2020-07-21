@@ -6,7 +6,7 @@ import typer
 
 from .detect import supports_editable
 from .sync import sync as sync_operation
-from .utils import log_error
+from .utils import increase_verbosity, log_debug, log_error
 
 app = typer.Typer()
 
@@ -54,9 +54,9 @@ def sync(
         ),
         show_default=False,
     ),
-    # uninstall: bool = typer.Option(
-    #     False, help=("Uninstall dependencies that are not needed anymore.")
-    # ),
+    uninstall_unneeded: bool = typer.Option(
+        False, help=("Uninstall dependencies that are not needed anymore.")
+    ),
 ) -> None:
     if editable is None:
         editable = supports_editable()
@@ -69,7 +69,7 @@ def sync(
         to_upgrade,
         editable,
         extras=[],
-        uninstall=False,
+        uninstall_unneeded=uninstall_unneeded,
         project_root=Path.cwd(),
     )
 
@@ -78,15 +78,19 @@ def sync(
 def callback(
     ctx: typer.Context,
     python: str = typer.Option(default="python", show_default=True, metavar="PYTHON"),
-    # verbose: bool = typer.Option(False, "--verbose", "-v"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", show_default=False),
 ) -> None:
     """A simple pip freeze workflow for Python application developers."""
+    # handle verbosity/quietness
+    if verbose:
+        increase_verbosity()
+    # find python
     python_abspath = shutil.which(python)
     if not python_abspath:
         log_error(f"Python interpreter {python!r} not found.")
         raise typer.Exit(1)
     ctx.obj.python = python_abspath
-    # TODO prompt if python is same as sys.executable
+    log_debug(f"Using {python_abspath}")
 
 
 def main() -> None:

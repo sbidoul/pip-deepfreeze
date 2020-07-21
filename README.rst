@@ -159,6 +159,7 @@ Global options::
 
     Options:
       --python PYTHON       [default: python]
+      -v, --verbose
       --install-completion  Install completion for the current shell.
       --show-completion     Show completion for the current shell, to copy it or
                             customize the installation.
@@ -184,6 +185,10 @@ Global options::
 
       --editable / --no-editable  Install the project in editable mode. Defaults
                                   to editable if the project supports it.
+
+      --uninstall-unneeded / --no-uninstall-unneeded
+                                  Uninstall dependencies that are not needed
+                                  anymore.  [default: False]
 
       --help                      Show this message and exit.
 

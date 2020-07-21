@@ -1,6 +1,7 @@
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, List, Optional, Tuple
 
+from .compat import shlex_join
 from .list_depends import list_depends
 from .project_name import get_project_name
 from .req_file_parser import (
@@ -9,7 +10,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .utils import check_call, check_output, log_info
+from .utils import check_call, check_output, log_debug, log_info
 
 
 def pip_upgrade_project(
@@ -59,7 +60,7 @@ def pip_upgrade_project(
     # 2. get installed frozen dependencies of project
     installed_reqs = {
         get_req_name(req_line): req_line
-        for req_line in pip_freeze_dependencies(python, project_root)
+        for req_line in pip_freeze_dependencies(python, project_root, extras)[0]
     }
     assert all(installed_reqs.keys())  # TODO user error instead?
     # 3. uninstall dependencies that do not match constraints
@@ -72,7 +73,7 @@ def pip_upgrade_project(
             to_uninstall.add(installed_req_name)
     if to_uninstall:
         to_uninstall_str = ",".join(to_uninstall)
-        log_info(f"Uninstalling dependencies to upgrade: {to_uninstall_str}")
+        log_info(f"Uninstalling dependencies to update: {to_uninstall_str}")
         pip_uninstall(python, to_uninstall)
     # 4. install project with constraints
     # TODO Using -c here would break with the new pip resolver:
@@ -82,7 +83,8 @@ def pip_upgrade_project(
     #      then the second best approach is to use -r here, and let
     #      sync's --uninstall option remove what we don't need.
     #      But the REQUESTED metadata will be incorrect.
-    log_info("Installing project")
+    project_name = get_project_name(python, project_root)
+    log_info(f"Installing/updating {project_name}")
     cmd = [python, "-m", "pip", "install", "-r", f"{constraints_filename}"]
     if editable:
         cmd.append("-e")
@@ -91,6 +93,10 @@ def pip_upgrade_project(
         cmd.append(f"{project_root}[{extras_str}]")
     else:
         cmd.append(f"{project_root}")
+    log_debug(f"Running {shlex_join(cmd)}")
+    log_debug(f"with {constraints_filename}:")
+    with open(constraints_filename) as f:
+        log_debug(f.read().strip())
     check_call(cmd)
 
 
@@ -102,17 +108,29 @@ def pip_freeze(python: str) -> Iterable[str]:
 
 def pip_freeze_dependencies(
     python: str, project_root: Path, extras: Optional[Iterable[str]] = None
-) -> Iterable[str]:
-    """Run pip freeze, returning only dependencies of the project."""
+) -> Tuple[List[str], List[str]]:
+    """Run pip freeze, returning only dependencies of the project.
+
+    Return the list of dependencies, and the list of other dependencies
+    (except the project itself). Dependencies are returned in pip freeze
+    format. Unnamed requirements are ignored.
+    """
     project_name = get_project_name(python, project_root)
-    dependencies = list_depends(python, project_name)
-    frozen = pip_freeze(python)
-    for frozen_req in frozen:
+    if extras:
+        raise NotImplementedError("extras")
+    dependencies_names = list_depends(python, project_name)
+    frozen_reqs = pip_freeze(python)
+    dependencies_reqs = []
+    unneeded_reqs = []
+    for frozen_req in frozen_reqs:
         frozen_req_name = get_req_name(frozen_req)
         if not frozen_req_name:
             continue
-        if frozen_req_name in dependencies:
-            yield frozen_req
+        if frozen_req_name in dependencies_names:
+            dependencies_reqs.append(frozen_req)
+        elif frozen_req_name != project_name:
+            unneeded_reqs.append(frozen_req)
+    return dependencies_reqs, unneeded_reqs
 
 
 def pip_uninstall(python: str, requirements: Iterable[str]) -> None:

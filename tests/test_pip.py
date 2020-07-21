@@ -37,11 +37,17 @@ def test_pip_freeze(to_install, expected, virtualenv_python, testpkgs):
 
 
 @pytest.mark.parametrize(
-    "install_requires, expected",
-    [([], []), (["pkga"], ["pkga==0.0.0"]), (["pkgb"], ["pkga==0.0.0", "pkgb==0.0.0"])],
+    "install_requires, other_installs, expected",
+    [
+        ([], [], [[], []]),
+        ([], ["pkgc"], [[], ["pkgc==0.0.3"]]),
+        (["pkga"], [], [["pkga==0.0.0"], []]),
+        (["pkgb"], [], [["pkga==0.0.0", "pkgb==0.0.0"], []]),
+        (["pkgb"], ["pkgc"], [["pkga==0.0.0", "pkgb==0.0.0"], ["pkgc==0.0.3"]]),
+    ],
 )
 def test_pip_freeze_dependencies(
-    install_requires, expected, virtualenv_python, testpkgs, tmp_path
+    install_requires, other_installs, expected, virtualenv_python, testpkgs, tmp_path
 ):
     # note: complex dependency situations are tested in test_list_depends.py
     (tmp_path / "setup.py").write_text(
@@ -68,6 +74,7 @@ def test_pip_freeze_dependencies(
             "-e",
             str(tmp_path),  # str required for py < 3.8 on windows
         ]
+        + other_installs
     )
     assert list(pip_freeze_dependencies(virtualenv_python, tmp_path)) == expected
 

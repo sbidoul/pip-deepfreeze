@@ -1,6 +1,6 @@
 import pytest
 
-from pip_deepfreeze.req_parser import canonicalize_name, get_req_name
+from pip_deepfreeze.req_parser import canonicalize_name, get_req_name, get_req_names
 
 
 @pytest.mark.parametrize(
@@ -27,3 +27,10 @@ def test_canonicalize_name(req_name, expected):
 )
 def test_get_req_name(requirement, expected):
     assert get_req_name(requirement) == expected
+
+
+@pytest.mark.parametrize(
+    "requirements,expected", [(["pkga", "./pkga", "pkgb"], ["pkga", "pkgb"])]
+)
+def test_get_req_names(requirements, expected):
+    assert list(get_req_names(requirements)) == expected
