@@ -1,14 +1,15 @@
 import tempfile
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import httpx
+import typer
 
 from .pip import pip_freeze_dependencies, pip_uninstall, pip_upgrade_project
 from .project_name import get_project_name
 from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
-from .req_parser import get_req_name
+from .req_parser import get_req_names
 from .utils import log_debug, log_info, open_with_rollback
 
 
@@ -18,7 +19,7 @@ def sync(
     to_upgrade: List[str],
     editable: bool,
     extras: List[str],
-    uninstall_unneeded: bool,
+    uninstall_unneeded: Optional[bool],
     project_root: Path,
 ) -> None:
     project_name = get_project_name(python, project_root)
@@ -66,15 +67,28 @@ def sync(
             print(req_line, file=f)
     # uninstall unneeded dependencies, if asked to do so
     if unneeded_reqs:
-        unneeded_req_names = [get_req_name(r) for r in unneeded_reqs]
-        unneeded_req_names2 = [n for n in unneeded_req_names if n]
-        unneeded_reqs_str = ",".join(unneeded_req_names2)
+        unneeded_req_names = get_req_names(unneeded_reqs)
+        unneeded_reqs_str = ",".join(unneeded_req_names)
+        prompted = False
+        if uninstall_unneeded is None:
+            uninstall_unneeded = typer.confirm(
+                typer.style(
+                    f"The following distributions "
+                    f"that are not dependencies of {project_name} "
+                    f"are also installed: {unneeded_reqs_str}.\n"
+                    f"Do you want to uninstall them?",
+                    bold=True,
+                ),
+                default=False,
+                show_default=True,
+            )
+            prompted = True
         if uninstall_unneeded:
             log_info(f"Uninstalling unneeded distributions: {unneeded_reqs_str}")
-            pip_uninstall(python, unneeded_req_names2)
-        else:
+            pip_uninstall(python, unneeded_req_names)
+        elif not prompted:
             log_debug(
                 f"The following distributions "
                 f"that are not dependencies of {project_name} "
-                f"are installed: {unneeded_reqs_str}"
+                f"are also installed: {unneeded_reqs_str}"
             )

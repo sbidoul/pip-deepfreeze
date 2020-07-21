@@ -186,9 +186,10 @@ Global options::
       --editable / --no-editable  Install the project in editable mode. Defaults
                                   to editable if the project supports it.
 
-      --uninstall-unneeded / --no-uninstall-unneeded
+  --uninstall-unneeded / --no-uninstall-unneeded
                                   Uninstall dependencies that are not needed
-                                  anymore.  [default: False]
+                                  anymore. If not specified, ask confirmation.
+
 
       --help                      Show this message and exit.
 

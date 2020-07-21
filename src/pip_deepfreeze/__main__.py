@@ -55,7 +55,11 @@ def sync(
         show_default=False,
     ),
     uninstall_unneeded: bool = typer.Option(
-        False, help=("Uninstall dependencies that are not needed anymore.")
+        None,
+        help=(
+            "Uninstall dependencies that are not needed anymore. "
+            "If not specified, ask confirmation."
+        ),
     ),
 ) -> None:
     if editable is None:
