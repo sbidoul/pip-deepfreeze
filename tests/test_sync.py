@@ -209,7 +209,7 @@ def test_sync_project_root(virtualenv_python, editable_foobar_path):
         to_upgrade=[],
         editable=True,
         extras=[],
-        uninstall=False,
+        uninstall_unneeded=False,
         project_root=editable_foobar_path,
     )
     assert (editable_foobar_path / "requirements.txt").exists()
@@ -234,7 +234,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         to_upgrade=[],
         editable=True,
         extras=[],
-        uninstall=False,
+        uninstall_unneeded=False,
         project_root=tmp_path,
     )
     assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
@@ -255,7 +255,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         to_upgrade=[],
         editable=True,
         extras=[],
-        uninstall=False,
+        uninstall_unneeded=False,
         project_root=tmp_path,
     )
     assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
@@ -266,7 +266,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         to_upgrade=[],
         editable=True,
         extras=[],
-        uninstall=True,
+        uninstall_unneeded=True,
         project_root=tmp_path,
     )
     assert "pkga==" not in "\n".join(pip_freeze(virtualenv_python))
