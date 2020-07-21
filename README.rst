@@ -158,7 +158,9 @@ Global options::
       A simple pip freeze workflow for Python application developers.
 
     Options:
-      --python PYTHON       [default: python]
+      --python PYTHON       The python executable to use. Determines the virtual
+                            environment into which the project is to be installed.
+                            Defaults to the 'python' executable found in PATH.
       -v, --verbose
       --install-completion  Install completion for the current shell.
       --show-completion     Show completion for the current shell, to copy it or
@@ -186,10 +188,9 @@ Global options::
       --editable / --no-editable  Install the project in editable mode. Defaults
                                   to editable if the project supports it.
 
-  --uninstall-unneeded / --no-uninstall-unneeded
+      --uninstall-unneeded / --no-uninstall-unneeded
                                   Uninstall dependencies that are not needed
                                   anymore. If not specified, ask confirmation.
-
 
       --help                      Show this message and exit.
 
@@ -200,17 +201,21 @@ Global options::
    find yourself writing ``import pip_deepfreeze``, please don't, as everything
    may change without notice. Or rather, get in touch to discuss your needs.
 
-Roadmap
--------
+Other tools
+-----------
 
--  Stabilize CLI options.
--  Optionally uninstall unneeded dependencies.
--  Support extras (e.g. for a ``test`` extra, we would have
-   ``requirements-test.txt`` which includes ``requirements.txt`` and
-   optionally ``requirements-test.txt.in``).
--  Support different target environements for the same project (e.g.
-   different python versions, which may result in different packages
-   being installed). Is this actually useful in practice ?
+Several other tools exist with a similar scope as ``pip-deepfreeze``.
+
+- `pip <https://pip.pypa.io/en/stable/>`_ itself. ``pip-deepfreeze`` relies
+  extensively on the ``pip`` CLI for installation and querying the database of
+  installed distributions. In essence it is a thin wrapper around ``pip
+  install``. Some of the features here may serve as inspiration for future
+  ``pip`` evolutions.
+- `pip-tools <https://pypi.org/project/pip-tools/>`_. This is the one with the most
+  similar features. Besides the reasons explained in `About`_ above I wanted to see
+  if it was possible to do such a thing using the ``pip`` CLI only.
+- `Poetry <https://python-poetry.org/>`_.
+- `pipenv <https://pipenv.pypa.io/en/latest/>`_.
 
 Development
 -----------
@@ -233,3 +238,12 @@ To release:
 - ``towncrier --version x.y.z``.
 - Inspect and commit the updated ``HISTORY.rst``.
 - ``git tag x.y.z ; git push --tags``.
+
+Contributing
+------------
+
+We welcome contributions of all kinds.
+
+Please consult the `issue tracker
+<https://github.com/sbidoul/pip-deepfreeze/issues>`_ to discover the roadmap
+and known bugs.

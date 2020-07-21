@@ -81,7 +81,16 @@ def sync(
 @app.callback()
 def callback(
     ctx: typer.Context,
-    python: str = typer.Option(default="python", show_default=True, metavar="PYTHON"),
+    python: str = typer.Option(
+        default="python",
+        show_default=False,
+        metavar="PYTHON",
+        help=(
+            "The python executable to use. Determines the virtual environment into "
+            "which the project is to be installed. Defaults to the 'python' executable "
+            "found in PATH."
+        ),
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", show_default=False),
 ) -> None:
     """A simple pip freeze workflow for Python application developers."""
