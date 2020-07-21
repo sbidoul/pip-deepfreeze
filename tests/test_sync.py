@@ -270,3 +270,99 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         project_root=tmp_path,
     )
     assert "pkga==" not in "\n".join(pip_freeze(virtualenv_python))
+
+
+@pytest.mark.xfail(reason="https://github.com/sbidoul/pip-deepfreeze/issues/24")
+def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
+    """Test that a preinstalled dependency is updated when project is not installed
+    before sync.
+
+    This case may also happen when adding intermediate dependencies
+    """
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "-f",
+            testpkgs,
+            "pkgc==0.0.1",
+        ]
+    )
+    assert "pkgc==0.0.1" in "\n".join(pip_freeze(virtualenv_python))
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+            setup(name="theproject", install_requires=["pkgc"])
+            """
+        )
+    )
+    (tmp_path / "requirements.txt.in").write_text(
+        textwrap.dedent(
+            f"""\
+            --no-index
+            -f {testpkgs}
+            """
+        )
+    )
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=["pkgc"],
+        editable=True,
+        extras=[],
+        uninstall_unneeded=False,
+        project_root=tmp_path,
+    )
+    assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
+
+
+@pytest.mark.xfail(reason="https://github.com/sbidoul/pip-deepfreeze/issues/24")
+def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
+    """Test that a preinstalled dependency is updated when project is not installed
+    before sync.
+
+    This case may also happen when adding intermediate dependencies
+    """
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "-f",
+            testpkgs,
+            "pkgc==0.0.1",
+        ]
+    )
+    assert "pkgc==0.0.1" in "\n".join(pip_freeze(virtualenv_python))
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+            setup(name="theproject", install_requires=["pkgc"])
+            """
+        )
+    )
+    (tmp_path / "requirements.txt.in").write_text(
+        textwrap.dedent(
+            f"""\
+            --no-index
+            -f {testpkgs}
+            """
+        )
+    )
+    sync(
+        virtualenv_python,
+        upgrade_all=True,
+        to_upgrade=[],
+        editable=True,
+        extras=[],
+        uninstall_unneeded=False,
+        project_root=tmp_path,
+    )
+    assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
