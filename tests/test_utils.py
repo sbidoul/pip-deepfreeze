@@ -44,7 +44,7 @@ def test_log_debug(capsys):
     assert "debug" not in capsys.readouterr().err
     increase_verbosity()
     try:
-        log_info("debug")
+        log_debug("debug")
         assert capsys.readouterr().err == "debug\n"
     finally:
         decrease_verbosity()

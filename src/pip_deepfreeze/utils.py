@@ -47,7 +47,7 @@ def decrease_verbosity() -> None:
 
 def log_debug(msg: str) -> None:
     if _verbosity > 0:
-        typer.secho(msg, dim=True)
+        typer.secho(msg, dim=True, err=True)
 
 
 def log_info(msg: str, nl: bool = True) -> None:
