@@ -94,9 +94,13 @@ def pip_upgrade_project(
     else:
         cmd.append(f"{project_root}")
     log_debug(f"Running {shlex_join(cmd)}")
-    log_debug(f"with {constraints_filename}:")
     with open(constraints_filename) as f:
-        log_debug(f.read().strip())
+        constraints = f.read().strip()
+        if constraints:
+            log_debug(f"with {constraints_filename}:")
+            log_debug(constraints)
+        else:
+            log_debug(f"with empty {constraints_filename}.")
     check_call(cmd)
 
 
