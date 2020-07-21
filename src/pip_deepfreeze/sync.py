@@ -4,7 +4,7 @@ from typing import List
 
 import httpx
 
-from .pip import pip_freeze_dependencies, pip_upgrade_project
+from .pip import pip_freeze_dependencies, pip_uninstall_unneeded, pip_upgrade_project
 from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
 from .utils import log_info, open_with_rollback
@@ -16,7 +16,7 @@ def sync(
     to_upgrade: List[str],
     editable: bool,
     extras: List[str],
-    uninstall: bool,
+    uninstall_unneeded: bool,
     project_root: Path,
 ) -> None:
     requirements_frozen = project_root / "requirements.txt"
@@ -42,8 +42,8 @@ def sync(
     finally:
         constraints_path.unlink()
     # uninstall unneeded dependencies, if asked to do so
-    if uninstall:
-        raise NotImplementedError("--uninstall not implemented yet")
+    if uninstall_unneeded:
+        pip_uninstall_unneeded(python, project_root, extras)
     # freeze
     log_info(f"Updating {requirements_frozen}")
     with open_with_rollback(requirements_frozen) as f:
@@ -61,5 +61,5 @@ def sync(
                 if isinstance(parsed_req_line, OptionsLine):
                     print(parsed_req_line.raw_line, file=f)
         # output frozen dependencies of project
-        for req_line in pip_freeze_dependencies(python, project_root):
+        for req_line in pip_freeze_dependencies(python, project_root, extras):
             print(req_line, file=f)

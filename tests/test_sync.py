@@ -213,3 +213,60 @@ def test_sync_project_root(virtualenv_python, editable_foobar_path):
         project_root=editable_foobar_path,
     )
     assert (editable_foobar_path / "requirements.txt").exists()
+
+
+def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
+    setup_py = tmp_path / "setup.py"
+    setup_py.write_text(
+        textwrap.dedent(
+            """
+            from setuptools import setup
+
+            setup(name="foobar", version="0.0.1", install_requires=["pkga"])
+            """
+        )
+    )
+    in_reqs = tmp_path / "requirements.txt.in"
+    in_reqs.write_text(f"-f {testpkgs}")
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=[],
+        uninstall=False,
+        project_root=tmp_path,
+    )
+    assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
+    # remove dependency on pkga
+    setup_py.write_text(
+        textwrap.dedent(
+            """
+            from setuptools import setup
+
+            setup(name="foobar", version="0.0.1", install_requires=[])
+            """
+        )
+    )
+    # sync with uninstall=False, pkga remains
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=[],
+        uninstall=False,
+        project_root=tmp_path,
+    )
+    assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
+    # sync with uninstall=True, pkga removed
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=[],
+        uninstall=True,
+        project_root=tmp_path,
+    )
+    assert "pkga==" not in "\n".join(pip_freeze(virtualenv_python))

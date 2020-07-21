@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, Iterator, Optional
 
 from .list_depends import list_depends
 from .project_name import get_project_name
@@ -7,6 +7,7 @@ from .req_file_parser import (
     NestedRequirementsLine,
     RequirementLine,
     parse as parse_req_file,
+    parse_lines as parse_req_file_lines,
 )
 from .req_parser import get_req_name
 from .utils import check_call, check_output, log_info
@@ -59,7 +60,7 @@ def pip_upgrade_project(
     # 2. get installed frozen dependencies of project
     installed_reqs = {
         get_req_name(req_line): req_line
-        for req_line in pip_freeze_dependencies(python, project_root)
+        for req_line in pip_freeze_dependencies(python, project_root, extras)
     }
     assert all(installed_reqs.keys())  # TODO user error instead?
     # 3. uninstall dependencies that do not match constraints
@@ -105,6 +106,8 @@ def pip_freeze_dependencies(
 ) -> Iterable[str]:
     """Run pip freeze, returning only dependencies of the project."""
     project_name = get_project_name(python, project_root)
+    if extras:
+        raise NotImplementedError("extras")
     dependencies = list_depends(python, project_name)
     frozen = pip_freeze(python)
     for frozen_req in frozen:
@@ -120,3 +123,31 @@ def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
     if list(requirements):
         cmd = [python, "-m", "pip", "uninstall", "--yes"] + list(requirements)
         check_call(cmd)
+
+
+def _req_names(req_lines: Iterable[str]) -> Iterator[str]:
+    for req_line in parse_req_file_lines(req_lines, "<requirements>"):
+        if not isinstance(req_line, RequirementLine):
+            continue
+        req_name = get_req_name(req_line.requirement)
+        if not req_name:
+            continue
+        yield req_name
+
+
+def pip_uninstall_unneeded(
+    python: str, project_root: Path, extras: Optional[Iterable[str]]
+) -> None:
+    """Uninstall distributions that are not dependencies of project.
+
+    This removes {pip_freeze} - {pip_freeze_dependencies} - {project_name}
+    """
+    frozen = set(_req_names(pip_freeze(python)))
+    frozen_deps = set(_req_names(pip_freeze_dependencies(python, project_root, extras)))
+    project_name = {get_project_name(python, project_root)}
+    to_uninstall = frozen - frozen_deps - project_name
+    to_uninstall = {r for r in to_uninstall if r is not None}  # filter out unnamed
+    if to_uninstall:
+        to_uninstall_str = ",".join(to_uninstall)
+        log_info(f"Uninstalling unneeded distributions: {to_uninstall_str}")
+        pip_uninstall(python, to_uninstall)

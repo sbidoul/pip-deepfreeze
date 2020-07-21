@@ -6,6 +6,11 @@ from .utils import check_output
 
 
 def list_depends(python: str, project_name: str) -> Set[str]:
+    """List dependencies of an installed project.
+
+    Return canonicalized distribution names, excluding the project
+    itself.
+    """
     with resource_as_file(
         resource_files("pip_deepfreeze").joinpath(  # type: ignore
             "list_depends_script.py"

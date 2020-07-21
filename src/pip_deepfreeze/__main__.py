@@ -54,9 +54,9 @@ def sync(
         ),
         show_default=False,
     ),
-    # uninstall: bool = typer.Option(
-    #     False, help=("Uninstall dependencies that are not needed anymore.")
-    # ),
+    uninstall_unneeded: bool = typer.Option(
+        False, help=("Uninstall dependencies that are not needed anymore.")
+    ),
 ) -> None:
     if editable is None:
         editable = supports_editable()
@@ -69,7 +69,7 @@ def sync(
         to_upgrade,
         editable,
         extras=[],
-        uninstall=False,
+        uninstall_unneeded=uninstall_unneeded,
         project_root=Path.cwd(),
     )
 
