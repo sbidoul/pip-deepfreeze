@@ -57,11 +57,19 @@ def sync(
     uninstall_unneeded: bool = typer.Option(
         None,
         help=(
-            "Uninstall dependencies that are not needed anymore. "
+            "Uninstall distributions that are not dependencies of the project. "
             "If not specified, ask confirmation."
         ),
     ),
 ) -> None:
+    """Install/update the the environment to match the project requirements.
+
+    Install/reinstall the project. Install/update dependencies to the
+    latest allowed version according to pinned dependencies in
+    requirements.txt or constraints in requirements.txt.in. On demand
+    update of dependencies to to the latest version that matches
+    constraints. Optionally uninstall unneeded dependencies.
+    """
     if editable is None:
         editable = supports_editable()
     elif editable and not supports_editable():

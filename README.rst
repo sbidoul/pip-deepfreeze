@@ -175,6 +175,14 @@ Global options::
 
     Usage: pip-df sync [OPTIONS]
 
+      Install/update the the environment to match the project requirements.
+
+      Install/reinstall the project. Install/update dependencies to the latest
+      allowed version according to pinned dependencies in requirements.txt or
+      constraints in requirements.txt.in. On demand update of dependencies to
+      to the latest version that matches constraints. Optionally uninstall
+      unneeded dependencies.
+
     Options:
       -u, --update DEPENDENCY     Make sure DEPENDENCY is upgraded (or downgraded)
                                   to the latest allowed version. If DEPENDENCY is
@@ -189,8 +197,9 @@ Global options::
                                   to editable if the project supports it.
 
       --uninstall-unneeded / --no-uninstall-unneeded
-                                  Uninstall dependencies that are not needed
-                                  anymore. If not specified, ask confirmation.
+                                  Uninstall distributions that are not
+                                  dependencies of the project. If not
+                                  specified, ask confirmation.
 
       --help                      Show this message and exit.
 
