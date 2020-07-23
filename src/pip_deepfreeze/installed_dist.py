@@ -1,8 +1,23 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from packaging.requirements import Requirement
 
 from .req_parser import canonicalize_name
+
+
+class DirectUrl:
+    def __init__(self, data: Dict[str, Any]):
+        self.data = data
+
+    def __str__(self) -> str:
+        url = self.data.get("url")
+        vcs_info = self.data.get("vcs_info")
+        if vcs_info:
+            vcs = vcs_info.get("vcs")
+            commit_id = vcs_info.get("commit_id")
+            return f"{vcs}+{url}@{commit_id}"
+        else:
+            return str(url)
 
 
 class InstalledDistribution:
@@ -18,6 +33,13 @@ class InstalledDistribution:
         version = self.data["metadata"]["version"]
         assert isinstance(version, str)
         return version
+
+    @property
+    def direct_url(self) -> Optional[DirectUrl]:
+        direct_url = self.data.get("direct_url")
+        if direct_url is None:
+            return None
+        return DirectUrl(direct_url)
 
     @property
     def requires_dist(self) -> List[Requirement]:

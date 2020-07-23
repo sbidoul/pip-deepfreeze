@@ -6,6 +6,7 @@ import typer
 
 from .detect import supports_editable
 from .sync import sync as sync_operation
+from .tree import tree as tree_operation
 from .utils import increase_verbosity, log_debug, log_error
 
 app = typer.Typer()
@@ -85,6 +86,11 @@ def sync(
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
     )
+
+
+@app.command()
+def tree(ctx: typer.Context) -> None:
+    tree_operation(ctx.obj.python, project_root=ctx.obj.project_root, extras=[])
 
 
 @app.callback()
