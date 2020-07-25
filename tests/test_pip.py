@@ -3,10 +3,12 @@ import textwrap
 from typing import Iterable, Iterator
 
 import pytest
+from packaging.requirements import Requirement
 
 from pip_deepfreeze.pip import (
     pip_freeze,
     pip_freeze_dependencies,
+    pip_list,
     pip_uninstall,
     pip_upgrade_project,
 )
@@ -49,7 +51,7 @@ def test_pip_freeze(to_install, expected, virtualenv_python, testpkgs):
 def test_pip_freeze_dependencies(
     install_requires, other_installs, expected, virtualenv_python, testpkgs, tmp_path
 ):
-    # note: complex dependency situations are tested in test_list_depends.py
+    # note: complex dependency situations are tested in test_list_installed_depends.py
     (tmp_path / "setup.py").write_text(
         textwrap.dedent(
             f"""
@@ -213,3 +215,63 @@ def test_pip_upgrade_vcs_url(virtualenv_python, tmp_path):
         "toml @ git+https://github.com/uiri/toml"
         "@a86fc1fbd650a19eba313c3f642c9e2c679dc8d6"
     ]
+
+
+def test_pip_list(virtualenv_python, testpkgs):
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "-f",
+            testpkgs,
+            "pkgb",
+        ]
+    )
+    installed_dists = pip_list(virtualenv_python)
+    assert set(installed_dists.keys()) == {"pkga", "pkgb", "pip", "wheel", "setuptools"}
+    pkga_dist = installed_dists["pkga"]
+    assert pkga_dist.name == "pkga"
+    assert pkga_dist.version == "0.0.0"
+    # assert pkga_dist.direct_url is None
+    pkgb_dist = installed_dists["pkgb"]
+    assert pkgb_dist.name == "pkgb"
+    assert pkgb_dist.version == "0.0.0"
+    assert repr(pkgb_dist.requires) == repr([Requirement("pkga")])
+    assert repr(pkgb_dist.requires_dist) == repr([Requirement("pkga<0.0.1")])
+    # assert pkga_dist.direct_url is None
+
+
+def test_pip_list_extras(virtualenv_python, testpkgs):
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "-f",
+            testpkgs,
+            "pkge",
+        ]
+    )
+    installed_dists = pip_list(virtualenv_python)
+    assert set(installed_dists.keys()) == {
+        "pkga",
+        "pkgb",
+        "pkgc",
+        "pkgd",
+        "pkge",
+        "pip",
+        "wheel",
+        "setuptools",
+    }
+    pkgd_dist = installed_dists["pkgd"]
+    assert repr(pkgd_dist.requires) == repr([Requirement("pkga")])
+    assert repr(pkgd_dist.extra_requires) == repr(
+        {"b": [Requirement("pkgb")], "c": [Requirement("pkgc")]}
+    )
+    pkge_dist = installed_dists["pkge"]
+    assert repr(pkge_dist.requires) == repr([Requirement("pkgd[b,c]")])

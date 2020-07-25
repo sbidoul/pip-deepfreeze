@@ -1,8 +1,10 @@
+import json
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
-from .compat import shlex_join
-from .list_depends import list_depends
+from .compat import resource_as_file, resource_files, shlex_join
+from .installed_dist import InstalledDistribution, InstalledDistributions
+from .list_installed_depends import list_installed_depends
 from .project_name import get_project_name
 from .req_file_parser import (
     NestedRequirementsLine,
@@ -104,6 +106,22 @@ def pip_upgrade_project(
     check_call(cmd)
 
 
+def pip_list(python: str) -> InstalledDistributions:
+    """List installed distributions.
+
+    Currently works via list_installed_script.py, but this could become
+    a native pip feature in the future.
+    """
+    with resource_as_file(
+        resource_files("pip_deepfreeze").joinpath(  # type: ignore
+            "pip_list_json.py"
+        )
+    ) as pip_list_json:
+        json_dists = json.loads(check_output([python, str(pip_list_json)]))
+        dists = [InstalledDistribution(json_dist) for json_dist in json_dists]
+        return {dist.name: dist for dist in dists}
+
+
 def pip_freeze(python: str) -> Iterable[str]:
     """Run pip freeze."""
     cmd = [python, "-m", "pip", "freeze"]
@@ -122,7 +140,7 @@ def pip_freeze_dependencies(
     project_name = get_project_name(python, project_root)
     if extras:
         raise NotImplementedError("extras")
-    dependencies_names = list_depends(python, project_name)
+    dependencies_names = list_installed_depends(pip_list(python), project_name)
     frozen_reqs = pip_freeze(python)
     dependencies_reqs = []
     unneeded_reqs = []
