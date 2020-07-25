@@ -151,6 +151,12 @@ How to
 CLI reference
 -------------
 
+.. note::
+
+   The command line interface is the only supported public interface. If you
+   find yourself writing ``import pip_deepfreeze``, please don't, as everything
+   may change without notice. Or rather, get in touch to discuss your needs.
+
 Global options
 ~~~~~~~~~~~~~~
 
@@ -219,12 +225,6 @@ pip-df tree
    Options:
    --help  Show this message and exit.
 
-
-   .. note::
-
-      The command line interface is the only supported public interface. If you
-      find yourself writing ``import pip_deepfreeze``, please don't, as everything
-      may change without notice. Or rather, get in touch to discuss your needs.
 
 Other tools
 -----------
