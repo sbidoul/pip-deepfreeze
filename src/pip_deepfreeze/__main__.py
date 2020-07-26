@@ -90,13 +90,14 @@ def sync(
 def callback(
     ctx: typer.Context,
     python: str = typer.Option(
-        default="python",
+        "python",
+        "--python",
+        "-p",
         show_default=False,
         metavar="PYTHON",
         help=(
-            "The python executable to use. Determines the virtual environment into "
-            "which the project is to be installed. Defaults to the 'python' executable "
-            "found in PATH."
+            "The python executable to use. Determines the python environment to "
+            "work on. Defaults to the 'python' executable found in PATH."
         ),
     ),
     verbose: bool = typer.Option(False, "--verbose", "-v", show_default=False),
