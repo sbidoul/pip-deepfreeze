@@ -13,6 +13,7 @@ app = typer.Typer()
 
 class MainOptions:
     python: str
+    project_root: Path
 
 
 @app.command()
@@ -82,7 +83,7 @@ def sync(
         editable,
         extras=[],
         uninstall_unneeded=uninstall_unneeded,
-        project_root=Path.cwd(),
+        project_root=ctx.obj.project_root,
     )
 
 
@@ -100,6 +101,16 @@ def callback(
             "work on. Defaults to the 'python' executable found in PATH."
         ),
     ),
+    project_root: Path = typer.Option(
+        ".",
+        "--project-root",
+        "-r",
+        exists=True,
+        dir_okay=True,
+        file_okay=False,
+        resolve_path=True,
+        help="The project root directory.",
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", show_default=False),
 ) -> None:
     """A simple pip freeze workflow for Python application developers."""
@@ -113,6 +124,9 @@ def callback(
         raise typer.Exit(1)
     ctx.obj.python = python_abspath
     log_debug(f"Using {python_abspath}")
+    # project directory
+    ctx.obj.project_root = project_root
+    log_debug(f"Looking for project in {project_root}")
 
 
 def main() -> None:
