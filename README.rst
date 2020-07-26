@@ -236,20 +236,21 @@ pip-df tree
 Other tools
 -----------
 
-Several other tools exist with a similar scope as ``pip-deepfreeze``.
+Several other tools exist with a similar or overlapping scope as
+``pip-deepfreeze``.
 
 - `pip <https://pip.pypa.io/en/stable/>`_ itself. ``pip-deepfreeze`` relies
   extensively on the ``pip`` CLI for installation and querying the database of
   installed distributions. In essence it is a thin wrapper around ``pip
-  install``. Some of the features here may serve as inspiration for future
-  ``pip`` evolutions.
+  install`` and ``pip freeze``. Some of the features here may serve as
+  inspiration for future ``pip`` evolutions.
 - `pip-tools <https://pypi.org/project/pip-tools/>`_. This is the one with the most
   similar features. Besides the reasons explained in `About`_ above I wanted to see
   if it was possible to do such a thing using the ``pip`` CLI only.
 - `pip-deptree <https://pypi.org/project/pipdeptree/>`_. Works similarly as
   `pip-df tree` but needs to be installed in the target virtualenv.
-- `Poetry <https://python-poetry.org/>`_.
-- `pipenv <https://pipenv.pypa.io/en/latest/>`_.
+- `Poetry <https://python-poetry.org/>`_
+- `pipenv <https://pipenv.pypa.io/en/latest/>`_
 
 Development
 -----------
