@@ -162,23 +162,26 @@ Global options
 
 .. code::
 
-    Usage: pip-df [OPTIONS] COMMAND [ARGS]...
+   Usage: pip-df [OPTIONS] COMMAND [ARGS]...
 
-      A simple pip freeze workflow for Python application developers.
+     A simple pip freeze workflow for Python application developers.
 
-    Options:
-      --python PYTHON       The python executable to use. Determines the virtual
-                            environment into which the project is to be installed.
-                            Defaults to the 'python' executable found in PATH.
-      -v, --verbose
-      --install-completion  Install completion for the current shell.
-      --show-completion     Show completion for the current shell, to copy it or
-                            customize the installation.
+   Options:
+     -p, --python PYTHON           The python executable to use. Determines the
+                                   python environment to work on. Defaults to the
+                                   'python' executable found in PATH.
 
-      --help                Show this message and exit.
+     -r, --project-root DIRECTORY  The project root directory.  [default: .]
+     -v, --verbose
+     --install-completion          Install completion for the current shell.
+     --show-completion             Show completion for the current shell, to copy
+                                   it or customize the installation.
 
-    Commands:
-      sync
+     --help                        Show this message and exit.
+
+   Commands:
+     sync  Install/update the environment to match the project requirements.
+     tree  Print the installed dependencies of the project as a tree.
 
 pip-df sync
 ~~~~~~~~~~~
@@ -187,33 +190,36 @@ pip-df sync
 
    Usage: pip-df sync [OPTIONS]
 
-     Install/update the the environment to match the project requirements.
+     Install/update the environment to match the project requirements.
 
      Install/reinstall the project. Install/update dependencies to the latest
      allowed version according to pinned dependencies in requirements.txt or
-     constraints in requirements.txt.in. On demand update of dependencies to
-     to the latest version that matches constraints. Optionally uninstall
-     unneeded dependencies.
+     constraints in requirements.txt.in. On demand update of dependencies to to
+     the latest version that matches constraints. Optionally uninstall unneeded
+     dependencies.
 
    Options:
-     -u, --update DEPENDENCY     Make sure DEPENDENCY is upgraded (or downgraded)
-                                 to the latest allowed version. If DEPENDENCY is
-                                 not part of your application dependencies
-                                 anymore, this option has no effect. This option
-                                 can be repeated.
+     -u, --update DEPENDENCY         Make sure DEPENDENCY is upgraded (or
+                                     downgraded) to the latest allowed version.
+                                     If DEPENDENCY is not part of your
+                                     application dependencies anymore, this
+                                     option has no effect. This option can be
+                                     repeated.
 
-     --update-all                Upgrade (or downgrade) all dependencies of your
-                                 application to the latest allowed version.
+     --update-all                    Upgrade (or downgrade) all dependencies of
+                                     your application to the latest allowed
+                                     version.
 
-     --editable / --no-editable  Install the project in editable mode. Defaults
-                                 to editable if the project supports it.
+     --editable / --no-editable      Install the project in editable mode.
+                                     Defaults to editable if the project supports
+                                     it.
 
      --uninstall-unneeded / --no-uninstall-unneeded
-                                 Uninstall distributions that are not
-                                 dependencies of the project. If not
-                                 specified, ask confirmation.
+                                     Uninstall distributions that are not
+                                     dependencies of the project. If not
+                                     specified, ask confirmation.
 
-     --help                      Show this message and exit.
+     --help                          Show this message and exit.
 
 pip-df tree
 ~~~~~~~~~~~
@@ -222,9 +228,10 @@ pip-df tree
 
    Usage: pip-df tree [OPTIONS]
 
-   Options:
-   --help  Show this message and exit.
+     Print the installed dependencies of the project as a tree.
 
+   Options:
+     --help  Show this message and exit.
 
 Other tools
 -----------

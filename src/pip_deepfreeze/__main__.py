@@ -64,7 +64,7 @@ def sync(
         ),
     ),
 ) -> None:
-    """Install/update the the environment to match the project requirements.
+    """Install/update the environment to match the project requirements.
 
     Install/reinstall the project. Install/update dependencies to the
     latest allowed version according to pinned dependencies in
@@ -90,6 +90,7 @@ def sync(
 
 @app.command()
 def tree(ctx: typer.Context) -> None:
+    """Print the installed dependencies of the project as a tree."""
     tree_operation(ctx.obj.python, project_root=ctx.obj.project_root, extras=[])
 
 
