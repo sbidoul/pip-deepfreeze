@@ -109,8 +109,8 @@ def pip_upgrade_project(
 def pip_list(python: str) -> InstalledDistributions:
     """List installed distributions.
 
-    Currently works via list_installed_script.py, but this could become
-    a native pip feature in the future.
+    Currently works via pip_list_json.py, but this could become a native
+    pip feature in the future.
     """
     with resource_as_file(
         resource_files("pip_deepfreeze").joinpath(  # type: ignore

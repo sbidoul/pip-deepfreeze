@@ -151,80 +151,106 @@ How to
 CLI reference
 -------------
 
-Global options::
-
-    Usage: pip-df [OPTIONS] COMMAND [ARGS]...
-
-      A simple pip freeze workflow for Python application developers.
-
-    Options:
-      --python PYTHON       The python executable to use. Determines the virtual
-                            environment into which the project is to be installed.
-                            Defaults to the 'python' executable found in PATH.
-      -v, --verbose
-      --install-completion  Install completion for the current shell.
-      --show-completion     Show completion for the current shell, to copy it or
-                            customize the installation.
-
-      --help                Show this message and exit.
-
-    Commands:
-      sync
-
-``sync`` command options::
-
-    Usage: pip-df sync [OPTIONS]
-
-      Install/update the the environment to match the project requirements.
-
-      Install/reinstall the project. Install/update dependencies to the latest
-      allowed version according to pinned dependencies in requirements.txt or
-      constraints in requirements.txt.in. On demand update of dependencies to
-      to the latest version that matches constraints. Optionally uninstall
-      unneeded dependencies.
-
-    Options:
-      -u, --update DEPENDENCY     Make sure DEPENDENCY is upgraded (or downgraded)
-                                  to the latest allowed version. If DEPENDENCY is
-                                  not part of your application dependencies
-                                  anymore, this option has no effect. This option
-                                  can be repeated.
-
-      --update-all                Upgrade (or downgrade) all dependencies of your
-                                  application to the latest allowed version.
-
-      --editable / --no-editable  Install the project in editable mode. Defaults
-                                  to editable if the project supports it.
-
-      --uninstall-unneeded / --no-uninstall-unneeded
-                                  Uninstall distributions that are not
-                                  dependencies of the project. If not
-                                  specified, ask confirmation.
-
-      --help                      Show this message and exit.
-
-
 .. note::
 
    The command line interface is the only supported public interface. If you
    find yourself writing ``import pip_deepfreeze``, please don't, as everything
    may change without notice. Or rather, get in touch to discuss your needs.
 
+Global options
+~~~~~~~~~~~~~~
+
+.. code::
+
+   Usage: pip-df [OPTIONS] COMMAND [ARGS]...
+
+     A simple pip freeze workflow for Python application developers.
+
+   Options:
+     -p, --python PYTHON           The python executable to use. Determines the
+                                   python environment to work on. Defaults to the
+                                   'python' executable found in PATH.
+
+     -r, --project-root DIRECTORY  The project root directory.  [default: .]
+     -v, --verbose
+     --install-completion          Install completion for the current shell.
+     --show-completion             Show completion for the current shell, to copy
+                                   it or customize the installation.
+
+     --help                        Show this message and exit.
+
+   Commands:
+     sync  Install/update the environment to match the project requirements.
+     tree  Print the installed dependencies of the project as a tree.
+
+pip-df sync
+~~~~~~~~~~~
+
+.. code::
+
+   Usage: pip-df sync [OPTIONS]
+
+     Install/update the environment to match the project requirements.
+
+     Install/reinstall the project. Install/update dependencies to the latest
+     allowed version according to pinned dependencies in requirements.txt or
+     constraints in requirements.txt.in. On demand update of dependencies to to
+     the latest version that matches constraints. Optionally uninstall unneeded
+     dependencies.
+
+   Options:
+     -u, --update DEPENDENCY         Make sure DEPENDENCY is upgraded (or
+                                     downgraded) to the latest allowed version.
+                                     If DEPENDENCY is not part of your
+                                     application dependencies anymore, this
+                                     option has no effect. This option can be
+                                     repeated.
+
+     --update-all                    Upgrade (or downgrade) all dependencies of
+                                     your application to the latest allowed
+                                     version.
+
+     --editable / --no-editable      Install the project in editable mode.
+                                     Defaults to editable if the project supports
+                                     it.
+
+     --uninstall-unneeded / --no-uninstall-unneeded
+                                     Uninstall distributions that are not
+                                     dependencies of the project. If not
+                                     specified, ask confirmation.
+
+     --help                          Show this message and exit.
+
+pip-df tree
+~~~~~~~~~~~
+
+.. code::
+
+   Usage: pip-df tree [OPTIONS]
+
+     Print the installed dependencies of the project as a tree.
+
+   Options:
+     --help  Show this message and exit.
+
 Other tools
 -----------
 
-Several other tools exist with a similar scope as ``pip-deepfreeze``.
+Several other tools exist with a similar or overlapping scope as
+``pip-deepfreeze``.
 
 - `pip <https://pip.pypa.io/en/stable/>`_ itself. ``pip-deepfreeze`` relies
   extensively on the ``pip`` CLI for installation and querying the database of
   installed distributions. In essence it is a thin wrapper around ``pip
-  install``. Some of the features here may serve as inspiration for future
-  ``pip`` evolutions.
+  install`` and ``pip freeze``. Some of the features here may serve as
+  inspiration for future ``pip`` evolutions.
 - `pip-tools <https://pypi.org/project/pip-tools/>`_. This is the one with the most
   similar features. Besides the reasons explained in `About`_ above I wanted to see
   if it was possible to do such a thing using the ``pip`` CLI only.
-- `Poetry <https://python-poetry.org/>`_.
-- `pipenv <https://pipenv.pypa.io/en/latest/>`_.
+- `pip-deptree <https://pypi.org/project/pipdeptree/>`_. Works similarly as
+  `pip-df tree` but needs to be installed in the target virtualenv.
+- `Poetry <https://python-poetry.org/>`_
+- `pipenv <https://pipenv.pypa.io/en/latest/>`_
 
 Development
 -----------
