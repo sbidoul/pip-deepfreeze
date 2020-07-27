@@ -12,7 +12,11 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .utils import check_call, check_output, log_debug, log_info
+from .utils import check_call, check_output, log_debug, log_info, pip_verbosity
+
+
+def _pip_cmd(python: str) -> List[str]:
+    return [python, "-m", "pip"] + pip_verbosity()
 
 
 def pip_upgrade_project(
@@ -87,7 +91,7 @@ def pip_upgrade_project(
     #      But the REQUESTED metadata will be incorrect.
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd = [python, "-m", "pip", "install", "-r", f"{constraints_filename}"]
+    cmd = _pip_cmd(python) + ["install", "-r", f"{constraints_filename}"]
     if editable:
         cmd.append("-e")
     if extras:
@@ -158,5 +162,5 @@ def pip_freeze_dependencies(
 def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
     """Uninstall packages."""
     if list(requirements):
-        cmd = [python, "-m", "pip", "uninstall", "--yes"] + list(requirements)
+        cmd = _pip_cmd(python) + ["uninstall", "--yes"] + list(requirements)
         check_call(cmd)

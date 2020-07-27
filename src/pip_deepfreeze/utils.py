@@ -2,7 +2,7 @@ import contextlib
 import subprocess
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import IO, Any, Dict, Iterator, Optional, Sequence, Union
+from typing import IO, Any, Dict, Iterator, List, Optional, Sequence, Union
 
 import typer
 
@@ -48,6 +48,16 @@ def decrease_verbosity() -> None:
 def log_debug(msg: str) -> None:
     if _verbosity > 0:
         typer.secho(msg, dim=True, err=True)
+
+
+def pip_verbosity() -> List[str]:
+    if _verbosity < 0:
+        return ["-q"]
+    elif _verbosity > 2:
+        return ["-vv"]
+    elif _verbosity > 1:
+        return ["-v"]
+    return []
 
 
 def log_info(msg: str, nl: bool = True) -> None:
