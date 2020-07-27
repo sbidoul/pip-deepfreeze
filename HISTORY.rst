@@ -1,5 +1,27 @@
- 0.4.0 (2020-07-21)
-===================
+0.5.0 (2020-07-27)
+==================
+
+Features
+--------
+
+- Add -p short option for selecting the python interpreter (same as --python). (`#27 <https://github.com/sbidoul/pip-deepfreeze/issues/27>`_)
+- Add --project-root global option, to select the project directory. (`#28 <https://github.com/sbidoul/pip-deepfreeze/issues/28>`_)
+- Add ``tree`` command to print the installed dependencies of the project as a
+  tree. The print out includes the installed version (and direct URL if any), and
+  highlights missing dependencies. (`#29 <https://github.com/sbidoul/pip-deepfreeze/issues/29>`_)
+- Add built-in knowledge of some build backends (setuptools' setup.cfg, flit,
+  generic PEP 621) so we can obtain the project name faster, without doing
+  a full PEP 517 metadata preparation. (`#30 <https://github.com/sbidoul/pip-deepfreeze/issues/30>`_)
+
+
+Misc
+----
+
+- Refactor installed dependencies discovery. (`#26 <https://github.com/sbidoul/pip-deepfreeze/issues/26>`_)
+
+
+0.4.0 (2020-07-21)
+==================
 
 Features
 --------
