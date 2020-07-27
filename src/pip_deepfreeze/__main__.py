@@ -133,7 +133,7 @@ def callback(
     log_debug(f"Using {python_abspath}")
     # project directory
     ctx.obj.project_root = project_root
-    log_debug(f"Looking for project in {project_root}")
+    log_debug(f"Looking for project in {project_root!r}")
 
 
 def main() -> None:
