@@ -1,5 +1,5 @@
-0.5.0 (2020-07-27)
-==================
+v0.5.0 (2020-07-27)
+===================
 
 Features
 --------
@@ -20,8 +20,8 @@ Misc
 - Refactor installed dependencies discovery. (`#26 <https://github.com/sbidoul/pip-deepfreeze/issues/26>`_)
 
 
-0.4.0 (2020-07-21)
-==================
+v0.4.0 (2020-07-21)
+===================
 
 Features
 --------
@@ -34,8 +34,8 @@ Features
 - Add ``--verbose`` option. (`#22 <https://github.com/sbidoul/pip-deepfreeze/issues/22>`_)
 
 
-0.3.0 (2020-07-19)
-==================
+v0.3.0 (2020-07-19)
+===================
 
 Features
 --------
@@ -53,8 +53,8 @@ Bugfixes
   dependency. (`#10 <https://github.com/sbidoul/pip-deepfreeze/issues/10>`_)
 
 
-0.2.0 (2020-07-16)
-==================
+v0.2.0 (2020-07-16)
+===================
 
 Features
 --------

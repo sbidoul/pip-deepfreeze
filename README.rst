@@ -269,10 +269,10 @@ your local clone of the ``pip-deepfreeze`` repository.
 
 To release:
 
-- Select the next version number of the form ``x.y.z``.
-- ``towncrier --version x.y.z``.
+- Select the next version number of the form ``X.Y.Z``.
+- ``towncrier --version vX.Y.Z``.
 - Inspect and commit the updated ``HISTORY.rst``.
-- ``git tag x.y.z ; git push --tags``.
+- ``git tag vX.Y.Z ; git push --tags``.
 
 Contributing
 ------------
