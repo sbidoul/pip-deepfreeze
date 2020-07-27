@@ -239,7 +239,10 @@ pip-df tree
      Print the installed dependencies of the project as a tree.
 
    Options:
-     --help  Show this message and exit.
+     -e, --extras EXTRAS  Extras of project to consider when looking for
+                          depdencies.
+
+     --help               Show this message and exit.
 
 Other tools
 -----------
