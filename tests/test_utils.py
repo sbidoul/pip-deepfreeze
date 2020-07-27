@@ -6,6 +6,7 @@ import typer
 from pip_deepfreeze.utils import (
     check_call,
     check_output,
+    comma_split,
     decrease_verbosity,
     increase_verbosity,
     log_debug,
@@ -82,3 +83,18 @@ def test_check_output(capsys):
         check_output([sys.executable, "-c", "import sys; sys.exit(1)"])
     assert e.value.exit_code == 1
     assert "Error running: " in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    "s, expected",
+    [
+        (None, []),
+        ("", []),
+        ("  ", []),
+        (" a", ["a"]),
+        ("a, b", ["a", "b"]),
+        ("a,,b, c ", ["a", "b", "c"]),
+    ],
+)
+def test_comma_split(s, expected):
+    assert comma_split(s) == expected

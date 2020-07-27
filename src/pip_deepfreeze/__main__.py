@@ -1,13 +1,13 @@
 import shutil
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 import typer
 
 from .detect import supports_editable
 from .sync import sync as sync_operation
 from .tree import tree as tree_operation
-from .utils import increase_verbosity, log_debug, log_error
+from .utils import comma_split, increase_verbosity, log_debug, log_error
 
 app = typer.Typer()
 
@@ -20,16 +20,15 @@ class MainOptions:
 @app.command()
 def sync(
     ctx: typer.Context,
-    to_upgrade: List[str] = typer.Option(
+    to_upgrade: str = typer.Option(
         None,
         "--update",
         "-u",
-        metavar="DEPENDENCY",
+        metavar="DEP1,DEP2,...",
         help=(
-            "Make sure DEPENDENCY is upgraded (or downgraded) to the latest "
-            "allowed version. If DEPENDENCY is not part of your application "
-            "dependencies anymore, this option has no effect. "
-            "This option can be repeated."
+            "Make sure selected dependencies are upgraded (or downgraded) to "
+            "the latest allowed version. If DEP is not part of your application "
+            "dependencies anymore, this option has no effect."
         ),
     ),
     upgrade_all: bool = typer.Option(
@@ -80,7 +79,7 @@ def sync(
     sync_operation(
         ctx.obj.python,
         upgrade_all,
-        to_upgrade,
+        comma_split(to_upgrade),
         editable,
         extras=[],
         uninstall_unneeded=uninstall_unneeded,

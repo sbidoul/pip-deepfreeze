@@ -2,7 +2,7 @@ import contextlib
 import subprocess
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import IO, Any, Dict, Iterator, Optional, Sequence, Union
+from typing import IO, Any, Dict, Iterator, List, Optional, Sequence, Union
 
 import typer
 
@@ -82,3 +82,13 @@ def check_output(
         cmd_str = shlex_join(str(item) for item in cmd)
         log_error(f"Error running: {cmd_str}.")
         raise typer.Exit(1)
+
+
+def comma_split(s: str) -> List[str]:
+    if not s:
+        return []
+    s = s.strip()
+    if not s:
+        return []
+    items = [item.strip() for item in s.split(",")]
+    return [item for item in items if item]
