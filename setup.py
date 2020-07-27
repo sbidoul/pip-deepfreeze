@@ -34,6 +34,7 @@ setup(
         "httpx",
         'importlib_resources ; python_version<"3.9"',
         "packaging",
+        "toml",
         "typer[all]",
         'typing-extensions ; python_version<"3.8"',  # for Protocol
     ],
