@@ -21,6 +21,7 @@ def pip_upgrade_project(
     project_root: Path,
     extras: Optional[Iterable[str]] = None,
     editable: bool = True,
+    use_pip_constraints: bool = False,
 ) -> None:
     """Upgrade a project.
 
@@ -85,9 +86,13 @@ def pip_upgrade_project(
     #      then the second best approach is to use -r here, and let
     #      sync's --uninstall option remove what we don't need.
     #      But the REQUESTED metadata will be incorrect.
+    if use_pip_constraints:
+        constraints_mode = "-c"
+    else:
+        constraints_mode = "-r"
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd = [python, "-m", "pip", "install", "-r", f"{constraints_filename}"]
+    cmd = [python, "-m", "pip", "install", constraints_mode, f"{constraints_filename}"]
     if editable:
         cmd.append("-e")
     if extras:

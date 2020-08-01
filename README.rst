@@ -219,6 +219,15 @@ pip-df sync
                                      dependencies of the project. If not
                                      specified, ask confirmation.
 
+     --use-pip-constraints / --no-use-pip-constraints
+                                     Use pip --constraints instead of
+                                     --requirements when passing pinned
+                                     dependencies and constraints to pip. This
+                                     has advantages such as marking only the
+                                     project as REQUESTED, but may fail in some
+                                     circumstances such as when using direct URLs
+                                     with the new pip resolver.  [default: True]
+
      --help                          Show this message and exit.
 
 pip-df tree
