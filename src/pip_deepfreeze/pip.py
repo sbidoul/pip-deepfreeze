@@ -21,7 +21,7 @@ def pip_upgrade_project(
     project_root: Path,
     extras: Optional[Iterable[str]] = None,
     editable: bool = True,
-    use_pip_constraints: bool = False,
+    use_pip_constraints: bool = True,
 ) -> None:
     """Upgrade a project.
 
