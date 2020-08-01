@@ -211,6 +211,7 @@ def test_sync_project_root(virtualenv_python, editable_foobar_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=editable_foobar_path,
+        use_pip_constraints=True,
     )
     assert (editable_foobar_path / "requirements.txt").exists()
 
@@ -236,6 +237,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
+        use_pip_constraints=True,
     )
     assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
     # remove dependency on pkga
@@ -257,6 +259,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
+        use_pip_constraints=True,
     )
     assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
     # sync with uninstall=True, pkga removed
@@ -268,6 +271,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         extras=[],
         uninstall_unneeded=True,
         project_root=tmp_path,
+        use_pip_constraints=True,
     )
     assert "pkga==" not in "\n".join(pip_freeze(virtualenv_python))
 

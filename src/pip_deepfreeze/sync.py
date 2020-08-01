@@ -21,6 +21,7 @@ def sync(
     extras: List[str],
     uninstall_unneeded: Optional[bool],
     project_root: Path,
+    use_pip_constraints: bool,
 ) -> None:
     project_name = get_project_name(python, project_root)
     requirements_frozen = project_root / "requirements.txt"
@@ -41,7 +42,12 @@ def sync(
     constraints_path = Path(constraints.name)
     try:
         pip_upgrade_project(
-            python, constraints_path, project_root, editable=editable, extras=extras,
+            python,
+            constraints_path,
+            project_root,
+            editable=editable,
+            extras=extras,
+            use_pip_constraints=use_pip_constraints,
         )
     finally:
         constraints_path.unlink()
