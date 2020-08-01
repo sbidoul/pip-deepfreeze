@@ -105,7 +105,7 @@ To update one or more dependencies to the latest allowed version, run:
 
 .. code:: console
 
-    pip-df sync --update DEPENDENCY1 --update DEPENDENCY2 ...
+    pip-df sync --update DEPENDENCY1,DEPENDENCY2 ...
 
 If you need to add some dependencies from VCS references (e.g. when a library
 with a patch you need is not available as a release on a package index), add
@@ -138,7 +138,7 @@ How to
    ``setup.py`` and add the git reference in ``requirements.txt.in``)
 -  Remove a dependency (remove it from ``setup.py``)
 -  Update a dependency to the most recent version
-   (``pip-df sync --update   DEPENDENCY1 --update DEPENDENCY2``)
+   (``pip-df sync --update   DEPENDENCY1,DEPENDENCY2``)
 -  Update all dependencies to the latest version
    (``pip-df sync --update-all`` or remove ``requirements.txt`` and run
    ``pip-df sync``)
@@ -199,12 +199,11 @@ pip-df sync
      dependencies.
 
    Options:
-     -u, --update DEPENDENCY         Make sure DEPENDENCY is upgraded (or
-                                     downgraded) to the latest allowed version.
-                                     If DEPENDENCY is not part of your
+     -u, --update DEP1,DEP2,...      Make sure selected dependencies are upgraded
+                                     (or downgraded) to the latest allowed
+                                     version. If DEP is not part of your
                                      application dependencies anymore, this
-                                     option has no effect. This option can be
-                                     repeated.
+                                     option has no effect.
 
      --update-all                    Upgrade (or downgrade) all dependencies of
                                      your application to the latest allowed
