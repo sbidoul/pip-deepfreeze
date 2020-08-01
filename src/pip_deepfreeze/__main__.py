@@ -40,12 +40,12 @@ def sync(
         ),
         show_default=False,
     ),
-    # extras: List[str] = typer.Option(
+    # extras: str = typer.Option(
     #     None,
-    #     "-e",
     #     "--extra",
+    #     "-e",
     #     metavar="EXTRA",
-    #     help=("Extra to install. This option can be repeated."),
+    #     help="Extras to install.",
     # ),
     editable: Optional[bool] = typer.Option(
         None,
@@ -99,9 +99,20 @@ def sync(
 
 
 @app.command()
-def tree(ctx: typer.Context) -> None:
+def tree(
+    ctx: typer.Context,
+    extras: str = typer.Option(
+        None,
+        "--extras",
+        "-e",
+        metavar="EXTRAS",
+        help="Extras of project to consider when looking for depdencies.",
+    ),
+) -> None:
     """Print the installed dependencies of the project as a tree."""
-    tree_operation(ctx.obj.python, project_root=ctx.obj.project_root, extras=[])
+    tree_operation(
+        ctx.obj.python, project_root=ctx.obj.project_root, extras=comma_split(extras)
+    )
 
 
 @app.callback()
