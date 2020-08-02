@@ -63,3 +63,8 @@ Features
   mode if the project supports it. Fail gracefully if editable mode is requested
   for a project that does not support it. (`#2 <https://github.com/sbidoul/pip-deepfreeze/issues/2>`_)
 - Detect requirement name of the form egg=name. (`#3 <https://github.com/sbidoul/pip-deepfreeze/issues/3>`_)
+
+v0.1.0 (2020-07-15)
+===================
+
+First release.
