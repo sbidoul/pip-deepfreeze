@@ -41,13 +41,13 @@ def sync(
         ),
         show_default=False,
     ),
-    # extras: str = typer.Option(
-    #     None,
-    #     "--extra",
-    #     "-e",
-    #     metavar="EXTRA",
-    #     help="Extras to install.",
-    # ),
+    extras: str = typer.Option(
+        None,
+        "--extras",
+        "-e",
+        metavar="EXTRAS",
+        help="Extras to install and freeze to requirements-{EXTRA}.txt.",
+    ),
     editable: Optional[bool] = typer.Option(
         None,
         help=(
@@ -92,7 +92,7 @@ def sync(
         upgrade_all,
         comma_split(to_upgrade),
         editable,
-        extras=[],
+        extras=comma_split(extras),
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
         use_pip_constraints=use_pip_constraints,
