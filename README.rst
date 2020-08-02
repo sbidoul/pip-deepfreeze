@@ -20,8 +20,19 @@ A simple pip freeze workflow for Python application developers.
 About
 -----
 
-``pip-deepfreeze`` aims at doing one thing and doing it well, namely installing and
-pinning dependencies of Python applications (not libraries) in a virtual environment.
+``pip-deepfreeze`` aims at doing one thing and doing it well, namely managing
+the dependencies of a Python *application* in a virtual environment.
+
+This includes:
+
+- installing the project and its dependencies,
+- updating the environment with new dependencies as the project evolves,
+- uninstalling unused dependencies,
+- refreshing dependencies,
+- maintaining pinned versions in ``requirements.txt``,
+- displaying installed dependencies as a tree.
+
+A few characteristics of this project:
 
 - It is easy to use.
 - It is fast.
@@ -31,7 +42,7 @@ pinning dependencies of Python applications (not libraries) in a virtual environ
 - It assumes your project is configured using a PEP 517 compliant build
   backend but otherwise makes no assumption on the specific backend
   used.
-- It has first class support for VCS references.
+- It has first class support for dependencies sepecified as VCS references.
 - It is written in Python 3.6+, yet works in any virtual environment
   that has ``pip`` installed, including python 2.
 - It is small, simple, with good test coverage and hopefully easy to
@@ -39,9 +50,9 @@ pinning dependencies of Python applications (not libraries) in a virtual environ
 
 .. warning::
 
-   While ``pip-deepfreeze`` is functional already (see `roadmap below <#roadmap>`__), this
-   is to be considered as alpha software for a little while, until we have gathered some
-   feedback on the CLI options.
+   While ``pip-deepfreeze`` is functional already, this is to be considered as
+   alpha software for a little while, until we have gathered some feedback on
+   the CLI options.
 
 Installation
 ------------
