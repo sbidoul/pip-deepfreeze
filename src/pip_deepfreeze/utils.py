@@ -84,7 +84,7 @@ def check_output(
         raise typer.Exit(1)
 
 
-def comma_split(s: str) -> List[str]:
+def comma_split(s: Optional[str]) -> List[str]:
     if not s:
         return []
     s = s.strip()
