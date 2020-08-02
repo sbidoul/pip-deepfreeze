@@ -2,10 +2,11 @@ from pathlib import Path
 from typing import Iterable, Iterator, Optional
 
 import httpx
+from packaging.utils import canonicalize_name
 
 from .compat import shlex_join
 from .req_file_parser import OptionsLine, RequirementLine, parse
-from .req_parser import canonicalize_name, get_req_name
+from .req_parser import get_req_name
 from .utils import log_error
 
 

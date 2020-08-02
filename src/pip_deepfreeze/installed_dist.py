@@ -1,8 +1,9 @@
 from typing import Any, Dict, List, Optional
 
 from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
 
-from .req_parser import canonicalize_name
+from .compat import NormalizedName
 
 
 class DirectUrl:
@@ -25,7 +26,7 @@ class InstalledDistribution:
         self.data = data
 
     @property
-    def name(self) -> str:
+    def name(self) -> NormalizedName:
         return canonicalize_name(self.data["metadata"]["name"])
 
     @property
@@ -57,4 +58,4 @@ class InstalledDistribution:
         }
 
 
-InstalledDistributions = Dict[str, InstalledDistribution]
+InstalledDistributions = Dict[NormalizedName, InstalledDistribution]

@@ -3,13 +3,14 @@ from typing import Dict, List, Optional, Set, Tuple
 
 import typer
 from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
 
+from .compat import NormalizedName
 from .installed_dist import InstalledDistribution
 from .pip import pip_list
 from .project_name import get_project_name
-from .req_parser import canonicalize_name
 
-NodeKey = Tuple[str, Tuple[str, ...]]
+NodeKey = Tuple[NormalizedName, Tuple[NormalizedName, ...]]
 
 
 class Node:

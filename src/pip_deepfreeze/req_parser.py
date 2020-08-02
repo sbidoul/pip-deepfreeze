@@ -2,6 +2,9 @@ import re
 from typing import Iterable, List, Optional
 
 from packaging.requirements import InvalidRequirement, Requirement
+from packaging.utils import canonicalize_name
+
+from .compat import NormalizedName
 
 # normalization regex from https://www.python.org/dev/peps/pep-0503/
 _canonicalize_regex = re.compile(r"[-_.]+")
@@ -11,10 +14,6 @@ _egg_name_regex = re.compile(
 )
 
 
-def canonicalize_name(name: str) -> str:
-    return _canonicalize_regex.sub("-", name).lower()
-
-
 def _get_egg_name(requirement: str) -> Optional[str]:
     mo = _egg_name_regex.search(requirement)
     if not mo:
@@ -22,7 +21,7 @@ def _get_egg_name(requirement: str) -> Optional[str]:
     return mo.group(1)
 
 
-def get_req_name(requirement: str) -> Optional[str]:
+def get_req_name(requirement: str) -> Optional[NormalizedName]:
     try:
         name = Requirement(requirement).name
     except InvalidRequirement:
@@ -32,7 +31,7 @@ def get_req_name(requirement: str) -> Optional[str]:
     return canonicalize_name(name)
 
 
-def get_req_names(requirements: Iterable[str]) -> List[str]:
+def get_req_names(requirements: Iterable[str]) -> List[NormalizedName]:
     req_names = []
     for requirement in requirements:
         req_name = get_req_name(requirement)

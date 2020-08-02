@@ -1,14 +1,15 @@
 from typing import Set
 
 from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
 
+from .compat import NormalizedName
 from .installed_dist import InstalledDistributions
-from .req_parser import canonicalize_name
 
 
 def list_installed_depends(
     installed_dists: InstalledDistributions, project_name: str
-) -> Set[str]:
+) -> Set[NormalizedName]:
     """List installed dependencies of an installed project.
 
     Return canonicalized distribution names, excluding the project
