@@ -138,9 +138,11 @@ def pip_freeze_dependencies(
 ) -> Tuple[List[str], List[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
-    Return the list of dependencies, and the list of other dependencies
-    (except the project itself). Dependencies are returned in pip freeze
-    format. Unnamed requirements are ignored.
+    Return the list of installed direct and indirect dependencies of the
+    project, and the list of other installed dependencies that are not
+    dependencies of the project (except the project itself).
+    Dependencies are returned in pip freeze format. Unnamed requirements
+    are ignored.
     """
     project_name = get_project_name(python, project_root)
     if extras:
