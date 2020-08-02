@@ -1,6 +1,6 @@
 import shlex
 import sys
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, NewType
 
 __all__ = ["shlex_join", "resource_as_file", "resource_files", "Protocol"]
 
@@ -24,7 +24,8 @@ else:
     from importlib_resources import as_file as resource_as_file, files as resource_files
 
 
+# https://github.com/pypa/packaging/pull/329
 if TYPE_CHECKING:
     from packaging.utils import NormalizedName
 else:
-    NormalizedName = str
+    NormalizedName = NewType("NormalizedName", str)
