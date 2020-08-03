@@ -1,3 +1,18 @@
+v0.6.0 (2020-08-03)
+===================
+
+Features
+--------
+
+- Use ``pip``'s ``--constraints`` mode by default when passing pinned
+  dependencies and constraints to pip. In case this causes trouble (e.g. when
+  using direct URLs with the new pip resolver), this can be disabled with
+  ``--no-use-pip-constraints``. (`#31 <https://github.com/sbidoul/pip-deepfreeze/issues/31>`_)
+- ``--update`` is changed to accept a comma-separated list of distribution names. (`#33 <https://github.com/sbidoul/pip-deepfreeze/issues/33>`_)
+- Add ``--extras`` option to ``pip-df tree`` command, to consider ``extras`` of
+  the project when printing the tree of installed dependencies. (`#34 <https://github.com/sbidoul/pip-deepfreeze/issues/34>`_)
+
+
 v0.5.0 (2020-07-27)
 ===================
 
