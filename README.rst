@@ -148,6 +148,15 @@ there?
    that you don't control, or VCS links for dependencies that you need to
    install from VCS source.
 
+I have added a constraint in ``requirements.txt.in`` but ``pip-df sync`` does
+not honor it. What is going on?
+
+   ``pip-df sync`` always gives priority to versions pinned in ``requirements.txt``,
+   unless explictly asked to do otherwise. After adding or changing constraints or VCS
+   references for already pinned requirements, use the ``--update`` option like so::
+
+      pip-df sync --update DEPENDENCY1,DEPENDENCY2,...
+
 How can I pass options to pip?
 
    The most reliable and repeatable way to pass options to pip is to add them
