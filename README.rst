@@ -134,8 +134,50 @@ When, later again, your branch is merged upstream and the project has published
 a release, remove the line from ``requirements.txt.in`` and run ``pip-df sync
 --update DEPENDENCYNAME`` to update to the latest released version.
 
-How to
-------
+How to and FAQ
+--------------
+
+What should I put in ``requirements.txt.in``? Should I add all my dependencies
+there?
+
+   ``requirements.txt.in`` is optional. The dependencies of your project must
+   be declared primarily in ``setup.py`` or ``setup.cfg`` (if you use
+   ``setuptools``), or in ``pyproject.toml`` if you use another PEP 517 build
+   backend such as ``flit``. ``requirements.txt.in`` must contain additional
+   constraints if needed, such as version constraints on indirect dependencies
+   that you don't control, or VCS links for dependencies that you need to
+   install from VCS source.
+
+How can I pass options to pip?
+
+   The most reliable and repeatable way to pass options to pip is to add them
+   in ``requirements.txt.in``. The pip documentation lists `options that are
+   allowed in requirements files
+   <https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format>`_.
+   Global options can also be set in the pip configuration file or passed via
+   ``PIP_*`` environment variables (see the pip documentation for more
+   information).
+
+Why not using ``pip install`` and ``pip freeze`` manually?
+
+   ``pip-df sync`` combines both commands in one and ensures your environment
+   and pinned requirements remain correct and up-to-date. Some error prone
+   operations it facilitates include: uninstalling unneeded dependencies,
+   updating selected dependencies, overriding depedencies with VCS references,
+   etc.
+
+Is there a recommended way to deploy my project in the production environment?
+
+   There are many possibilities. One approach that works well (and is
+   recommended in the pip documentation) works with two simple steps. First you
+   build the wheel files for your project and dependencies, using::
+
+      pip wheel --no-deps -r requirements.txt -e . --wheel-dir=./wheel-dir
+
+   Then you ship the content of the ``wheel-dir`` directory to your target
+   environment or docker image, and run::
+
+      pip install --no-index --find-links=./wheel-dir ./wheel-dir/project_name-*.whl
 
 (TODO)
 
@@ -153,11 +195,6 @@ How to
 -  Update all dependencies to the latest version
    (``pip-df sync --update-all`` or remove ``requirements.txt`` and run
    ``pip-df sync``)
--  Pass options to pip (via ``requirements.txt.in`` or via ``PIP_*``
-   environment variables)
--  Deploy my project
-   (``pip wheel --no-deps requirements.txt -e . --wheel-dir=release``, ship the
-   release directory then run ``pip install   --no-index release/*.whl``).
 
 CLI reference
 -------------
