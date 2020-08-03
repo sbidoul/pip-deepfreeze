@@ -145,9 +145,7 @@ def pip_freeze_dependencies(
     are ignored.
     """
     project_name = get_project_name(python, project_root)
-    if extras:
-        raise NotImplementedError("extras")
-    dependencies_names = list_installed_depends(pip_list(python), project_name)
+    dependencies_names = list_installed_depends(pip_list(python), project_name, extras)
     frozen_reqs = pip_freeze(python)
     dependencies_reqs = []
     unneeded_reqs = []

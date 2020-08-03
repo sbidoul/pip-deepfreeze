@@ -1,4 +1,4 @@
-from typing import Set
+from typing import Iterable, Optional, Set
 
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
@@ -8,7 +8,9 @@ from .installed_dist import InstalledDistributions
 
 
 def list_installed_depends(
-    installed_dists: InstalledDistributions, project_name: str
+    installed_dists: InstalledDistributions,
+    project_name: str,
+    extras: Optional[Iterable[str]] = None,
 ) -> Set[NormalizedName]:
     """List installed dependencies of an installed project.
 
@@ -28,7 +30,7 @@ def list_installed_depends(
             dist = installed_dists[req_name]
         except KeyError:
             # not installed
-            return  # TODO add it anyway?
+            return
         else:
             if not deps_only:
                 res.add(req_name)
@@ -38,6 +40,11 @@ def list_installed_depends(
                 for dep_req in dist.extra_requires[extra]:
                     add(dep_req, deps_only=False)
 
-    add(Requirement(project_name), deps_only=True)
+    project_name_with_extras = project_name
+    if extras:
+        project_name_with_extras += "[" + ",".join(extras) + "]"
+    add(
+        Requirement(project_name_with_extras), deps_only=True,
+    )
 
     return res
