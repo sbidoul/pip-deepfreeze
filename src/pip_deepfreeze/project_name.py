@@ -80,9 +80,12 @@ def get_project_name_from_pyproject_toml_flit(
     ):
         return None
     assert pyproject_toml
-    return str(
+    project_name = (
         pyproject_toml.get("tool", {}).get("flit", {}).get("metadata", {}).get("module")
     )
+    if not project_name:
+        return None
+    return str(project_name)
 
 
 def get_project_name_from_pyproject_toml_pep621(
@@ -92,7 +95,10 @@ def get_project_name_from_pyproject_toml_pep621(
     if not _get_build_backend(pyproject_toml):
         return None
     assert pyproject_toml
-    return str(pyproject_toml.get("project", {}).get("name"))
+    project_name = pyproject_toml.get("project", {}).get("name")
+    if not project_name:
+        return None
+    return str(project_name)
 
 
 def get_project_name_from_pep517(python: str, project_root: Path) -> str:
