@@ -5,6 +5,7 @@ from typing import Optional
 import typer
 
 from .detect import supports_editable
+from .sanity import check_env
 from .sync import sync as sync_operation
 from .tree import tree as tree_operation
 from .utils import comma_split, increase_verbosity, log_debug, log_error
@@ -151,10 +152,13 @@ def callback(
         log_error(f"Python interpreter {python!r} not found.")
         raise typer.Exit(1)
     ctx.obj.python = python_abspath
-    log_debug(f"Using {python_abspath}")
+    log_debug(f"Using python {python_abspath}")
+    # sanity checks
+    if not check_env(ctx.obj.python):
+        raise typer.Exit(1)
     # project directory
     ctx.obj.project_root = project_root
-    log_debug(f"Looking for project in {project_root!r}")
+    log_debug(f"Looking for project in {project_root}")
 
 
 def main() -> None:
