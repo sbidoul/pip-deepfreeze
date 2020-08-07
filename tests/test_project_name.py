@@ -61,6 +61,20 @@ def test_get_project_name_from_pyproject_toml_flit(tmp_path):
     assert get_project_name(sys.executable, tmp_path) == "theproject"
 
 
+def test_get_project_name_from_pyproject_toml_flit_no_module(tmp_path):
+    (tmp_path / "pyproject.toml").write_text(
+        textwrap.dedent(
+            """\
+            [build-system]
+            build-backend = "flit_core.buildapi"
+
+            [tool.flit.metadata]
+            """
+        )
+    )
+    assert not get_project_name_from_pyproject_toml_flit(_load_pyproject_toml(tmp_path))
+
+
 def test_get_project_name_from_pyproject_toml_pep621(tmp_path):
     (tmp_path / "pyproject.toml").write_text(
         textwrap.dedent(
@@ -78,6 +92,22 @@ def test_get_project_name_from_pyproject_toml_pep621(tmp_path):
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"
+
+
+def test_get_project_name_from_pyproject_toml_pep621_no_project(tmp_path):
+    (tmp_path / "pyproject.toml").write_text(
+        textwrap.dedent(
+            """\
+            [build-system]
+            build-backend = "abackend"
+
+            [project]
+            """
+        )
+    )
+    assert not get_project_name_from_pyproject_toml_pep621(
+        _load_pyproject_toml(tmp_path)
+    )
 
 
 def test_project_name_from_pep517_setup_py(tmp_path):
