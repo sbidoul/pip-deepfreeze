@@ -10,6 +10,7 @@ EnvInfo = TypedDict(
     "EnvInfo",
     {
         "in_virtualenv": bool,
+        "include_system_site_packages": bool,
         "has_pkg_resources": bool,
         "has_importlib_metadata": bool,
         "pip_version": Optional[str],
@@ -32,6 +33,12 @@ def check_env(python: str) -> bool:
     env_info = _get_env_info(python)
     if not env_info.get("in_virtualenv"):
         log_error(f"{python} is not in a virtualenv, refusing to start.")
+        return False
+    if env_info.get("include_system_site_packages"):
+        log_error(
+            f"{python} is in a virtualenv that includes system site packages, "
+            f"refusing to start."
+        )
         return False
     if not env_info.get("has_pkg_resources"):
         setuptools_install_cmd = shlex_join(
