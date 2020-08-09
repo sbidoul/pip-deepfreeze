@@ -1,9 +1,9 @@
 import json
-from typing import Optional, TypedDict, cast
+from typing import Optional, cast
 
 from packaging.version import Version
 
-from .compat import resource_as_file, resource_files
+from .compat import TypedDict, resource_as_file, resource_files
 from .utils import check_output, log_error, log_warning, shlex_join
 
 EnvInfo = TypedDict(
