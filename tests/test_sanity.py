@@ -1,7 +1,5 @@
 import subprocess
-import textwrap
 
-import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
@@ -22,33 +20,6 @@ def test_sanity_pip_version(virtualenv_python, capsys):
     assert check_env(virtualenv_python)
     captured = capsys.readouterr()
     assert "works best with pip>=20.1" in captured.err
-
-
-@pytest.mark.parametrize("bad_pip_version_line", ["pip a ...", "pip"])
-def test_sanity_invalid_pip_version(
-    virtualenv_python, capsys, tmp_path, bad_pip_version_line
-):
-    assert check_env(virtualenv_python)
-    (tmp_path / "setup.py").write_text(
-        textwrap.dedent(
-            """\
-            from setuptools import setup
-
-            setup(
-                name="pip",
-                packages=["pip"],
-            )
-            """
-        )
-    )
-    (tmp_path / "pip").mkdir()
-    (tmp_path / "pip" / "__main__.py").write_text(f"print('{bad_pip_version_line}')")
-    subprocess.check_call(
-        [virtualenv_python, "-m", "pip", "install", "-q", str(tmp_path)]
-    )
-    assert check_env(virtualenv_python)
-    captured = capsys.readouterr()
-    assert "Could not detect pip version in" in captured.err
 
 
 def test_sanity_pkg_resources(virtualenv_python, capsys):
