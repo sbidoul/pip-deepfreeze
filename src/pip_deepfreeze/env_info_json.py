@@ -12,6 +12,7 @@ Prints a json dictionary with the following keys:
 
 This script must be python 2 compatible.
 """
+import io
 import json
 import os
 import sys
@@ -68,22 +69,40 @@ def _get_version_pkg_resources(dist_name):
         return None
 
 
-def _find_pyvenv_cfg_path():
-    # type: () -> Optional[str]
-    pyvenv_cfg_path = os.path.join(os.path.dirname(sys.executable), "pyvenv.cfg")
-    if os.path.isfile(pyvenv_cfg_path):
-        return pyvenv_cfg_path
-    pyvenv_cfg_path = os.path.join(os.path.dirname(sys.executable), "..", "pyvenv.cfg")
-    if os.path.isfile(pyvenv_cfg_path):
-        return pyvenv_cfg_path
-    return None
+def _load_pyvenv_cfg(pyvenv_cfg_path):
+    # type: (str) -> Dict[str, str]
+    pyvenv_cfg = {}
+    try:
+        with io.open(pyvenv_cfg_path, encoding="utf-8") as f:
+            for line in f:
+                key, _, value = line.partition("=")
+                pyvenv_cfg[key.strip()] = value.strip()
+    except IOError:
+        pass
+    return pyvenv_cfg
+
+
+def _find_pyvenv_cfg():
+    # type: () -> Dict[str, str]
+    for pyvenv_cfg_path in (
+        os.path.join(os.path.dirname(sys.executable), "pyvenv.cfg"),
+        os.path.join(os.path.dirname(sys.executable), "..", "pyvenv.cfg"),
+    ):
+        if not os.path.isfile(pyvenv_cfg_path):
+            continue
+        pyvenv_cfg = _load_pyvenv_cfg(pyvenv_cfg_path)
+        return pyvenv_cfg
+    return {}
 
 
 def main():
     # type: () -> None
     result = {}  # type: Dict[str, Union[Optional[str], bool]]
-    pyvenv_cfg_path = _find_pyvenv_cfg_path()
-    result["in_virtualenv"] = bool(pyvenv_cfg_path)
+    pyvenv_cfg = _find_pyvenv_cfg()
+    result["in_virtualenv"] = bool(pyvenv_cfg.get("home"))
+    result["include_system_site_packages"] = (
+        pyvenv_cfg.get("include-system-site-packages") != "false"
+    )
     result["has_pkg_resources"] = _check_pkg_resources()
     result["has_importlib_metadata"] = _check_importlib_metadata()
     _get_version = None
