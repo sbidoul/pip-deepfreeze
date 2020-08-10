@@ -36,7 +36,7 @@ setup(
         "packaging>=20.4",
         "toml",
         "typer[all]",
-        'typing-extensions ; python_version<"3.8"',  # for Protocol
+        'typing-extensions ; python_version<"3.8"',  # for Protocol, TypedDict
     ],
     extras_require={
         "test": ["pytest", "pytest-cov", "pytest-xdist", "virtualenv"],
@@ -49,8 +49,8 @@ setup(
         ]
     },
     project_urls={
-        "Bug Reports": "https://github.com/sbidoul/pip-deepfreeze/issues",
         "Source": "https://github.com/sbidoul/pip-deepfreeze/",
+        "Bug Reports": "https://github.com/sbidoul/pip-deepfreeze/issues",
         "Changelog": (
             "https://github.com/sbidoul/pip-deepfreeze/blob/master/HISTORY.rst"
         ),

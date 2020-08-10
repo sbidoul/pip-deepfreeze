@@ -1,7 +1,6 @@
 import subprocess
-import textwrap
+from pathlib import Path
 
-import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
@@ -22,33 +21,6 @@ def test_sanity_pip_version(virtualenv_python, capsys):
     assert check_env(virtualenv_python)
     captured = capsys.readouterr()
     assert "works best with pip>=20.1" in captured.err
-
-
-@pytest.mark.parametrize("bad_pip_version_line", ["pip a ...", "pip"])
-def test_sanity_invalid_pip_version(
-    virtualenv_python, capsys, tmp_path, bad_pip_version_line
-):
-    assert check_env(virtualenv_python)
-    (tmp_path / "setup.py").write_text(
-        textwrap.dedent(
-            """\
-            from setuptools import setup
-
-            setup(
-                name="pip",
-                packages=["pip"],
-            )
-            """
-        )
-    )
-    (tmp_path / "pip").mkdir()
-    (tmp_path / "pip" / "__main__.py").write_text(f"print('{bad_pip_version_line}')")
-    subprocess.check_call(
-        [virtualenv_python, "-m", "pip", "install", "-q", str(tmp_path)]
-    )
-    assert check_env(virtualenv_python)
-    captured = capsys.readouterr()
-    assert "Could not detect pip version in" in captured.err
 
 
 def test_sanity_pkg_resources(virtualenv_python, capsys):
@@ -77,3 +49,18 @@ def test_sanity_main(virtualenv_python):
     result = runner.invoke(app, ["--python", virtualenv_python, "tree"])
     assert result.exit_code != 0
     assert "pip not available", result.stderr
+
+
+def test_sanity_venv_no_pyvenv_cfg(virtualenv_python, capsys):
+    (Path(virtualenv_python).parent.parent / "pyvenv.cfg").unlink()
+    assert not check_env(virtualenv_python)
+    captured = capsys.readouterr()
+    assert "is not in a virtualenv", captured.stderr
+
+
+def test_sanity_venv_system_site_packages(
+    virtualenv_python_with_system_site_packages, capsys
+):
+    assert not check_env(virtualenv_python_with_system_site_packages)
+    captured = capsys.readouterr()
+    assert "virtualenv that includes system site packages", captured.stderr
