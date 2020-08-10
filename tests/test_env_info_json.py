@@ -10,6 +10,15 @@ ENV_INFO_JSON = os.path.join(
 
 def test_env_info_json(virtualenv_python):
     """Basic check, more elaborate tests are in test_sanity.py."""
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "pytest-cov",  # pytest-cov needed for subprocess coverage to work
+        ]
+    )
     env_info_json = subprocess.check_output(
         [virtualenv_python, ENV_INFO_JSON], universal_newlines=True,
     )
