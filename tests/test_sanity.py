@@ -51,9 +51,13 @@ def test_sanity_main(virtualenv_python):
     assert "pip not available", result.stderr
 
 
-def test_sanity_venv_no_pyvenv_cfg(virtualenv_python, capsys):
-    (Path(virtualenv_python).parent.parent / "pyvenv.cfg").unlink()
-    assert not check_env(virtualenv_python)
+def test_sanity_venv_no_pyvenv_cfg(virtualenv_python_with_pytest_cov, capsys):
+    (Path(virtualenv_python_with_pytest_cov).parent.parent / "pyvenv.cfg").unlink()
+    assert not check_env(virtualenv_python_with_pytest_cov)
+    captured = capsys.readouterr()
+    assert "is not in a virtualenv", captured.stderr
+    (Path(virtualenv_python_with_pytest_cov).parent.parent / "pyvenv.cfg").touch()
+    assert not check_env(virtualenv_python_with_pytest_cov)
     captured = capsys.readouterr()
     assert "is not in a virtualenv", captured.stderr
 

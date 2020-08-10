@@ -20,6 +20,19 @@ def virtualenv_python(tmp_path):
 
 
 @pytest.fixture
+def virtualenv_python_with_pytest_cov(tmp_path):
+    """Return a python executable path within an isolated virtualenv."""
+    venv = tmp_path / "venv"
+    subprocess.check_call([sys.executable, "-m", "virtualenv", str(venv)])
+    if os.name == "nt":
+        python = venv / "Scripts" / "python.exe"
+    else:
+        python = venv / "bin" / "python"
+    subprocess.check_call([str(python), "-m", "pip", "install", "pytest-cov"])
+    return str(python)
+
+
+@pytest.fixture
 def virtualenv_python_with_system_site_packages(tmp_path):
     """Return a python executable path within an isolated virtualenv."""
     venv = tmp_path / "venv"

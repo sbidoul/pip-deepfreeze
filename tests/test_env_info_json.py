@@ -19,6 +19,17 @@ def test_env_info_json(virtualenv_python):
             "pytest-cov",  # pytest-cov needed for subprocess coverage to work
         ]
     )
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "uninstall",
+            "-y",
+            "wheel",
+            "importlib_metadata",
+        ]
+    )
     env_info_json = subprocess.check_output(
         [virtualenv_python, ENV_INFO_JSON], universal_newlines=True,
     )

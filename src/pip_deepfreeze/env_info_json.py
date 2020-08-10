@@ -70,8 +70,6 @@ def _find_pyvenv_cfg():
         os.path.join(os.path.dirname(sys.executable), "pyvenv.cfg"),
         os.path.join(os.path.dirname(sys.executable), "..", "pyvenv.cfg"),
     ):
-        if not os.path.isfile(pyvenv_cfg_path):
-            continue
         try:
             pyvenv_cfg = _load_pyvenv_cfg(pyvenv_cfg_path)
         except IOError:
