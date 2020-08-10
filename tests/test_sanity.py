@@ -1,4 +1,5 @@
 import subprocess
+from pathlib import Path
 
 from typer.testing import CliRunner
 
@@ -48,3 +49,18 @@ def test_sanity_main(virtualenv_python):
     result = runner.invoke(app, ["--python", virtualenv_python, "tree"])
     assert result.exit_code != 0
     assert "pip not available", result.stderr
+
+
+def test_sanity_venv_no_pyvenv_cfg(virtualenv_python, capsys):
+    (Path(virtualenv_python).parent.parent / "pyvenv.cfg").unlink()
+    assert not check_env(virtualenv_python)
+    captured = capsys.readouterr()
+    assert "is not in a virtualenv", captured.stderr
+
+
+def test_sanity_venv_system_site_packages(
+    virtualenv_python_with_system_site_packages, capsys
+):
+    assert not check_env(virtualenv_python_with_system_site_packages)
+    captured = capsys.readouterr()
+    assert "virtualenv that includes system site packages", captured.stderr

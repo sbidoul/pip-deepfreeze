@@ -19,6 +19,20 @@ def virtualenv_python(tmp_path):
     return str(python)
 
 
+@pytest.fixture
+def virtualenv_python_with_system_site_packages(tmp_path):
+    """Return a python executable path within an isolated virtualenv."""
+    venv = tmp_path / "venv"
+    subprocess.check_call(
+        [sys.executable, "-m", "virtualenv", str(venv), "--system-site-packages"]
+    )
+    if os.name == "nt":
+        python = venv / "Scripts" / "python.exe"
+    else:
+        python = venv / "bin" / "python"
+    return str(python)
+
+
 @pytest.fixture(scope="session")
 def testpkgs(tmp_path_factory):
     """Create test wheels and return the temp dir where they are stored."""
