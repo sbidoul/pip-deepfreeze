@@ -134,8 +134,28 @@ When, later again, your branch is merged upstream and the project has published
 a release, remove the line from ``requirements.txt.in`` and run ``pip-df sync
 --update DEPENDENCYNAME`` to update to the latest released version.
 
-How to and FAQ
---------------
+How to
+------
+
+(TODO)
+
+-  Initial install (create a venv, and run ``pip-df sync`` which will
+   install and generate ``requirements.txt``)
+-  Add pip options (``--find-links``, ``--extra-index-url``, etc: in
+   ``requirements.txt.in``)
+-  Add a dependency that is published in an index or accessible via
+   ``--find-links`` (add it in ``setup.py``)
+-  Install dependencies from direct URLs such as git (add it in
+   ``setup.py`` and add the git reference in ``requirements.txt.in``)
+-  Remove a dependency (remove it from ``setup.py``)
+-  Update a dependency to the most recent version
+   (``pip-df sync --update   DEPENDENCY1,DEPENDENCY2``)
+-  Update all dependencies to the latest version
+   (``pip-df sync --update-all`` or remove ``requirements.txt`` and run
+   ``pip-df sync``)
+
+FAQ
+---
 
 What should I put in ``requirements.txt.in``? Should I add all my dependencies
 there?
@@ -156,6 +176,16 @@ not honor it. What is going on?
    references for already pinned requirements, use the ``--update`` option like so::
 
       pip-df sync --update DEPENDENCY1,DEPENDENCY2,...
+
+`pip-deepfreeze` erroneously complains python is not running in a virtualenv.
+
+   The most probable cause is that you used an older version of ``virtualenv``
+   which does not generate PEP 405 compliant virtual environments.
+   ``virtualenv`` version 20 and later are supported, as well as the Python 3
+   native ``venv`` module. Should this problem be prevalent in practice, we may
+   add support for older ``virtualenv`` versions, or add an option to ignore
+   the virtualenv sanity check (which is only there to prevent
+   ``pip-deepfreeze`` to corrupt the system Python packages by accident).
 
 How can I pass options to pip?
 
@@ -187,23 +217,6 @@ Is there a recommended way to deploy my project in the production environment?
    environment or docker image, and run::
 
       pip install --no-index --find-links=./wheel-dir ./wheel-dir/project_name-*.whl
-
-(TODO)
-
--  Initial install (create a venv, and run ``pip-df sync`` which will
-   install and generate ``requirements.txt``)
--  Add pip options (``--find-links``, ``--extra-index-url``, etc: in
-   ``requirements.txt.in``)
--  Add a dependency that is published in an index or accessible via
-   ``--find-links`` (add it in ``setup.py``)
--  Install dependencies from direct URLs such as git (add it in
-   ``setup.py`` and add the git reference in ``requirements.txt.in``)
--  Remove a dependency (remove it from ``setup.py``)
--  Update a dependency to the most recent version
-   (``pip-df sync --update   DEPENDENCY1,DEPENDENCY2``)
--  Update all dependencies to the latest version
-   (``pip-df sync --update-all`` or remove ``requirements.txt`` and run
-   ``pip-df sync``)
 
 CLI reference
 -------------
