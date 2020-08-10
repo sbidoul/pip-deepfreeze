@@ -25,8 +25,8 @@ def _get_env_info(python: str) -> EnvInfo:
         resource_files("pip_deepfreeze").joinpath(  # type: ignore
             "env_info_json.py"
         )
-    ) as pip_list_json:
-        return cast(EnvInfo, json.loads(check_output([python, str(pip_list_json)])))
+    ) as env_info_json:
+        return cast(EnvInfo, json.loads(check_output([python, str(env_info_json)])))
 
 
 def check_env(python: str) -> bool:
