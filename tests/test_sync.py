@@ -6,7 +6,7 @@ import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
-from pip_deepfreeze.pip import pip_freeze
+from pip_deepfreeze.pip import pip_freeze, pip_list
 from pip_deepfreeze.sync import sync
 
 
@@ -372,3 +372,46 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
         use_pip_constraints=True,
     )
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
+
+
+def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+            setup(
+                name="theproject",
+                install_requires=["pkgb"],
+                extras_require={
+                    "c": ["pkgc"],
+                },
+            )
+            """
+        )
+    )
+    (tmp_path / "requirements.txt.in").write_text(
+        textwrap.dedent(
+            f"""\
+            --no-index
+            -f {testpkgs}
+            """
+        )
+    )
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=["c"],
+        uninstall_unneeded=False,
+        project_root=tmp_path,
+        use_pip_constraints=True,
+    )
+    assert {"pkga", "pkgb", "pkgc"}.issubset(pip_list(virtualenv_python))
+    requirements_txt = (tmp_path / "requirements.txt").read_text()
+    assert "pkga==0.0.0\npkgb==0.0.0\n" in requirements_txt
+    assert "pkgc" not in requirements_txt
+    requirements_c_txt = (tmp_path / "requirements-c.txt").read_text()
+    assert "pkga" not in requirements_c_txt
+    assert "pkgb" not in requirements_c_txt
+    assert "pkgc=0.0.3\n" in requirements_c_txt
