@@ -29,6 +29,7 @@ def test_sync(virtualenv_python, testpkgs, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     subprocess.check_call(
         [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
         cwd=tmp_path,
@@ -54,6 +55,7 @@ def test_sync_no_in_req(virtualenv_python, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     subprocess.check_call(
         [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
         cwd=tmp_path,
@@ -156,6 +158,7 @@ def editable_foobar_path(tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = foobar\n")  # for perf
     return tmp_path
 
 
@@ -227,6 +230,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = foobar\n")  # for perf
     in_reqs = tmp_path / "requirements.txt.in"
     in_reqs.write_text(f"-f {testpkgs}")
     sync(
@@ -304,6 +308,7 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     (tmp_path / "requirements.txt.in").write_text(
         textwrap.dedent(
             f"""\
@@ -353,6 +358,7 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     (tmp_path / "requirements.txt.in").write_text(
         textwrap.dedent(
             f"""\
@@ -389,6 +395,7 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     (tmp_path / "requirements.txt.in").write_text(
         textwrap.dedent(
             f"""\
