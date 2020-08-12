@@ -69,7 +69,7 @@ class Node:
         return version
 
 
-def tree(python: str, project_root: Path, extras: List[str]) -> None:
+def tree(python: str, project_root: Path, extras: List[NormalizedName]) -> None:
     installed_dists = pip_list(python)
     nodes = {}  # type: Dict[NodeKey, Node]
 
@@ -90,7 +90,7 @@ def tree(python: str, project_root: Path, extras: List[str]) -> None:
                 node.children.append(add(dep_req))
         return node
 
-    project_name_with_extras = get_project_name(python, project_root)
+    project_name_with_extras = str(get_project_name(python, project_root))
     if extras:
         project_name_with_extras += "[" + ",".join(extras) + "]"
     add(Requirement(project_name_with_extras)).print()

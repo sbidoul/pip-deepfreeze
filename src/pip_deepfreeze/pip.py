@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
-from .compat import resource_as_file, resource_files, shlex_join
+from .compat import NormalizedName, resource_as_file, resource_files, shlex_join
 from .installed_dist import InstalledDistribution, InstalledDistributions
 from .list_installed_depends import list_installed_depends
 from .project_name import get_project_name
@@ -19,7 +19,7 @@ def pip_upgrade_project(
     python: str,
     constraints_filename: Path,
     project_root: Path,
-    extras: Optional[Iterable[str]] = None,
+    extras: Optional[Iterable[NormalizedName]] = None,
     editable: bool = True,
     use_pip_constraints: bool = True,
 ) -> None:
@@ -134,7 +134,7 @@ def pip_freeze(python: str) -> Iterable[str]:
 
 
 def pip_freeze_dependencies(
-    python: str, project_root: Path, extras: Optional[Iterable[str]] = None
+    python: str, project_root: Path, extras: Optional[Iterable[NormalizedName]] = None
 ) -> Tuple[List[str], List[str]]:
     """Run pip freeze, returning only dependencies of the project.
 

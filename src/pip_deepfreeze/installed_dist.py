@@ -51,9 +51,9 @@ class InstalledDistribution:
         return [Requirement(req) for req in self.data.get("requires", [])]
 
     @property
-    def extra_requires(self) -> Dict[str, List[Requirement]]:
+    def extra_requires(self) -> Dict[NormalizedName, List[Requirement]]:
         return {
-            extra: [Requirement(req) for req in reqs]
+            canonicalize_name(extra): [Requirement(req) for req in reqs]
             for extra, reqs in self.data.get("extra_requires", {}).items()
         }
 

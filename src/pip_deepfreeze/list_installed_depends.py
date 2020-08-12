@@ -9,8 +9,8 @@ from .installed_dist import InstalledDistributions
 
 def list_installed_depends(
     installed_dists: InstalledDistributions,
-    project_name: str,
-    extras: Optional[Iterable[str]] = None,
+    project_name: NormalizedName,
+    extras: Optional[Iterable[NormalizedName]] = None,
 ) -> Set[NormalizedName]:
     """List installed dependencies of an installed project.
 
@@ -40,7 +40,7 @@ def list_installed_depends(
                 for dep_req in dist.extra_requires[extra]:
                     add(dep_req, deps_only=False)
 
-    project_name_with_extras = project_name
+    project_name_with_extras = str(project_name)
     if extras:
         project_name_with_extras += "[" + ",".join(extras) + "]"
     add(

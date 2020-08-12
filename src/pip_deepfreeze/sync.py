@@ -5,6 +5,7 @@ from typing import List, Optional
 import httpx
 import typer
 
+from .compat import NormalizedName
 from .pip import pip_freeze_dependencies, pip_uninstall, pip_upgrade_project
 from .project_name import get_project_name
 from .req_file_parser import OptionsLine, parse as parse_req_file
@@ -18,7 +19,7 @@ def sync(
     upgrade_all: bool,
     to_upgrade: List[str],
     editable: bool,
-    extras: List[str],
+    extras: List[NormalizedName],
     uninstall_unneeded: Optional[bool],
     project_root: Path,
     use_pip_constraints: bool,
