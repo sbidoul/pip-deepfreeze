@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Set
+from typing import Dict, Iterable, Optional, Set
 
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
@@ -47,4 +47,17 @@ def list_installed_depends(
         Requirement(project_name_with_extras), deps_only=True,
     )
 
+    return res
+
+
+def list_installed_depends_by_extra(
+    installed_dists: InstalledDistributions, project_name: NormalizedName,
+) -> Dict[Optional[NormalizedName], Set[NormalizedName]]:
+    """Get installed dependencies of a project, grouped by extra."""
+    res = {}  # type: Dict[Optional[NormalizedName], Set[NormalizedName]]
+    base_depends = list_installed_depends(installed_dists, project_name)
+    res[None] = base_depends
+    for extra in installed_dists[project_name].extra_requires:
+        extra_depends = list_installed_depends(installed_dists, project_name, [extra])
+        res[extra] = extra_depends - base_depends
     return res

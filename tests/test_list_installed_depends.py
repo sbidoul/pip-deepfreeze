@@ -3,7 +3,10 @@ import textwrap
 
 import pytest
 
-from pip_deepfreeze.list_installed_depends import list_installed_depends
+from pip_deepfreeze.list_installed_depends import (
+    list_installed_depends,
+    list_installed_depends_by_extra,
+)
 from pip_deepfreeze.pip import pip_list
 
 
@@ -126,4 +129,41 @@ def test_list_installed_depends_extras(virtualenv_python, testpkgs, tmp_path):
         "pkga",
         "pkgb",
         "pkgc",
+    }
+
+
+def test_list_installed_depends_by_extra(virtualenv_python, testpkgs, tmp_path):
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+
+            setup(
+                name="theproject",
+                install_requires=["pkga"],
+                extras_require={
+                    "b": ["pkgb"],
+                    "c": ["pkgc"],
+                },
+            )
+            """
+        )
+    )
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "-e",
+            str(tmp_path) + "[b,c]",
+            "-f",
+            str(testpkgs),
+        ]
+    )
+    installed_dists = pip_list(virtualenv_python)
+    assert list_installed_depends_by_extra(installed_dists, "theproject") == {
+        None: {"pkga"},
+        "b": {"pkgb"},
+        "c": {"pkgc"},
     }
