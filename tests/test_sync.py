@@ -320,6 +320,7 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
+        use_pip_constraints=True,
     )
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
 
@@ -368,5 +369,6 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
+        use_pip_constraints=True,
     )
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
