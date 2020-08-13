@@ -137,22 +137,69 @@ a release, remove the line from ``requirements.txt.in`` and run ``pip-df sync
 How to
 ------
 
-(TODO)
+Creating a new project.
 
--  Initial install (create a venv, and run ``pip-df sync`` which will
-   install and generate ``requirements.txt``)
--  Add pip options (``--find-links``, ``--extra-index-url``, etc: in
-   ``requirements.txt.in``)
--  Add a dependency that is published in an index or accessible via
-   ``--find-links`` (add it in ``setup.py``)
--  Install dependencies from direct URLs such as git (add it in
-   ``setup.py`` and add the git reference in ``requirements.txt.in``)
--  Remove a dependency (remove it from ``setup.py``)
--  Update a dependency to the most recent version
-   (``pip-df sync --update   DEPENDENCY1,DEPENDENCY2``)
--  Update all dependencies to the latest version
-   (``pip-df sync --update-all`` or remove ``requirements.txt`` and run
-   ``pip-df sync``)
+   Follow the instructions of your favorite PEP 517 compliant build tool, such
+   as ``setuptools``, ``flit`` or others. After declaring the first
+   dependencies, create and activate a virtualenv, then run ``pip-df sync`` in
+   the project directory to generate pinned dependencies in
+   ``requirements.txt``.
+
+Installing an existing project.
+
+   After checking out the project from source control, create and activate
+   activate virtualenv, the run ``pip-df sync`` to install the project.
+
+Updating to the latest version of a project.
+
+   After dependencies have been added to the project by others, update the
+   source code from VCS, then run ``pip-df sync`` while in your activated
+   virtualenv to bring it to the desired state: dependencies will be updated,
+   removed or uninstalled as needed.
+
+Adding or removing dependencies.
+
+   After you have added or removed dependencies to your build tool
+   configuration, simply run ``pip-df sync`` to update your virtualenv.
+   You will be prompted to uninstall unneeded dependencies.
+
+Refreshing some pinned dependencies.
+
+   After a while you may want to refresh some or all of your dependencies to an
+   up-to-date version. You can do so with ``pip-df sync --update
+   dep1,dep2,...``.
+
+Refreshing all pinned dependencies.
+
+   To update all dependencies to the latest allowed version, you can use
+   ``pip-df sync --update-all``. This is equivalent to removing
+   ``requirements.txt`` then running ``pip-df sync``. This is also roughly
+   equivalent to reinstalling in an empty virtualenv with ``pip install -e . -c
+   requirements.txt.in`` then running ``pip freeze > requirements.txt``.
+
+Using another package index than PyPI.
+
+   Create a file named ``requirements.txt.in`` in your project root, and add
+   pip options to it, such as ``--extra-index-url`` or ``--find-links``. You
+   can add any option that `pip supports in requirements files
+   <https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format>`_.
+
+Installing dependencies from VCS.
+
+   When one of your direct or indirect dependencies has a bug or a missing
+   feature, it is convenient to do an upstream pull request then install from
+   it. Assume for instance your project depends on the ``packaging`` library
+   and you want to install a pull request you made to it. To do so, make sure
+   ``packaging`` is declared as a regular dependency of your project. Then
+   add the VCS reference in ``requirements.txt.in`` like so::
+
+      packaging @ git+https://github.com/you/packaging@your-branch
+
+   Then run ``pip-df sync --update packaging`` to install from the branch and
+   pin the exact commit in ``requirements.txt`` for reproducibility. When
+   upstream merges your PR and cuts a release, you can simply remove the line
+   from ``requirements.txt.in`` and run ``pip-df sync --update packaging`` to
+   refresh to the latest released version.
 
 FAQ
 ---
@@ -163,7 +210,7 @@ there?
    ``requirements.txt.in`` is optional. The dependencies of your project must
    be declared primarily in ``setup.py`` or ``setup.cfg`` (if you use
    ``setuptools``), or in ``pyproject.toml`` if you use another PEP 517 build
-   backend such as ``flit``. ``requirements.txt.in`` must contain additional
+   backend such as ``flit``. ``requirements.txt.in`` may contain additional
    constraints if needed, such as version constraints on indirect dependencies
    that you don't control, or VCS links for dependencies that you need to
    install from VCS source.
@@ -217,6 +264,10 @@ Is there a recommended way to deploy my project in the production environment?
    environment or docker image, and run::
 
       pip install --no-index --find-links=./wheel-dir ./wheel-dir/project_name-*.whl
+
+   Note the use of ``--no-deps`` when building and ``--no-index`` when
+   installing. This will ensure that all your dependencies are pinned in
+   ``requirements.txt``.
 
 CLI reference
 -------------
@@ -282,6 +333,9 @@ pip-df sync
      --editable / --no-editable      Install the project in editable mode.
                                      Defaults to editable if the project supports
                                      it.
+
+     -e, --extras EXTRAS             Extras to install and freeze to
+                                     requirements-{EXTRA}.txt.
 
      --uninstall-unneeded / --no-uninstall-unneeded
                                      Uninstall distributions that are not
