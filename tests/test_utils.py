@@ -13,6 +13,7 @@ from pip_deepfreeze.utils import (
     log_error,
     log_info,
     log_warning,
+    make_project_name_with_extras,
     open_with_rollback,
 )
 
@@ -98,3 +99,16 @@ def test_check_output(capsys):
 )
 def test_comma_split(s, expected):
     assert comma_split(s) == expected
+
+
+@pytest.mark.parametrize(
+    "project_name, extras, expected",
+    [
+        ("prj", None, "prj"),
+        ("prj", [], "prj"),
+        ("prj", ["e1"], "prj[e1]"),
+        ("prj", ["e1", "e2"], "prj[e1,e2]"),
+    ],
+)
+def test_make_project_name_with_extras(project_name, extras, expected):
+    assert make_project_name_with_extras(project_name, extras) == expected

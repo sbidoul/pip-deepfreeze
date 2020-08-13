@@ -1,14 +1,18 @@
-from typing import Set
+from typing import Dict, Optional, Sequence, Set
 
+import typer
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 from .compat import NormalizedName
 from .installed_dist import InstalledDistributions
+from .utils import log_error, make_project_name_with_extras
 
 
 def list_installed_depends(
-    installed_dists: InstalledDistributions, project_name: str
+    installed_dists: InstalledDistributions,
+    project_name: NormalizedName,
+    extras: Optional[Sequence[NormalizedName]] = None,
 ) -> Set[NormalizedName]:
     """List installed dependencies of an installed project.
 
@@ -28,16 +32,35 @@ def list_installed_depends(
             dist = installed_dists[req_name]
         except KeyError:
             # not installed
-            return  # TODO add it anyway?
+            return
         else:
             if not deps_only:
                 res.add(req_name)
             for dep_req in dist.requires:
                 add(dep_req, deps_only=False)
             for extra in req.extras:
+                if extra not in dist.extra_requires:
+                    log_error(f"{extra} is not an extra of {dist.name}")
+                    raise typer.Exit(1)
                 for dep_req in dist.extra_requires[extra]:
                     add(dep_req, deps_only=False)
 
-    add(Requirement(project_name), deps_only=True)
+    add(
+        Requirement(make_project_name_with_extras(project_name, extras)),
+        deps_only=True,
+    )
 
+    return res
+
+
+def list_installed_depends_by_extra(
+    installed_dists: InstalledDistributions, project_name: NormalizedName,
+) -> Dict[Optional[NormalizedName], Set[NormalizedName]]:
+    """Get installed dependencies of a project, grouped by extra."""
+    res = {}  # type: Dict[Optional[NormalizedName], Set[NormalizedName]]
+    base_depends = list_installed_depends(installed_dists, project_name)
+    res[None] = base_depends
+    for extra in installed_dists[project_name].extra_requires:
+        extra_depends = list_installed_depends(installed_dists, project_name, [extra])
+        res[extra] = extra_depends - base_depends
     return res

@@ -11,7 +11,7 @@ from .utils import log_error
 
 
 def prepare_frozen_reqs_for_upgrade(
-    frozen_filename: Path,
+    frozen_filenames: Iterable[Path],
     in_filename: Path,
     upgrade_all: bool = False,
     to_upgrade: Optional[Iterable[str]] = None,
@@ -44,21 +44,22 @@ def prepare_frozen_reqs_for_upgrade(
                     continue
                 in_reqs.append((req_name, in_req.requirement))
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
-    if frozen_filename.is_file() and not upgrade_all:
-        for frozen_req in parse(
-            str(frozen_filename), recurse=True, reqs_only=True, strict=True
-        ):
-            assert isinstance(frozen_req, RequirementLine)
-            req_name = get_req_name(frozen_req.requirement)
-            if not req_name:
-                log_error(
-                    f"Ignoring unnamed frozen requirement {frozen_req.raw_line!r}."
-                )
-                continue
-            if req_name in to_upgrade_set:
-                continue
-            frozen_reqs.add(req_name)
-            yield frozen_req.requirement
+    for frozen_filename in frozen_filenames:
+        if frozen_filename.is_file() and not upgrade_all:
+            for frozen_req in parse(
+                str(frozen_filename), recurse=True, reqs_only=True, strict=True
+            ):
+                assert isinstance(frozen_req, RequirementLine)
+                req_name = get_req_name(frozen_req.requirement)
+                if not req_name:
+                    log_error(
+                        f"Ignoring unnamed frozen requirement {frozen_req.raw_line!r}."
+                    )
+                    continue
+                if req_name in to_upgrade_set:
+                    continue
+                frozen_reqs.add(req_name)
+                yield frozen_req.requirement
     # 3. emit in_reqs that have not been emitted as frozen reqs
     for req_name, in_req_str in in_reqs:
         if req_name not in frozen_reqs:

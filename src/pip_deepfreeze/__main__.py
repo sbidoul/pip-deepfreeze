@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 import typer
+from packaging.utils import canonicalize_name
 
 from .detect import supports_editable
 from .sanity import check_env
@@ -41,13 +42,13 @@ def sync(
         ),
         show_default=False,
     ),
-    # extras: str = typer.Option(
-    #     None,
-    #     "--extra",
-    #     "-e",
-    #     metavar="EXTRA",
-    #     help="Extras to install.",
-    # ),
+    extras: str = typer.Option(
+        None,
+        "--extras",
+        "-e",
+        metavar="EXTRAS",
+        help="Extras to install and freeze to requirements-{EXTRA}.txt.",
+    ),
     editable: Optional[bool] = typer.Option(
         None,
         help=(
@@ -92,7 +93,7 @@ def sync(
         upgrade_all,
         comma_split(to_upgrade),
         editable,
-        extras=[],
+        extras=[canonicalize_name(extra) for extra in comma_split(extras)],
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
         use_pip_constraints=use_pip_constraints,
@@ -112,7 +113,9 @@ def tree(
 ) -> None:
     """Print the installed dependencies of the project as a tree."""
     tree_operation(
-        ctx.obj.python, project_root=ctx.obj.project_root, extras=comma_split(extras)
+        ctx.obj.python,
+        project_root=ctx.obj.project_root,
+        extras=[canonicalize_name(extra) for extra in comma_split(extras)],
     )
 
 

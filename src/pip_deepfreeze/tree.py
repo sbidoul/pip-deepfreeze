@@ -9,6 +9,7 @@ from .compat import NormalizedName
 from .installed_dist import InstalledDistribution
 from .pip import pip_list
 from .project_name import get_project_name
+from .utils import make_project_name_with_extras
 
 NodeKey = Tuple[NormalizedName, Tuple[NormalizedName, ...]]
 
@@ -69,14 +70,9 @@ class Node:
         return version
 
 
-def tree(python: str, project_root: Path, extras: List[str]) -> None:
+def tree(python: str, project_root: Path, extras: List[NormalizedName]) -> None:
     project_name = get_project_name(python, project_root)
     installed_dists = pip_list(python)
-    if extras:
-        req = Requirement(f"{project_name}[{','.join(extras)}]")
-    else:
-        req = Requirement(project_name)
-
     nodes = {}  # type: Dict[NodeKey, Node]
 
     def add(req: Requirement) -> Node:
@@ -96,4 +92,4 @@ def tree(python: str, project_root: Path, extras: List[str]) -> None:
                 node.children.append(add(dep_req))
         return node
 
-    add(req).print()
+    add(Requirement(make_project_name_with_extras(project_name, extras))).print()

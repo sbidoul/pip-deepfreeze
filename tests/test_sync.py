@@ -6,7 +6,7 @@ import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
-from pip_deepfreeze.pip import pip_freeze
+from pip_deepfreeze.pip import pip_freeze, pip_list
 from pip_deepfreeze.sync import sync
 
 
@@ -29,6 +29,7 @@ def test_sync(virtualenv_python, testpkgs, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     subprocess.check_call(
         [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
         cwd=tmp_path,
@@ -54,6 +55,7 @@ def test_sync_no_in_req(virtualenv_python, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     subprocess.check_call(
         [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
         cwd=tmp_path,
@@ -156,6 +158,7 @@ def editable_foobar_path(tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = foobar\n")  # for perf
     return tmp_path
 
 
@@ -227,6 +230,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = foobar\n")  # for perf
     in_reqs = tmp_path / "requirements.txt.in"
     in_reqs.write_text(f"-f {testpkgs}")
     sync(
@@ -304,6 +308,7 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     (tmp_path / "requirements.txt.in").write_text(
         textwrap.dedent(
             f"""\
@@ -320,6 +325,7 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
+        use_pip_constraints=True,
     )
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
 
@@ -352,6 +358,7 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
             """
         )
     )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
     (tmp_path / "requirements.txt.in").write_text(
         textwrap.dedent(
             f"""\
@@ -368,5 +375,70 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
+        use_pip_constraints=True,
     )
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
+
+
+def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+            setup(
+                name="theproject",
+                install_requires=["pkgb"],
+                extras_require={
+                    "c": ["pkgc"],
+                },
+            )
+            """
+        )
+    )
+    (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject\n")  # for perf
+    (tmp_path / "requirements.txt.in").write_text(
+        textwrap.dedent(
+            f"""\
+            --no-index
+            -f {testpkgs}
+            """
+        )
+    )
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=["c"],
+        uninstall_unneeded=False,
+        project_root=tmp_path,
+        use_pip_constraints=True,
+    )
+    assert {"pkga", "pkgb", "pkgc"}.issubset(pip_list(virtualenv_python))
+    requirements_txt = (tmp_path / "requirements.txt").read_text()
+    assert "pkga==0.0.0\npkgb==0.0.0\n" in requirements_txt
+    assert "pkgc" not in requirements_txt
+    requirements_c_txt = (tmp_path / "requirements-c.txt").read_text()
+    assert "pkga" not in requirements_c_txt
+    assert "pkgb" not in requirements_c_txt
+    assert "pkgc==0.0.3\n" in requirements_c_txt
+    # now sync again with a different frozen extra dependency
+    (tmp_path / "requirements-c.txt").write_text("pkgc==0.0.2")
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=["c"],
+        uninstall_unneeded=False,
+        project_root=tmp_path,
+        use_pip_constraints=True,
+    )
+    assert {"pkga", "pkgb", "pkgc"}.issubset(pip_list(virtualenv_python))
+    requirements_txt = (tmp_path / "requirements.txt").read_text()
+    assert "pkga==0.0.0\npkgb==0.0.0\n" in requirements_txt
+    assert "pkgc" not in requirements_txt
+    requirements_c_txt = (tmp_path / "requirements-c.txt").read_text()
+    assert "pkga" not in requirements_c_txt
+    assert "pkgb" not in requirements_c_txt
+    assert "pkgc==0.0.2\n" in requirements_c_txt

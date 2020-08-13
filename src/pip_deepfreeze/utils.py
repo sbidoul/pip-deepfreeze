@@ -2,7 +2,7 @@ import contextlib
 import subprocess
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import IO, Any, Dict, Iterator, List, Optional, Sequence, Union
+from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, Union
 
 import typer
 
@@ -92,3 +92,12 @@ def comma_split(s: Optional[str]) -> List[str]:
         return []
     items = [item.strip() for item in s.split(",")]
     return [item for item in items if item]
+
+
+def make_project_name_with_extras(
+    project_name: str, extras: Optional[Iterable[str]]
+) -> str:
+    if not extras:
+        return project_name
+    else:
+        return project_name + "[" + ",".join(extras) + "]"

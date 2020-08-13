@@ -12,14 +12,16 @@ from tempfile import TemporaryDirectory
 from typing import Any, MutableMapping, Optional
 
 import toml
+from packaging.utils import canonicalize_name
 
+from .compat import NormalizedName
 from .utils import check_call, check_output, log_info
 
 PyProjectToml = MutableMapping[str, Any]
 
 
 @lru_cache(maxsize=1)
-def get_project_name(python: str, project_root: Path) -> str:
+def get_project_name(python: str, project_root: Path) -> NormalizedName:
     log_info("Getting project name..", nl=False)
     pyproject_toml = _load_pyproject_toml(project_root)
     name = (
@@ -29,7 +31,7 @@ def get_project_name(python: str, project_root: Path) -> str:
         or get_project_name_from_pep517(python, project_root)
     )
     log_info(" " + name)
-    return name
+    return canonicalize_name(name)
 
 
 def _load_pyproject_toml(project_root: Path) -> Optional[PyProjectToml]:
@@ -122,7 +124,7 @@ def get_project_name_from_pep517(python: str, project_root: Path) -> str:
             ]
         )
         log_info(".", nl=False)
-        # TODO this uses an undocumented function of pep517
+        # XXX this uses an undocumented function of pep517
         name = check_output(
             [
                 python,
