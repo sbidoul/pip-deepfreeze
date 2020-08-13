@@ -1,10 +1,13 @@
 import json
 from pathlib import Path
-from typing import Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 from .compat import NormalizedName, resource_as_file, resource_files, shlex_join
 from .installed_dist import InstalledDistribution, InstalledDistributions
-from .list_installed_depends import list_installed_depends
+from .list_installed_depends import (
+    list_installed_depends,
+    list_installed_depends_by_extra,
+)
 from .project_name import get_project_name
 from .req_file_parser import (
     NestedRequirementsLine,
@@ -19,7 +22,7 @@ def pip_upgrade_project(
     python: str,
     constraints_filename: Path,
     project_root: Path,
-    extras: Optional[Iterable[NormalizedName]] = None,
+    extras: Optional[Sequence[NormalizedName]] = None,
     editable: bool = True,
     use_pip_constraints: bool = True,
 ) -> None:
@@ -48,8 +51,6 @@ def pip_upgrade_project(
     update the version specifier in requirements.txt, and reinstalling the project with
     this function.
     """
-    if extras:
-        raise NotImplementedError("extras not implemented")
     # 1. parse constraints
     constraint_reqs = {}
     for req_line in parse_req_file(
@@ -134,7 +135,7 @@ def pip_freeze(python: str) -> Iterable[str]:
 
 
 def pip_freeze_dependencies(
-    python: str, project_root: Path, extras: Optional[Iterable[NormalizedName]] = None
+    python: str, project_root: Path, extras: Optional[Sequence[NormalizedName]] = None
 ) -> Tuple[List[str], List[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
@@ -156,6 +157,48 @@ def pip_freeze_dependencies(
         if frozen_req_name in dependencies_names:
             dependencies_reqs.append(frozen_req)
         elif frozen_req_name != project_name:
+            unneeded_reqs.append(frozen_req)
+    return dependencies_reqs, unneeded_reqs
+
+
+def pip_freeze_dependencies_by_extra(
+    python: str, project_root: Path, extras: Sequence[NormalizedName]
+) -> Tuple[Dict[Optional[NormalizedName], List[str]], List[str]]:
+    """Run pip freeze, returning only dependencies of the project.
+
+    Return the list of installed direct and indirect dependencies of the
+    project grouped by extra, and the list of other installed
+    dependencies that are not dependencies of the project (except the
+    project itself). Dependencies are returned in pip freeze format.
+    Unnamed requirements are ignored.
+    """
+    project_name = get_project_name(python, project_root)
+    dependencies_by_extras = list_installed_depends_by_extra(
+        pip_list(python), project_name
+    )
+    frozen_reqs = pip_freeze(python)
+    dependencies_reqs = {
+        extra: [] for extra in extras
+    }  # type: Dict[Optional[NormalizedName], List[str]]
+    dependencies_reqs[None] = []
+    unneeded_reqs = []
+    for frozen_req in frozen_reqs:
+        frozen_req_name = get_req_name(frozen_req)
+        if not frozen_req_name:
+            continue
+        if frozen_req_name == project_name:
+            continue
+        unneeded = True
+        if frozen_req_name in dependencies_by_extras[None]:
+            unneeded = False
+            dependencies_reqs[None].append(frozen_req)
+        else:
+            for extra in extras:
+                assert extra in dependencies_by_extras  # TODO user error
+                if frozen_req_name in dependencies_by_extras[extra]:
+                    unneeded = False
+                    dependencies_reqs[extra].append(frozen_req)
+        if unneeded:
             unneeded_reqs.append(frozen_req)
     return dependencies_reqs, unneeded_reqs
 

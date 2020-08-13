@@ -1,17 +1,18 @@
-from typing import Dict, Iterable, Optional, Set
+from typing import Dict, Optional, Sequence, Set
 
+import typer
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 from .compat import NormalizedName
 from .installed_dist import InstalledDistributions
-from .utils import make_project_name_with_extras
+from .utils import log_error, make_project_name_with_extras
 
 
 def list_installed_depends(
     installed_dists: InstalledDistributions,
     project_name: NormalizedName,
-    extras: Optional[Iterable[NormalizedName]] = None,
+    extras: Optional[Sequence[NormalizedName]] = None,
 ) -> Set[NormalizedName]:
     """List installed dependencies of an installed project.
 
@@ -38,6 +39,9 @@ def list_installed_depends(
             for dep_req in dist.requires:
                 add(dep_req, deps_only=False)
             for extra in req.extras:
+                if extra not in dist.extra_requires:
+                    log_error(f"{extra} is not an extra of {dist.name}")
+                    raise typer.Exit(1)
                 for dep_req in dist.extra_requires[extra]:
                     add(dep_req, deps_only=False)
 

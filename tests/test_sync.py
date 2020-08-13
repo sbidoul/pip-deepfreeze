@@ -421,4 +421,24 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
     requirements_c_txt = (tmp_path / "requirements-c.txt").read_text()
     assert "pkga" not in requirements_c_txt
     assert "pkgb" not in requirements_c_txt
-    assert "pkgc=0.0.3\n" in requirements_c_txt
+    assert "pkgc==0.0.3\n" in requirements_c_txt
+    # now sync again with a different frozen extra dependency
+    (tmp_path / "requirements-c.txt").write_text("pkgc==0.0.2")
+    sync(
+        virtualenv_python,
+        upgrade_all=False,
+        to_upgrade=[],
+        editable=True,
+        extras=["c"],
+        uninstall_unneeded=False,
+        project_root=tmp_path,
+        use_pip_constraints=True,
+    )
+    assert {"pkga", "pkgb", "pkgc"}.issubset(pip_list(virtualenv_python))
+    requirements_txt = (tmp_path / "requirements.txt").read_text()
+    assert "pkga==0.0.0\npkgb==0.0.0\n" in requirements_txt
+    assert "pkgc" not in requirements_txt
+    requirements_c_txt = (tmp_path / "requirements-c.txt").read_text()
+    assert "pkga" not in requirements_c_txt
+    assert "pkgb" not in requirements_c_txt
+    assert "pkgc==0.0.2\n" in requirements_c_txt
