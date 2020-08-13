@@ -13,8 +13,8 @@ from pip_deepfreeze.utils import (
     log_error,
     log_info,
     log_warning,
+    make_project_name_with_extras,
     open_with_rollback,
-    project_name_with_extras,
 )
 
 
@@ -110,5 +110,5 @@ def test_comma_split(s, expected):
         ("prj", ["e1", "e2"], "prj[e1,e2]"),
     ],
 )
-def test_project_name_with_extras(project_name, extras, expected):
-    assert project_name_with_extras(project_name, extras) == expected
+def test_make_project_name_with_extras(project_name, extras, expected):
+    assert make_project_name_with_extras(project_name, extras) == expected

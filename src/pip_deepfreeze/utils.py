@@ -94,7 +94,9 @@ def comma_split(s: Optional[str]) -> List[str]:
     return [item for item in items if item]
 
 
-def project_name_with_extras(project_name: str, extras: Optional[Iterable[str]]) -> str:
+def make_project_name_with_extras(
+    project_name: str, extras: Optional[Iterable[str]]
+) -> str:
     if not extras:
         return project_name
     else:
