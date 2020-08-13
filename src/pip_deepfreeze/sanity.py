@@ -3,7 +3,7 @@ from typing import Optional, cast
 
 from packaging.version import Version
 
-from .compat import TypedDict, resource_as_file, resource_files
+from .compat import TypedDict, resource_path
 from .utils import check_output, log_error, log_warning, shlex_join
 
 EnvInfo = TypedDict(
@@ -21,11 +21,7 @@ EnvInfo = TypedDict(
 
 
 def _get_env_info(python: str) -> EnvInfo:
-    with resource_as_file(
-        resource_files("pip_deepfreeze").joinpath(  # type: ignore
-            "env_info_json.py"
-        )
-    ) as env_info_json:
+    with resource_path("pip_deepfreeze", "env_info_json.py") as env_info_json:
         return cast(EnvInfo, json.loads(check_output([python, str(env_info_json)])))
 
 
