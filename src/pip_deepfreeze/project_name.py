@@ -124,7 +124,7 @@ def get_project_name_from_pep517(python: str, project_root: Path) -> str:
             ]
         )
         log_info(".", nl=False)
-        # TODO this uses an undocumented function of pep517
+        # XXX this uses an undocumented function of pep517
         name = check_output(
             [
                 python,

@@ -10,9 +10,6 @@ moving this to a standalone library:
 - nested constraints?
 """
 
-# TODO accept pathlike or stream in parse(),
-#      but then what filename to return in ParsedLine, and how
-#      to handle base_filename
 # TODO better name than filename/base_filename
 
 from __future__ import absolute_import
@@ -255,7 +252,7 @@ def _parse_lines(
                 requirement=opts.editables[0],
                 is_editable=True,
                 is_constraint=constraints,
-                options=[],  # TODO or other_opts?
+                options=[],  # XXX can't editables have options?
             )
         elif opts.requirements:
             yield NestedRequirementsLine(
@@ -263,7 +260,9 @@ def _parse_lines(
                 lineno,
                 raw_line,
                 requirements=opts.requirements[0],
-                is_constraint=False,  # TODO this could be `constraints`
+                # XXX this could be `constraints` instead of False
+                #     https://github.com/pypa/pip/issues/8416
+                is_constraint=False,
             )
         elif opts.constraints:
             yield NestedRequirementsLine(
@@ -380,7 +379,7 @@ def _join_lines(lines_enum):
         assert primary_line_number is not None
         yield primary_line_number, "".join(new_lines), "\n".join(raw_lines)
 
-    # TODO: handle space after '\'.
+    # TODO (from pip codebase): handle space after '\'.
 
 
 def _remove_comments(lines_enum):

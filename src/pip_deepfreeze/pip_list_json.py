@@ -48,9 +48,9 @@ def main():
             direct_url = json.loads(dist.get_metadata("direct_url.json"))
             rec["direct_url"] = direct_url
         # requires/extra_requires
-        # TODO: this part would not be necessary if `packaging` had a way
-        #       to check the extra marker without evaluating with the full
-        #       environment
+        # XXX: this part would not be necessary if `packaging` had a way
+        #      to check the extra marker without evaluating with the full
+        #      environment
         requires = []
         requires_set = set()
         for dep in dist.requires():

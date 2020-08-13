@@ -59,14 +59,14 @@ def pip_upgrade_project(
         assert not isinstance(req_line, NestedRequirementsLine)
         if isinstance(req_line, RequirementLine):
             req_name = get_req_name(req_line.requirement)
-            assert req_name  # TODO user error instead?
+            assert req_name  # XXX user error instead?
             constraint_reqs[req_name] = req_line.requirement
     # 2. get installed frozen dependencies of project
     installed_reqs = {
         get_req_name(req_line): req_line
         for req_line in pip_freeze_dependencies(python, project_root, extras)[0]
     }
-    assert all(installed_reqs.keys())  # TODO user error instead?
+    assert all(installed_reqs.keys())  # XXX user error instead?
     # 3. uninstall dependencies that do not match constraints
     to_uninstall = set()
     for installed_req_name, installed_req in installed_reqs.items():
@@ -194,7 +194,7 @@ def pip_freeze_dependencies_by_extra(
             dependencies_reqs[None].append(frozen_req)
         else:
             for extra in extras:
-                assert extra in dependencies_by_extras  # TODO user error
+                assert extra in dependencies_by_extras  # XXX user error instead?
                 if frozen_req_name in dependencies_by_extras[extra]:
                     unneeded = False
                     dependencies_reqs[extra].append(frozen_req)
