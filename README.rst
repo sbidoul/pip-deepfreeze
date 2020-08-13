@@ -30,12 +30,14 @@ This includes:
 - uninstalling unused dependencies,
 - refreshing dependencies,
 - maintaining pinned versions in ``requirements.txt``,
+- pinning versions for extras in ``requirements-{extra}.txt``
 - displaying installed dependencies as a tree.
 
 A few characteristics of this project:
 
 - It is easy to use.
-- It is fast.
+- It is fast, with very little overhead on top of a regular
+  ``pip install`` + ``pip freeze``.
 - It relies on the documented ``pip`` command line interface and its
   ubiquitous `requirements file
   format <https://pip.pypa.io/en/stable/user_guide/?highlight=requirements#requirements-files>`__.
@@ -45,8 +47,8 @@ A few characteristics of this project:
 - It has first class support for dependencies sepecified as VCS references.
 - It is written in Python 3.6+, yet works in any virtual environment
   that has ``pip`` installed, including python 2.
-- It is small, simple, with good test coverage and hopefully easy to
-  maintain.
+- It is reasonably small and simple, with good test coverage and is hopefully
+  easy to maintain.
 
 .. warning::
 
@@ -200,6 +202,14 @@ Installing dependencies from VCS.
    upstream merges your PR and cuts a release, you can simply remove the line
    from ``requirements.txt.in`` and run ``pip-df sync --update packaging`` to
    refresh to the latest released version.
+
+Working with extras.
+
+   Assuming your project configuration declares extra dependencies such as
+   ``tests`` or ``docs``, you can run ``pip-df sync --extras tests,docs`` to
+   update your virtualenv with the necessary dependencies. This will also pin
+   extra dependencies in ``requirements-tests.txt`` and
+   ``requirements-docs.txt``.
 
 FAQ
 ---
