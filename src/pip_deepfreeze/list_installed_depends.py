@@ -5,6 +5,7 @@ from packaging.utils import canonicalize_name
 
 from .compat import NormalizedName
 from .installed_dist import InstalledDistributions
+from .utils import project_name_with_extras
 
 
 def list_installed_depends(
@@ -40,11 +41,8 @@ def list_installed_depends(
                 for dep_req in dist.extra_requires[extra]:
                     add(dep_req, deps_only=False)
 
-    project_name_with_extras = str(project_name)
-    if extras:
-        project_name_with_extras += "[" + ",".join(extras) + "]"
     add(
-        Requirement(project_name_with_extras), deps_only=True,
+        Requirement(project_name_with_extras(project_name, extras)), deps_only=True,
     )
 
     return res
