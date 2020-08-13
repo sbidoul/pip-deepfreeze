@@ -8,6 +8,7 @@ from packaging.requirements import Requirement
 from pip_deepfreeze.pip import (
     pip_freeze,
     pip_freeze_dependencies,
+    pip_freeze_dependencies_by_extra,
     pip_list,
     pip_uninstall,
     pip_upgrade_project,
@@ -79,6 +80,85 @@ def test_pip_freeze_dependencies(
         + other_installs
     )
     assert list(pip_freeze_dependencies(virtualenv_python, tmp_path)) == expected
+
+
+@pytest.mark.parametrize(
+    "install_requires, extras_require, other_installs, freeze_extras, expected",
+    [
+        ([], {}, [], [], [{None: []}, []]),
+        ([], {}, ["pkgc"], [], [{None: []}, ["pkgc==0.0.3"]]),
+        (["pkga"], {}, [], [], [{None: ["pkga==0.0.0"]}, []]),
+        (["pkgb"], {}, [], [], [{None: ["pkga==0.0.0", "pkgb==0.0.0"]}, []]),
+        (
+            ["pkgb"],
+            {},
+            ["pkgc"],
+            [],
+            [{None: ["pkga==0.0.0", "pkgb==0.0.0"]}, ["pkgc==0.0.3"]],
+        ),
+        (
+            ["pkgc"],
+            {"b": ["pkgb"]},
+            [],
+            [],
+            [{None: ["pkgc==0.0.3"]}, ["pkga==0.0.0", "pkgb==0.0.0"]],
+        ),
+        (
+            ["pkgc"],
+            {"b": ["pkgb"]},
+            [],
+            ["b"],
+            [{None: ["pkgc==0.0.3"], "b": ["pkga==0.0.0", "pkgb==0.0.0"]}, []],
+        ),
+    ],
+)
+def test_pip_freeze_dependencies_by_extra(
+    install_requires,
+    extras_require,
+    other_installs,
+    freeze_extras,
+    expected,
+    virtualenv_python,
+    testpkgs,
+    tmp_path,
+):
+    # note: complex dependency situations are tested in test_list_installed_depends.py
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            f"""
+            from setuptools import setup
+
+            setup(
+                name="theproject",
+                install_requires={install_requires!r},
+                extras_require={extras_require!r},
+            )
+            """
+        )
+    )
+    install = str(tmp_path)
+    if extras_require:
+        install += "[" + ",".join(extras_require.keys()) + "]"
+    subprocess.call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--find-links",
+            testpkgs,
+            "-e",
+            install,
+        ]
+        + other_installs
+    )
+    assert (
+        list(
+            pip_freeze_dependencies_by_extra(virtualenv_python, tmp_path, freeze_extras)
+        )
+        == expected
+    )
 
 
 @pytest.mark.parametrize(
