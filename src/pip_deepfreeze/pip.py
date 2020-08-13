@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-from .compat import NormalizedName, resource_as_file, resource_files, shlex_join
+from .compat import NormalizedName, resource_path, shlex_join
 from .installed_dist import InstalledDistribution, InstalledDistributions
 from .list_installed_depends import (
     list_installed_depends,
@@ -118,11 +118,7 @@ def pip_list(python: str) -> InstalledDistributions:
     Currently works via pip_list_json.py, but this could become a native
     pip feature in the future.
     """
-    with resource_as_file(
-        resource_files("pip_deepfreeze").joinpath(  # type: ignore
-            "pip_list_json.py"
-        )
-    ) as pip_list_json:
+    with resource_path("pip_deepfreeze", "pip_list_json.py") as pip_list_json:
         json_dists = json.loads(check_output([python, str(pip_list_json)]))
         dists = [InstalledDistribution(json_dist) for json_dist in json_dists]
         return {dist.name: dist for dist in dists}
