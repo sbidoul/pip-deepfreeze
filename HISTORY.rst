@@ -1,3 +1,29 @@
+ v0.7.0 (2020-08-14)
+====================
+
+Features
+--------
+
+- Support extras. (`#9 <https://github.com/sbidoul/pip-deepfreeze/issues/9>`_)
+- Check prerequisites (pip, setuptools/pkg_resources) in the target environment. (`#37 <https://github.com/sbidoul/pip-deepfreeze/issues/37>`_)
+- Refuse to start if the target python is not running in a virtualenv,
+  or if the virtualenv includes system site packages. This would be dangerous,
+  risking removing or updating system packages. (`#38 <https://github.com/sbidoul/pip-deepfreeze/issues/38>`_)
+- Python 3.9 compatibility. (`#45 <https://github.com/sbidoul/pip-deepfreeze/issues/45>`_)
+- Improved logging of changes made to ``requirements*.txt``. (`#46 <https://github.com/sbidoul/pip-deepfreeze/issues/46>`_)
+
+
+Bugfixes
+--------
+
+- Improve project name detection robustness. (`#39 <https://github.com/sbidoul/pip-deepfreeze/issues/39>`_)
+
+Documentation
+-------------
+
+- Improved the documentation with the *How to* section.
+
+
 v0.6.0 (2020-08-03)
 ===================
 
