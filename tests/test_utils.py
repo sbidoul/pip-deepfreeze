@@ -12,6 +12,7 @@ from pip_deepfreeze.utils import (
     log_debug,
     log_error,
     log_info,
+    log_notice,
     log_warning,
     make_project_name_with_extras,
     open_with_rollback,
@@ -41,6 +42,19 @@ def test_open_with_rollback(tmp_path):
         raise AssertionError("should not be here")
 
 
+def test_open_with_rollback_logging(tmp_path, capsys):
+    filename = tmp_path / "thefile"
+    with open_with_rollback(filename) as f:
+        f.write("a")
+    assert capsys.readouterr().err == f"Created {filename}\n"
+    with open_with_rollback(filename) as f:
+        f.write("a")
+    assert capsys.readouterr().err == f"No change to {filename}\n"
+    with open_with_rollback(filename) as f:
+        f.write("b")
+    assert capsys.readouterr().err == f"Updated {filename}\n"
+
+
 def test_log_debug(capsys):
     log_debug("debug")
     assert "debug" not in capsys.readouterr().err
@@ -55,6 +69,12 @@ def test_log_debug(capsys):
 def test_log_info(capsys):
     log_info("in", nl=False)
     log_info("fo")
+    assert capsys.readouterr().err == "info\n"
+
+
+def test_log_notice(capsys):
+    log_notice("in", nl=False)
+    log_notice("fo")
     assert capsys.readouterr().err == "info\n"
 
 

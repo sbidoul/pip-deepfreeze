@@ -27,9 +27,20 @@ def open_with_rollback(
             raise
         else:
             f.close()
+            with open(temp_filename) as fafter:
+                after = fafter.read()
+            before = None  # type: Optional[str]
             if filename.exists():
+                with open(filename) as fbefore:
+                    before = fbefore.read()
                 filename.unlink()
             temp_filename.rename(filename)
+            if before is None:
+                log_notice(f"Created {filename}")
+            elif before != after:
+                log_notice(f"Updated {filename}")
+            else:
+                log_info(f"No change to {filename}")
 
 
 _verbosity = 0
@@ -52,6 +63,10 @@ def log_debug(msg: str) -> None:
 
 def log_info(msg: str, nl: bool = True) -> None:
     typer.secho(msg, fg=typer.colors.BRIGHT_BLUE, err=True, nl=nl)
+
+
+def log_notice(msg: str, nl: bool = True) -> None:
+    typer.secho(msg, fg=typer.colors.GREEN, err=True, nl=nl)
 
 
 def log_warning(msg: str) -> None:
