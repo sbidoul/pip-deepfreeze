@@ -150,9 +150,11 @@ def pip_freeze_dependencies(
         frozen_req_name = get_req_name(frozen_req)
         if not frozen_req_name:
             continue
+        if frozen_req_name == project_name:
+            continue
         if frozen_req_name in dependencies_names:
             dependencies_reqs.append(frozen_req)
-        elif frozen_req_name != project_name:
+        else:
             unneeded_reqs.append(frozen_req)
     return dependencies_reqs, unneeded_reqs
 
