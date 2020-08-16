@@ -35,7 +35,7 @@ setup(
         'importlib_resources ; python_version<"3.7"',
         "packaging>=20.4",
         "toml",
-        "typer[all]",
+        "typer[all]>=0.3.2",
         'typing-extensions ; python_version<"3.8"',  # for Protocol, TypedDict
     ],
     extras_require={

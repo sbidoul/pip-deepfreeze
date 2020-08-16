@@ -16,9 +16,9 @@ repos:
     rev: v0.782
     hooks:
       - id: mypy
-        args: ["--strict", "--implicit-reexport"]
+        args: ["--strict"]
         exclude: '^(docs|tasks|tests)|setup\.py'
-        additional_dependencies: ["httpx", "importlib_resources", "packaging", "typer"]
+        additional_dependencies: ["httpx", "importlib_resources", "packaging", "typer>=0.3.2"]
   - repo: https://gitlab.com/PyCQA/flake8
     rev: "3.8.3"
     hooks:

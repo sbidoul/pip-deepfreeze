@@ -2,7 +2,7 @@ import shlex
 import sys
 from typing import TYPE_CHECKING, Iterable, NewType
 
-__all__ = ["shlex_join", "resource_path", "Protocol", "TypedDict"]
+__all__ = ["shlex_join", "resource_path", "NormalizedName", "Protocol", "TypedDict"]
 
 if sys.version_info >= (3, 8):
     from shlex import join as shlex_join

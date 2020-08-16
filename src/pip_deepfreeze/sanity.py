@@ -3,8 +3,8 @@ from typing import Optional, cast
 
 from packaging.version import Version
 
-from .compat import TypedDict, resource_path
-from .utils import check_output, log_error, log_warning, shlex_join
+from .compat import TypedDict, resource_path, shlex_join
+from .utils import check_output, log_error, log_warning
 
 EnvInfo = TypedDict(
     "EnvInfo",
