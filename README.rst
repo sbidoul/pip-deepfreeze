@@ -209,7 +209,9 @@ Working with extras.
    ``tests`` or ``docs``, you can run ``pip-df sync --extras tests,docs`` to
    update your virtualenv with the necessary dependencies. This will also pin
    extra dependencies in ``requirements-tests.txt`` and
-   ``requirements-docs.txt``.
+   ``requirements-docs.txt``. Note that pip-deepfreeze assumes that the
+   ``extras`` mechanism is used to specify *additional* dependencies to the
+   base dependencies of the project.
 
 FAQ
 ---
@@ -273,11 +275,11 @@ Is there a recommended way to deploy my project in the production environment?
    Then you ship the content of the ``wheel-dir`` directory to your target
    environment or docker image, and run::
 
-      pip install --no-index --find-links=./wheel-dir ./wheel-dir/project_name-*.whl
+      pip install --no-index --find-links=./wheel-dir project-name
 
    Note the use of ``--no-deps`` when building and ``--no-index`` when
-   installing. This will ensure that all your dependencies are pinned in
-   ``requirements.txt``.
+   installing. This will ensure that all the required dependencies are
+   effectively pinned in ``requirements.txt``.
 
 CLI reference
 -------------
