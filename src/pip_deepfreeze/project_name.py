@@ -27,7 +27,6 @@ def get_project_name(python: str, project_root: Path) -> NormalizedName:
     name = (
         get_project_name_from_setup_cfg(project_root, pyproject_toml)
         or get_project_name_from_pyproject_toml_flit(pyproject_toml)
-        or get_project_name_from_pyproject_toml_pep621(pyproject_toml)
         or get_project_name_from_pep517(python, project_root)
     )
     log_info(" " + name)

@@ -1,6 +1,8 @@
 import sys
 import textwrap
 
+import pytest
+
 from pip_deepfreeze.project_name import (
     _load_pyproject_toml,
     get_project_name,
@@ -75,6 +77,7 @@ def test_get_project_name_from_pyproject_toml_flit_no_module(tmp_path):
     assert not get_project_name_from_pyproject_toml_flit(_load_pyproject_toml(tmp_path))
 
 
+@pytest.mark.xfail(reason="pep621 is not adopted yet")
 def test_get_project_name_from_pyproject_toml_pep621(tmp_path):
     (tmp_path / "pyproject.toml").write_text(
         textwrap.dedent(
@@ -94,6 +97,7 @@ def test_get_project_name_from_pyproject_toml_pep621(tmp_path):
     assert get_project_name(sys.executable, tmp_path) == "theproject"
 
 
+@pytest.mark.xfail(reason="pep621 is not adopted yet")
 def test_get_project_name_from_pyproject_toml_pep621_no_project(tmp_path):
     (tmp_path / "pyproject.toml").write_text(
         textwrap.dedent(
