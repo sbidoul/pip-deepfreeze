@@ -108,7 +108,7 @@ def tree(
         "--extras",
         "-e",
         metavar="EXTRAS",
-        help="Extras of project to consider when looking for depdencies.",
+        help="Extras of project to consider when looking for dependencies.",
     ),
 ) -> None:
     """Print the installed dependencies of the project as a tree."""

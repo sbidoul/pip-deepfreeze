@@ -46,7 +46,7 @@ A few characteristics of this project:
 - It assumes your project is configured using a PEP 517 compliant build
   backend but otherwise makes no assumption on the specific backend
   used.
-- It has first class support for dependencies sepecified as VCS references.
+- It has first class support for dependencies specified as VCS references.
 - It is written in Python 3.6+, yet works in any virtual environment
   that has ``pip`` installed, including python 2.
 - It is reasonably small and simple, with good test coverage and is hopefully
@@ -233,7 +233,7 @@ I have added a constraint in ``requirements.txt.in`` but ``pip-df sync`` does
 not honor it. What is going on?
 
    ``pip-df sync`` always gives priority to versions pinned in ``requirements.txt``,
-   unless explictly asked to do otherwise. After adding or changing constraints or VCS
+   unless explicitly asked to do otherwise. After adding or changing constraints or VCS
    references for already pinned requirements, use the ``--update`` option like so::
 
       pip-df sync --update DEPENDENCY1,DEPENDENCY2,...
@@ -263,7 +263,7 @@ Why not using ``pip install`` and ``pip freeze`` manually?
    ``pip-df sync`` combines both commands in one and ensures your environment
    and pinned requirements remain correct and up-to-date. Some error prone
    operations it facilitates include: uninstalling unneeded dependencies,
-   updating selected dependencies, overriding depedencies with VCS references,
+   updating selected dependencies, overriding dependencies with VCS references,
    etc.
 
 Is there a recommended way to deploy my project in the production environment?
@@ -378,7 +378,7 @@ pip-df tree
 
    Options:
      -e, --extras EXTRAS  Extras of project to consider when looking for
-                          depdencies.
+                          dependencies.
 
      --help               Show this message and exit.
 
