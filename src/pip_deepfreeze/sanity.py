@@ -28,7 +28,11 @@ def _get_env_info(python: str) -> EnvInfo:
 def check_env(python: str) -> bool:
     env_info = _get_env_info(python)
     if not env_info.get("in_virtualenv"):
-        log_error(f"{python} is not in a virtualenv, refusing to start.")
+        log_error(
+            f"{python} is not in a virtualenv, refusing to start. "
+            f"See https://github.com/sbidoul/pip-deepfreeze/issues/47 "
+            f"for hints and discussion."
+        )
         return False
     if env_info.get("include_system_site_packages"):
         log_error(
