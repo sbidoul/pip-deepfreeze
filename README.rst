@@ -431,3 +431,6 @@ We welcome contributions of all kinds.
 Please consult the `issue tracker
 <https://github.com/sbidoul/pip-deepfreeze/issues>`_ to discover the roadmap
 and known bugs.
+
+Before opening a pull request, please create an issue first to discuss the bug or
+feature request.
