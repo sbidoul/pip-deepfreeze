@@ -1,6 +1,8 @@
 pip-deepfreeze
 ==============
 
+.. image:: https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/master/docs/logo.png
+
 A simple pip freeze workflow for Python application developers.
 
 .. image:: https://img.shields.io/github/workflow/status/sbidoul/pip-deepfreeze/CI
@@ -82,7 +84,7 @@ Using `pip <https://pypi.org/project/pip/>`__:
 Quick start
 -----------
 
-.. image:: https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/9ffc7b456bed1665deac0fc0eec09718beb4fcf7/docs/synopsis.png
+.. image:: https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/a148bcce2920025a30bcc16cfb6dbc2b9a1ca68d/docs/synopsis.png
    :alt: pip-deepfreeze synopsis
 
 Make sure your application declares its direct dependencies using `setuptools
