@@ -43,31 +43,32 @@
      inkscape:window-width="2488"
      inkscape:window-height="1376"
      id="namedview1762"
-     showgrid="false"
+     showgrid="true"
      inkscape:snap-text-baseline="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:zoom="1.1125147"
-     inkscape:cx="543.686"
-     inkscape:cy="329.94837"
+     inkscape:zoom="1.5733334"
+     inkscape:cx="603.52305"
+     inkscape:cy="276.69528"
      inkscape:window-x="72"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2">
+     inkscape:current-layer="layer1"
+     inkscape:snap-grids="false"
+     inkscape:snap-to-guides="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4645"
+       empspacing="8" />
     <sodipodi:guide
-       position="631.00292,485.38686"
+       position="818.86558,208.08714"
+       orientation="0,1"
+       id="guide4688"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="639.99154,460.21864"
        orientation="1,0"
-       id="guide7564"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="967.17826,207.63771"
-       orientation="0,1"
-       id="guide7566"
-       inkscape:locked="false" />
-    <sodipodi:guide
-       position="796.39399,328.98443"
-       orientation="0,1"
-       id="guide7568"
+       id="guide4712"
        inkscape:locked="false" />
   </sodipodi:namedview>
   <g
@@ -86,52 +87,21 @@
        sodipodi:role="line"
        id="tspan7349"
        x="217.52522"
-       y="391.34943"></tspan></text>
-  <g
-     inkscape:groupmode="layer"
-     id="layer1"
-     inkscape:label="guides"
-     style="display:none"
-     transform="translate(0,40)">
-    <ellipse
-       style="font-family:none;mix-blend-mode:normal;fill:none;fill-rule:nonzero;stroke:#37ffff;stroke-width:3.53220701;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       ry="195.51299"
-       rx="194.51091"
-       cy="550.87744"
-       cx="-418.61002"
-       id="path6435-8"
-       transform="matrix(-0.23400506,-0.97223538,0.96947157,-0.24520374,0,0)" />
-    <ellipse
-       style="font-family:none;mix-blend-mode:normal;fill:none;fill-rule:nonzero;stroke:#37ffff;stroke-width:4.21563864;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       ry="236.69763"
-       rx="228.8549"
-       cy="614.27203"
-       cx="-320.35626"
-       id="path6435-8-5"
-       transform="matrix(-0.76679441,0.64189278,0.62898753,0.77741539,0,0)" />
-  </g>
+       y="391.34943" /></text>
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="main"
      style="display:inline">
-    <ellipse
-       style="font-family:none;display:inline;mix-blend-mode:normal;fill:none;fill-rule:nonzero;stroke:#0088aa;stroke-width:8.5507431;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       ry="254.19214"
-       rx="250.78474"
-       cy="311.91022"
-       cx="632.01685"
-       id="path6435-0" />
-    <ellipse
-       style="font-family:none;display:inline;mix-blend-mode:normal;fill:#0088aa;fill-rule:nonzero;stroke:none;stroke-width:8.5507431;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       ry="173.96805"
-       rx="166.74741"
-       cy="311.91022"
-       cx="632.01685"
-       id="path6435" />
+    <circle
+       style="fill:#0088aa;fill-opacity:1;stroke:none;stroke-width:0.93972826;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       id="path4637"
+       cx="640"
+       cy="320"
+       r="167.96967" />
     <g
        style="font-family:none;display:inline;mix-blend-mode:normal;fill:none;fill-rule:nonzero;stroke:#ffffff;stroke-width:3.33332992;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       transform="matrix(4.3433297,0,0,4.4328988,-670.98204,-1904.5392)"
+       transform="matrix(4.3433297,0,0,4.4328988,-662.99891,-1896.4493)"
        id="g1555">
       <g
          id="g1513"
@@ -250,38 +220,56 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:50.39332962px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;fill:#0088aa;fill-opacity:1;stroke:none;stroke-opacity:1"
-       id="text6454"
-       y="169.96617"
-       transform="translate(-5.6360344,49.151813)"><textPath
-         xlink:href="#path6435-8"
-         id="textPath7344"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:53.33333206px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:2.56000066px;writing-mode:lr-tb;text-anchor:start;fill:#0088aa;fill-opacity:1;stroke:none;stroke-opacity:1">PIP</textPath></text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:50.39332962px;line-height:1.25;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0088aa;fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="text6454"><textPath
+         xlink:href="#path4666"
+         id="textPath4685"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:50.39332962px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:2.25px;writing-mode:lr-tb;text-anchor:start">PIP</textPath></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:50.39332962px;line-height:1.25;font-family:sans-serif;letter-spacing:7.9873457px;word-spacing:0px;display:inline;fill:#0088aa;fill-opacity:1;stroke:none;stroke-opacity:1"
-       id="text6454-0"
-       y="-142.78801"
-       transform="translate(-1.5487683,40)"><textPath
-         xlink:href="#path6435-8-5"
-         id="textPath7339"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:53.33333206px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:6.34000254px;writing-mode:lr-tb;text-anchor:start;fill:#0088aa;fill-opacity:1;stroke:none;stroke-opacity:1">DEEP FREEZE</textPath></text>
-    <g
-       id="g7572">
-      <ellipse
-         ry="11.71205"
-         rx="11.475403"
-         cy="311.91022"
-         cx="419.8848"
-         id="path7353"
-         style="display:inline;fill:#0088aa;fill-opacity:1;stroke:#0088aa;stroke-width:6.22638845;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1" />
-      <ellipse
-         ry="11.71205"
-         rx="11.475403"
-         cy="311.91022"
-         cx="843.25"
-         id="path7353-2"
-         style="display:inline;fill:#0088aa;fill-opacity:1;stroke:#0088aa;stroke-width:6.22638845;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:50.39332962px;line-height:1.25;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:7.9873457px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0088aa;fill-opacity:1;stroke:none;stroke-opacity:1"
+       id="text6454-0"><textPath
+         xlink:href="#path4666-6"
+         id="textPath4683">DEEP FREEZE</textPath></text>
+    <ellipse
+       style="display:inline;fill:#0088aa;fill-opacity:1;stroke:#0088aa;stroke-width:5.47136831;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       id="path7353-2"
+       cx="844.4278"
+       cy="320.44943"
+       rx="10.08388"
+       ry="10.291832" />
+    <circle
+       style="fill:none;fill-opacity:1;stroke:#0088aa;stroke-width:8.20821667;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       id="path4639"
+       cx="640"
+       cy="320"
+       r="243.93762" />
+    <ellipse
+       style="display:inline;fill:#0088aa;fill-opacity:1;stroke:#0088aa;stroke-width:5.47136831;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       id="path7353-2-5"
+       cx="436.39871"
+       cy="320.00424"
+       rx="10.08388"
+       ry="10.291832" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="guides"
+     style="display:none">
+    <circle
+       style="display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.98810554;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       id="path4666"
+       cx="-470.40497"
+       cy="539.18384"
+       r="186.246"
+       transform="rotate(-104.53766)" />
+    <circle
+       style="display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.18073416;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       id="path4666-6"
+       cx="-322.2276"
+       cy="638.88135"
+       r="222.5542"
+       transform="matrix(-0.80208538,0.59720938,0.59720938,0.80208538,0,0)" />
   </g>
 </svg>
