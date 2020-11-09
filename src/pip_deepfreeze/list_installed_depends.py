@@ -1,12 +1,11 @@
 from typing import Dict, Optional, Sequence, Set
 
-import typer
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 from .compat import NormalizedName
 from .installed_dist import InstalledDistributions
-from .utils import log_error, make_project_name_with_extras
+from .utils import make_project_name_with_extras
 
 
 def list_installed_depends(
@@ -40,8 +39,9 @@ def list_installed_depends(
                 add(dep_req, deps_only=False)
             for extra in req.extras:
                 if extra not in dist.extra_requires:
-                    log_error(f"{extra} is not an extra of {dist.name}")
-                    raise typer.Exit(1)
+                    # extra is not a known extra of installed dist,
+                    # so we can't report it's dependencies
+                    continue
                 for dep_req in dist.extra_requires[extra]:
                     add(dep_req, deps_only=False)
 
