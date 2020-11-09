@@ -15,7 +15,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .utils import check_call, check_output, log_debug, log_info
+from .utils import check_call, check_output, log_debug, log_info, log_warning
 
 
 def pip_upgrade_project(
@@ -175,9 +175,12 @@ def pip_freeze_dependencies_by_extra(
         pip_list(python), project_name
     )
     frozen_reqs = pip_freeze(python)
-    dependencies_reqs = {
-        extra: [] for extra in extras
-    }  # type: Dict[Optional[NormalizedName], List[str]]
+    dependencies_reqs = {}  # type: Dict[Optional[NormalizedName], List[str]]
+    for extra in extras:
+        if extra not in dependencies_by_extras:
+            log_warning(f"{extra} is not an extra of {project_name}")
+            continue
+        dependencies_reqs[extra] = []
     dependencies_reqs[None] = []
     unneeded_reqs = []
     for frozen_req in frozen_reqs:
@@ -192,8 +195,7 @@ def pip_freeze_dependencies_by_extra(
             dependencies_reqs[None].append(frozen_req)
         else:
             for extra in extras:
-                assert extra in dependencies_by_extras  # XXX user error instead?
-                if frozen_req_name in dependencies_by_extras[extra]:
+                if frozen_req_name in dependencies_by_extras.get(extra, []):
                     unneeded = False
                     dependencies_reqs[extra].append(frozen_req)
         if unneeded:
