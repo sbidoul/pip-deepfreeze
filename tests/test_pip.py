@@ -110,6 +110,8 @@ def test_pip_freeze_dependencies(
             ["b"],
             [{None: ["pkgc==0.0.3"], "b": ["pkga==0.0.0", "pkgb==0.0.0"]}, []],
         ),
+        # unknown extra "a"
+        ([], {}, ["pkga"], ["a"], [{None: []}, ["pkga==0.0.0"]]),
     ],
 )
 def test_pip_freeze_dependencies_by_extra(
