@@ -167,3 +167,32 @@ def test_list_installed_depends_by_extra(virtualenv_python, testpkgs, tmp_path):
         "b": {"pkgb"},
         "c": {"pkgc"},
     }
+
+
+def test_list_installed_depends_new_extra(virtualenv_python, testpkgs, tmp_path):
+    (tmp_path / "setup.py").write_text(
+        textwrap.dedent(
+            """\
+            from setuptools import setup
+
+            setup(
+                name="theproject",
+                install_requires=[],
+            )
+            """
+        )
+    )
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "-e",
+            str(tmp_path),
+            "-f",
+            str(testpkgs),
+        ]
+    )
+    installed_dists = pip_list(virtualenv_python)
+    assert list_installed_depends(installed_dists, "theproject", extras=["a"]) == set()
