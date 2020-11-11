@@ -1,28 +1,37 @@
 import json
+import subprocess
 from typing import Optional, cast
 
 from packaging.version import Version
 
 from .compat import TypedDict, resource_path, shlex_join
-from .utils import check_output, log_error, log_warning
+from .utils import log_error, log_warning
 
 EnvInfo = TypedDict(
     "EnvInfo",
     {
-        "in_virtualenv": bool,
-        "include_system_site_packages": bool,
-        "has_pkg_resources": bool,
-        "has_importlib_metadata": bool,
+        "in_virtualenv": Optional[bool],
+        "include_system_site_packages": Optional[bool],
+        "has_pkg_resources": Optional[bool],
+        "has_importlib_metadata": Optional[bool],
         "pip_version": Optional[str],
         "setuptools_version": Optional[str],
         "wheel_version": Optional[str],
     },
+    total=False,
 )
 
 
 def _get_env_info(python: str) -> EnvInfo:
-    with resource_path("pip_deepfreeze", "env_info_json.py") as env_info_json:
-        return cast(EnvInfo, json.loads(check_output([python, str(env_info_json)])))
+    with resource_path("pip_deepfreeze", "env_info_json.py") as env_info_json_script:
+        try:
+            env_info_json = subprocess.check_output(
+                [python, str(env_info_json_script)], universal_newlines=True
+            )
+        except subprocess.CalledProcessError:
+            return EnvInfo(in_virtualenv=False)
+        else:
+            return cast(EnvInfo, json.loads(env_info_json))
 
 
 def check_env(python: str) -> bool:
