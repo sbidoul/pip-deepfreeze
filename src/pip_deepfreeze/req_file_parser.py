@@ -274,7 +274,10 @@ def _parse_lines(
             )
         elif other_opts:
             yield OptionsLine(
-                filename, lineno, raw_line, options=other_opts,
+                filename,
+                lineno,
+                raw_line,
+                options=other_opts,
             )
         else:
             yield ParsedLine(filename, lineno, raw_line)
@@ -316,7 +319,9 @@ def _parse_line(line, filename, lineno, strict):
         )
     if strict and c > 0 and other_opts:
         raise OptionParsingError(
-            "Cannot mix -e/-c/-r with other options on the same line", filename, lineno,
+            "Cannot mix -e/-c/-r with other options on the same line",
+            filename,
+            lineno,
         )
     assert isinstance(opts, ParsedOptions)
     return args_str.strip(), opts, other_opts
@@ -449,7 +454,7 @@ def _auto_decode(data):
             assert result is not None
             encoding = result.groups()[0].decode("ascii")
             return data.decode(encoding)
-    return data.decode(locale.getpreferredencoding(False) or sys.getdefaultencoding(),)
+    return data.decode(locale.getpreferredencoding(False) or sys.getdefaultencoding())
 
 
 def _get_url_scheme(url):

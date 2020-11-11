@@ -337,7 +337,7 @@ def test_strict_option_errors(badreqs, tmp_path):
 
 
 @pytest.mark.parametrize(
-    "badreqs", ["-r", "--requirements", "-c", "--constraints", "-e", "--editable"],
+    "badreqs", ["-r", "--requirements", "-c", "--constraints", "-e", "--editable"]
 )
 def test_option_errors(badreqs, tmp_path):
     reqs = tmp_path / "reqs.txt"

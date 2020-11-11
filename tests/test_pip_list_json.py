@@ -69,7 +69,8 @@ def test_pip_list_json(to_install, expected, virtualenv_python, testpkgs):
         + to_install
     )
     depends_str = subprocess.check_output(
-        [virtualenv_python, PIP_LIST_JSON], universal_newlines=True,
+        [virtualenv_python, PIP_LIST_JSON],
+        universal_newlines=True,
     )
     depends_list = json.loads(depends_str)
     depends = sorted(

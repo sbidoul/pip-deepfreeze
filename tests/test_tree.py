@@ -30,7 +30,9 @@ def test_tree(virtualenv_python, testpkgs, tmp_path):
     )
     runner = CliRunner(mix_stderr=False)
     result = runner.invoke(
-        app, ["-p", virtualenv_python, "-r", tmp_path, "tree"], obj=MainOptions(),
+        app,
+        ["-p", virtualenv_python, "-r", tmp_path, "tree"],
+        obj=MainOptions(),
     )
     assert result.exit_code == 0
     assert result.stdout == textwrap.dedent(

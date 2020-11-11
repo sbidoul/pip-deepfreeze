@@ -86,7 +86,7 @@ def sync(
     if editable is None:
         editable = supports_editable()
     elif editable and not supports_editable():
-        log_error("The project does not support editable installation.",)
+        log_error("The project does not support editable installation.")
         raise typer.Exit(1)
     sync_operation(
         ctx.obj.python,

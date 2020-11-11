@@ -31,7 +31,8 @@ def test_env_info_json(virtualenv_python):
         ]
     )
     env_info_json = subprocess.check_output(
-        [virtualenv_python, ENV_INFO_JSON], universal_newlines=True,
+        [virtualenv_python, ENV_INFO_JSON],
+        universal_newlines=True,
     )
     env_info = json.loads(env_info_json)
     assert "in_virtualenv" in env_info

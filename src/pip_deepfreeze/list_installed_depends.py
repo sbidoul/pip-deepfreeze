@@ -54,7 +54,8 @@ def list_installed_depends(
 
 
 def list_installed_depends_by_extra(
-    installed_dists: InstalledDistributions, project_name: NormalizedName,
+    installed_dists: InstalledDistributions,
+    project_name: NormalizedName,
 ) -> Dict[Optional[NormalizedName], Set[NormalizedName]]:
     """Get installed dependencies of a project, grouped by extra."""
     res = {}  # type: Dict[Optional[NormalizedName], Set[NormalizedName]]
