@@ -348,7 +348,7 @@ pip-df sync
                                      Defaults to editable if the project supports
                                      it.
 
-     -e, --extras EXTRAS             Extras to install and freeze to
+     -x, --extras EXTRAS             Extras to install and freeze to
                                      requirements-{EXTRA}.txt.
 
      --uninstall-unneeded / --no-uninstall-unneeded
@@ -377,7 +377,7 @@ pip-df tree
      Print the installed dependencies of the project as a tree.
 
    Options:
-     -e, --extras EXTRAS  Extras of project to consider when looking for
+     -x, --extras EXTRAS  Extras of project to consider when looking for
                           dependencies.
 
      --help               Show this message and exit.
