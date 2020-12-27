@@ -9,9 +9,28 @@ import pytest
 
 @pytest.fixture
 def virtualenv_python(tmp_path):
-    """Return a python executable path within an isolated virtualenv."""
+    """Return a python executable path within an isolated virtualenv, using a pip
+    version that has the new resolver."""
     venv = tmp_path / "venv"
-    subprocess.check_call([sys.executable, "-m", "virtualenv", str(venv)])
+    subprocess.check_call(
+        # TODO remove pip version pin
+        [sys.executable, "-m", "virtualenv", "--pip", "20.3.3", str(venv)]
+    )
+    if os.name == "nt":
+        python = venv / "Scripts" / "python.exe"
+    else:
+        python = venv / "bin" / "python"
+    return str(python)
+
+
+@pytest.fixture
+def virtualenv_python_legacy_resolver(tmp_path):
+    """Return a python executable path within an isolated virtualenv, using a pip
+    version that has the legacy resolver."""
+    venv = tmp_path / "venv"
+    subprocess.check_call(
+        [sys.executable, "-m", "virtualenv", "--pip", "20.2.4", str(venv)]
+    )
     if os.name == "nt":
         python = venv / "Scripts" / "python.exe"
     else:

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import json
 import os
 import subprocess
+import sys
 
 import pytest
 
@@ -27,7 +28,7 @@ PIP_LIST_JSON = os.path.join(
                     },
                     "requires": ["pkga"],
                 },
-                {"metadata": {"name": "pkgc", "version": "0.0.3"}},
+                {"metadata": {"name": "pkgc", "version": "0.0.2"}},
                 {
                     "metadata": {
                         "name": "pkgd",
@@ -55,19 +56,19 @@ PIP_LIST_JSON = os.path.join(
     ],
 )
 def test_pip_list_json(to_install, expected, virtualenv_python, testpkgs):
-
-    subprocess.check_call(
-        [
-            virtualenv_python,
-            "-m",
-            "pip",
-            "install",
-            "--find-links",
-            testpkgs,
-            "pytest-cov",  # pytest-cov needed for subprocess coverage to work
-        ]
-        + to_install
-    )
+    install_cmd = [
+        virtualenv_python,
+        "-m",
+        "pip",
+        "install",
+        "--find-links",
+        testpkgs,
+        "pytest-cov",  # pytest-cov needed for subprocess coverage to work
+    ] + to_install
+    if sys.version_info[0] == 2:
+        # this test needs the new resolver and it is not the default in python 2
+        install_cmd += ["--use-feature", "2020-resolver"]
+    subprocess.check_call(install_cmd)
     depends_str = subprocess.check_output(
         [virtualenv_python, PIP_LIST_JSON],
         universal_newlines=True,
