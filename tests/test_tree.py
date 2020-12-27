@@ -77,7 +77,7 @@ def test_tree_extras(virtualenv_python, testpkgs, tmp_path):
     runner = CliRunner(mix_stderr=False)
     result = runner.invoke(
         app,
-        ["-p", virtualenv_python, "-r", tmp_path, "tree", "-e", "c"],
+        ["-p", virtualenv_python, "-r", tmp_path, "tree", "-x", "c"],
         obj=MainOptions(),
     )
     assert result.exit_code == 0

@@ -45,7 +45,7 @@ def sync(
     extras: str = typer.Option(
         None,
         "--extras",
-        "-e",
+        "-x",
         metavar="EXTRAS",
         help="Extras to install and freeze to requirements-{EXTRA}.txt.",
     ),
@@ -106,7 +106,7 @@ def tree(
     extras: str = typer.Option(
         None,
         "--extras",
-        "-e",
+        "-x",
         metavar="EXTRAS",
         help="Extras of project to consider when looking for dependencies.",
     ),
