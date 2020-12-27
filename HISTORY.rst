@@ -1,3 +1,29 @@
+v0.9.0 (2020-12-27)
+===================
+
+Features
+--------
+
+- Now that PEP 621 is in provisional state, use it to detect the project name. (`#56 <https://github.com/sbidoul/pip-deepfreeze/issues/56>`_)
+- Rename ``--extra`` short option from ``-e`` to ``-x``, to avoid confusion with
+  pip's ``-e`` which is for editables. (`#57 <https://github.com/sbidoul/pip-deepfreeze/issues/57>`_)
+
+
+Bugfixes
+--------
+
+- Fixed an issue that prevented running ``pip-df sync`` after adding an extra to
+  the setup.py/setup.cfg of an already installed project. (`#49 <https://github.com/sbidoul/pip-deepfreeze/issues/49>`_)
+- ``pip-df sync --extras`` now warns but otherwise ignores unknown extras. (`#50 <https://github.com/sbidoul/pip-deepfreeze/issues/50>`_)
+
+
+Misc
+----
+
+- Fix issue with py39 tests on windows. (`#53 <https://github.com/sbidoul/pip-deepfreeze/issues/53>`_)
+- Update tests for pip new resolver compatibility. (`#58 <https://github.com/sbidoul/pip-deepfreeze/pull/58>`_)
+
+
 v0.8.0 (2020-08-22)
 ===================
 

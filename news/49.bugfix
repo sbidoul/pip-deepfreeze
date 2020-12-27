@@ -1,2 +1,0 @@
-Fixed an issue that prevented running ``pip-df sync`` after adding an extra to
-the setup.py/setup.cfg of an already installed project.

@@ -1,1 +1,0 @@
-``pip-df sync --extras`` now warns but otherwise ignores unknown extras.
