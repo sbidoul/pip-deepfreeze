@@ -88,6 +88,7 @@ def tree(python: str, project_root: Path, extras: List[NormalizedName]) -> None:
         for dep_req in dist.requires:
             node.children.append(add(dep_req))
         for extra in req.extras:
+            extra = canonicalize_name(extra)
             for dep_req in dist.extra_requires.get(extra, []):
                 node.children.append(add(dep_req))
         return node

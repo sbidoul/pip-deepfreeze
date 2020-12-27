@@ -38,6 +38,7 @@ def list_installed_depends(
             for dep_req in dist.requires:
                 add(dep_req, deps_only=False)
             for extra in req.extras:
+                extra = canonicalize_name(extra)
                 if extra not in dist.extra_requires:
                     # extra is not a known extra of installed dist,
                     # so we can't report it's dependencies

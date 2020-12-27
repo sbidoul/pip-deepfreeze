@@ -22,6 +22,7 @@ def _get_egg_name(requirement: str) -> Optional[str]:
 
 
 def get_req_name(requirement: str) -> Optional[NormalizedName]:
+    name: Optional[str] = None
     try:
         name = Requirement(requirement).name
     except InvalidRequirement:
