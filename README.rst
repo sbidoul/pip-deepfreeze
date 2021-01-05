@@ -396,8 +396,8 @@ Several other tools exist with a similar or overlapping scope as
 - `pip-tools <https://pypi.org/project/pip-tools/>`_. This is the one with the most
   similar features. Besides the reasons explained in `About`_ above I wanted to see
   if it was possible to do such a thing using the ``pip`` CLI only.
-- `pip-deptree <https://pypi.org/project/pipdeptree/>`_. Works similarly as
-  `pip-df tree` but needs to be installed in the target virtualenv.
+- `pipdeptree <https://pypi.org/project/pipdeptree/>`_. Works similarly as
+  `pip-df tree`.
 - `Poetry <https://python-poetry.org/>`_
 - `pipenv <https://pipenv.pypa.io/en/latest/>`_
 
