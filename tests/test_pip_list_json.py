@@ -84,11 +84,11 @@ def test_pip_list_json(to_install, expected, virtualenv_python, testpkgs):
     )
     depends_list = json.loads(depends_str)
     depends = sorted(
-        [
+        (
             rec
             for rec in depends_list
             if rec["metadata"]["name"] in ("pkga", "pkgb", "pkgc", "pkgd", "pkge")
-        ],
+        ),
         key=lambda r: r["metadata"]["name"],
     )
     assert depends == expected
