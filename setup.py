@@ -40,7 +40,7 @@ setup(
     ],
     extras_require={
         "test": ["pytest", "pytest-cov", "pytest-xdist", "virtualenv"],
-        "mypy": ["mypy"],
+        "mypy": ["mypy==0.800"],
     },
     entry_points={
         "console_scripts": [
