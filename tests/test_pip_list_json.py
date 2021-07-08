@@ -55,18 +55,11 @@ PIP_LIST_JSON = os.path.join(
         )
     ],
 )
-def test_pip_list_json(to_install, expected, virtualenv_python, testpkgs):
-    subprocess.check_call(
-        [
-            virtualenv_python,
-            "-m",
-            "pip",
-            "install",
-            "pytest-cov",  # pytest-cov needed for subprocess coverage to work
-        ]
-    )
+def test_pip_list_json(
+    to_install, expected, virtualenv_python_with_pytest_cov, testpkgs
+):
     install_cmd = [
-        virtualenv_python,
+        virtualenv_python_with_pytest_cov,
         "-m",
         "pip",
         "install",
@@ -79,7 +72,7 @@ def test_pip_list_json(to_install, expected, virtualenv_python, testpkgs):
         install_cmd += ["--use-feature", "2020-resolver"]
     subprocess.check_call(install_cmd)
     depends_str = subprocess.check_output(
-        [virtualenv_python, PIP_LIST_JSON],
+        [virtualenv_python_with_pytest_cov, PIP_LIST_JSON],
         universal_newlines=True,
     )
     depends_list = json.loads(depends_str)
