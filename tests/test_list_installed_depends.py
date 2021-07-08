@@ -55,6 +55,7 @@ def test_list_installed_depends_downgrade_dep(tmp_path, virtualenv_python, testp
             "install",
             "-e",
             str(tmp_path),
+            "--no-index",
             "-f",
             str(testpkgs),
         ]
@@ -78,7 +79,16 @@ def test_list_installed_depends_downgrade_dep(tmp_path, virtualenv_python, testp
 
 def test_list_installed_depends_missing_dep(virtualenv_python, testpkgs):
     subprocess.check_call(
-        [virtualenv_python, "-m", "pip", "install", "--find-links", testpkgs, "pkgb"]
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--find-links",
+            testpkgs,
+            "pkgb",
+        ]
     )
     subprocess.check_call(
         [virtualenv_python, "-m", "pip", "uninstall", "--yes", "pkga"]
@@ -111,6 +121,7 @@ def test_list_installed_depends_extras(virtualenv_python, testpkgs, tmp_path):
             "install",
             "-e",
             str(tmp_path) + "[b,c]",
+            "--no-index",
             "-f",
             str(testpkgs),
         ]
@@ -157,6 +168,7 @@ def test_list_installed_depends_by_extra(virtualenv_python, testpkgs, tmp_path):
             "install",
             "-e",
             str(tmp_path) + "[b,c]",
+            "--no-index",
             "-f",
             str(testpkgs),
         ]
@@ -190,6 +202,7 @@ def test_list_installed_depends_new_extra(virtualenv_python, testpkgs, tmp_path)
             "install",
             "-e",
             str(tmp_path),
+            "--no-index",
             "-f",
             str(testpkgs),
         ]

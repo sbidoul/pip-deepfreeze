@@ -56,14 +56,23 @@ PIP_LIST_JSON = os.path.join(
     ],
 )
 def test_pip_list_json(to_install, expected, virtualenv_python, testpkgs):
+    subprocess.check_call(
+        [
+            virtualenv_python,
+            "-m",
+            "pip",
+            "install",
+            "pytest-cov",  # pytest-cov needed for subprocess coverage to work
+        ]
+    )
     install_cmd = [
         virtualenv_python,
         "-m",
         "pip",
         "install",
+        "--no-index",
         "--find-links",
         testpkgs,
-        "pytest-cov",  # pytest-cov needed for subprocess coverage to work
     ] + to_install
     if sys.version_info[0] == 2:
         # this test needs the new resolver and it is not the default in python 2
@@ -75,11 +84,11 @@ def test_pip_list_json(to_install, expected, virtualenv_python, testpkgs):
     )
     depends_list = json.loads(depends_str)
     depends = sorted(
-        [
+        (
             rec
             for rec in depends_list
             if rec["metadata"]["name"] in ("pkga", "pkgb", "pkgc", "pkgd", "pkge")
-        ],
+        ),
         key=lambda r: r["metadata"]["name"],
     )
     assert depends == expected
