@@ -42,7 +42,6 @@ def sync(
     extras: List[NormalizedName],
     uninstall_unneeded: Optional[bool],
     project_root: Path,
-    use_pip_constraints: bool,
 ) -> None:
     project_name = get_project_name(python, project_root)
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
@@ -71,7 +70,6 @@ def sync(
             project_root,
             editable=editable,
             extras=extras,
-            use_pip_constraints=use_pip_constraints,
         )
     finally:
         constraints_path.unlink()

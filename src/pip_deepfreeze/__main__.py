@@ -64,16 +64,6 @@ def sync(
             "If not specified, ask confirmation."
         ),
     ),
-    use_pip_constraints: bool = typer.Option(
-        True,
-        help=(
-            "Use pip --constraints instead of --requirements when passing "
-            "pinned dependencies and constraints to pip. This has advantages "
-            "such as marking only the project as REQUESTED, but may fail in "
-            "some circumstances such as when using direct URLs with the new "
-            "pip resolver."
-        ),
-    ),
 ) -> None:
     """Install/update the environment to match the project requirements.
 
@@ -96,7 +86,6 @@ def sync(
         extras=[canonicalize_name(extra) for extra in comma_split(extras)],
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
-        use_pip_constraints=use_pip_constraints,
     )
 
 

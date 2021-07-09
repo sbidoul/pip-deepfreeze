@@ -216,7 +216,6 @@ def test_sync_project_root(virtualenv_python, editable_foobar_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=editable_foobar_path,
-        use_pip_constraints=True,
     )
     assert (editable_foobar_path / "requirements.txt").exists()
 
@@ -243,7 +242,6 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
-        use_pip_constraints=True,
     )
     assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
     # remove dependency on pkga
@@ -265,7 +263,6 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
-        use_pip_constraints=True,
     )
     assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
     # sync with uninstall=True, pkga removed
@@ -277,7 +274,6 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         extras=[],
         uninstall_unneeded=True,
         project_root=tmp_path,
-        use_pip_constraints=True,
     )
     assert "pkga==" not in "\n".join(pip_freeze(virtualenv_python))
 
@@ -327,7 +323,6 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
-        use_pip_constraints=True,
     )
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
 
@@ -377,7 +372,6 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
-        use_pip_constraints=True,
     )
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
 
@@ -414,7 +408,6 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
         extras=["c"],
         uninstall_unneeded=False,
         project_root=tmp_path,
-        use_pip_constraints=True,
     )
     assert {"pkga", "pkgb", "pkgc"}.issubset(pip_list(virtualenv_python))
     requirements_txt = (tmp_path / "requirements.txt").read_text()
@@ -434,7 +427,6 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
         extras=["c"],
         uninstall_unneeded=False,
         project_root=tmp_path,
-        use_pip_constraints=True,
     )
     assert {"pkga", "pkgb", "pkgc"}.issubset(pip_list(virtualenv_python))
     requirements_txt = (tmp_path / "requirements.txt").read_text()

@@ -24,7 +24,6 @@ def pip_upgrade_project(
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
     editable: bool = True,
-    use_pip_constraints: bool = True,
 ) -> None:
     """Upgrade a project.
 
@@ -80,20 +79,9 @@ def pip_upgrade_project(
         log_info(f"Uninstalling dependencies to update: {to_uninstall_str}")
         pip_uninstall(python, to_uninstall)
     # 4. install project with constraints
-    # TODO Using -c here would break with the new pip resolver:
-    #      https://github.com/pypa/pip/issues/8253 and in some other
-    #      situations with the legacy resolver.
-    #      If we can't make pip handle direct URLs as constraints,
-    #      then the second best approach is to use -r here, and let
-    #      sync's --uninstall option remove what we don't need.
-    #      But the REQUESTED metadata will be incorrect.
-    if use_pip_constraints:
-        constraints_mode = "-c"
-    else:
-        constraints_mode = "-r"
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd = [python, "-m", "pip", "install", constraints_mode, f"{constraints_filename}"]
+    cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
     if editable:
         cmd.append("-e")
     if extras:
