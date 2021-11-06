@@ -77,78 +77,6 @@ def test_python_not_found(tmp_path):
 
 
 @pytest.fixture
-def not_editable_foobar_path(tmp_path):
-    (tmp_path / "pyproject.toml").write_text(
-        textwrap.dedent(
-            """
-            [build-system]
-            requires = ["flit_core >=2,<3"]
-            build-backend = "flit_core.buildapi"
-
-            [tool.flit.metadata]
-            module = "foobar"
-            author = "Toto"
-            """
-        )
-    )
-    (tmp_path / "foobar.py").write_text(
-        textwrap.dedent(
-            """
-            '''This is foobar'''
-            __version__ = '0.0.1'
-            """
-        )
-    )
-    return tmp_path
-
-
-def test_not_editable_default_install(virtualenv_python, not_editable_foobar_path):
-    subprocess.check_call(
-        [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
-        cwd=not_editable_foobar_path,
-    )
-    # installed not editable by default
-    assert "foobar @ file://" in "\n".join(pip_freeze(virtualenv_python))
-
-
-def test_not_editable_no_editable_install(virtualenv_python, not_editable_foobar_path):
-    subprocess.check_call(
-        [
-            sys.executable,
-            "-m",
-            "pip_deepfreeze",
-            "--python",
-            virtualenv_python,
-            "sync",
-            "--no-editable",
-        ],
-        cwd=not_editable_foobar_path,
-    )
-    # installed no-editable as requested
-    assert "foobar @ file://" in "\n".join(pip_freeze(virtualenv_python))
-
-
-def test_not_editable_editable_install(virtualenv_python, not_editable_foobar_path):
-    # trying to force editable fails gracefully
-    with pytest.raises(subprocess.CalledProcessError) as e:
-        subprocess.check_output(
-            [
-                sys.executable,
-                "-m",
-                "pip_deepfreeze",
-                "--python",
-                virtualenv_python,
-                "sync",
-                "--editable",
-            ],
-            cwd=not_editable_foobar_path,
-            universal_newlines=True,
-            stderr=subprocess.STDOUT,
-        )
-    assert "The project does not support editable installation." in e.value.output
-
-
-@pytest.fixture
 def editable_foobar_path(tmp_path):
     setup_py = tmp_path / "setup.py"
     setup_py.write_text(
@@ -173,46 +101,11 @@ def test_editable_default_install(virtualenv_python, editable_foobar_path):
     assert "-e " in "\n".join(pip_freeze(virtualenv_python))
 
 
-def test_editable_editable_install(virtualenv_python, editable_foobar_path):
-    subprocess.check_call(
-        [
-            sys.executable,
-            "-m",
-            "pip_deepfreeze",
-            "--python",
-            virtualenv_python,
-            "sync",
-            "--editable",
-        ],
-        cwd=editable_foobar_path,
-    )
-    # installed editable as requested
-    assert "-e " in "\n".join(pip_freeze(virtualenv_python))
-
-
-def test_editable_no_editable_install(virtualenv_python, editable_foobar_path):
-    # force no-editable
-    subprocess.check_call(
-        [
-            sys.executable,
-            "-m",
-            "pip_deepfreeze",
-            "--python",
-            virtualenv_python,
-            "sync",
-            "--no-editable",
-        ],
-        cwd=editable_foobar_path,
-    )
-    assert "foobar @ file://" in "\n".join(pip_freeze(virtualenv_python))
-
-
 def test_sync_project_root(virtualenv_python, editable_foobar_path):
     sync(
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
-        editable=True,
         extras=[],
         uninstall_unneeded=False,
         project_root=editable_foobar_path,
@@ -238,7 +131,6 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
-        editable=True,
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
@@ -259,7 +151,6 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
-        editable=True,
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
@@ -270,7 +161,6 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
-        editable=True,
         extras=[],
         uninstall_unneeded=True,
         project_root=tmp_path,
@@ -319,7 +209,6 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=["pkgc"],
-        editable=True,
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
@@ -368,7 +257,6 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
         virtualenv_python,
         upgrade_all=True,
         to_upgrade=[],
-        editable=True,
         extras=[],
         uninstall_unneeded=False,
         project_root=tmp_path,
@@ -404,7 +292,6 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
-        editable=True,
         extras=["c"],
         uninstall_unneeded=False,
         project_root=tmp_path,
@@ -423,7 +310,6 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
-        editable=True,
         extras=["c"],
         uninstall_unneeded=False,
         project_root=tmp_path,

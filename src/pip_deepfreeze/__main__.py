@@ -1,11 +1,9 @@
 import shutil
 from pathlib import Path
-from typing import Optional
 
 import typer
 from packaging.utils import canonicalize_name
 
-from .detect import supports_editable
 from .sanity import check_env
 from .sync import sync as sync_operation
 from .tree import tree as tree_operation
@@ -49,14 +47,6 @@ def sync(
         metavar="EXTRAS",
         help="Extras to install and freeze to requirements-{EXTRA}.txt.",
     ),
-    editable: Optional[bool] = typer.Option(
-        None,
-        help=(
-            "Install the project in editable mode. "
-            "Defaults to editable if the project supports it."
-        ),
-        show_default=False,
-    ),
     uninstall_unneeded: bool = typer.Option(
         None,
         help=(
@@ -73,16 +63,10 @@ def sync(
     update of dependencies to to the latest version that matches
     constraints. Optionally uninstall unneeded dependencies.
     """
-    if editable is None:
-        editable = supports_editable()
-    elif editable and not supports_editable():
-        log_error("The project does not support editable installation.")
-        raise typer.Exit(1)
     sync_operation(
         ctx.obj.python,
         upgrade_all,
         comma_split(to_upgrade),
-        editable,
         extras=[canonicalize_name(extra) for extra in comma_split(extras)],
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,

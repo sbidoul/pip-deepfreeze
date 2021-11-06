@@ -97,7 +97,7 @@ Create and activate a virtual environment using your favorite tool. Run
 ``pip list`` to make sure ``pip``, ``setuptools`` and ``wheel`` are installed
 in the virtualenv.
 
-To install your project (in editable mode if supported) in the active virtual
+To install your project in editable mode in the active virtual
 environment, go to your project root directory and run:
 
 .. code:: console
@@ -343,10 +343,6 @@ pip-df sync
      --update-all                    Upgrade (or downgrade) all dependencies of
                                      your application to the latest allowed
                                      version.
-
-     --editable / --no-editable      Install the project in editable mode.
-                                     Defaults to editable if the project supports
-                                     it.
 
      -x, --extras EXTRAS             Extras to install and freeze to
                                      requirements-{EXTRA}.txt.
