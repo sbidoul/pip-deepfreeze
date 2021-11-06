@@ -1,0 +1,4 @@
+An editable installation of the project is now always done by pip-deepfreeze. The
+`--editable` option is removed as well as the attempt to detect if the project is
+editable. This allows correct support for projects that support PEP 660 and do not have
+a `setup.py`.

@@ -38,7 +38,6 @@ def sync(
     python: str,
     upgrade_all: bool,
     to_upgrade: List[str],
-    editable: bool,
     extras: List[NormalizedName],
     uninstall_unneeded: Optional[bool],
     project_root: Path,
@@ -68,7 +67,6 @@ def sync(
             python,
             constraints_path,
             project_root,
-            editable=editable,
             extras=extras,
         )
     finally:

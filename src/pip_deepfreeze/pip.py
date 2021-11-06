@@ -23,7 +23,6 @@ def pip_upgrade_project(
     constraints_filename: Path,
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
-    editable: bool = True,
 ) -> None:
     """Upgrade a project.
 
@@ -82,8 +81,7 @@ def pip_upgrade_project(
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
     cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
-    if editable:
-        cmd.append("-e")
+    cmd.append("-e")
     if extras:
         extras_str = ",".join(extras)
         cmd.append(f"{project_root}[{extras_str}]")
