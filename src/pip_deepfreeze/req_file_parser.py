@@ -434,7 +434,7 @@ _BOMS = [
     (codecs.BOM_UTF32_LE, "utf-32-le"),
 ]  # type: List[Tuple[bytes, Text]]
 
-_ENCODING_RE = re.compile(br"coding[:=]\s*([-\w.]+)")
+_ENCODING_RE = re.compile(rb"coding[:=]\s*([-\w.]+)")
 
 
 def _auto_decode(data):
