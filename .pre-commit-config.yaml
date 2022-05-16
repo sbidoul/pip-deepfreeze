@@ -19,13 +19,13 @@ repos:
         args: ["--strict"]
         exclude: '^(docs|tasks|tests)|setup\.py'
         additional_dependencies: ["httpx", "importlib_resources", "packaging", "typer>=0.3.2", "types-toml", "types-setuptools"]
-  - repo: https://gitlab.com/PyCQA/flake8
-    rev: "3.9.2"
+  - repo: https://github.com/PyCQA/flake8
+    rev: "4.0.1"
     hooks:
       - id: flake8
         additional_dependencies: ["flake8-bugbear==20.1.4"]
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.1
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
     hooks:
       - id: isort
   - repo: https://github.com/myint/docformatter
