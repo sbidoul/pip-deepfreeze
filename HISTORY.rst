@@ -1,3 +1,18 @@
+0.10.1 (2022-09-07)
+=================
+
+Deprecations and Removals
+-------------------------
+
+- Remove ``--no-use-pip-constraints`` option. Users should switch to a pip
+  version that supports URL constraints, which is all of them for the legacy
+  resolver, and 21.1+ for the new resolver. (`#60 <https://github.com/sbidoul/pip-deepfreeze/issues/60>`_)
+- An editable installation of the project is now always done by pip-deepfreeze. The
+  `--editable` option is removed as well as the attempt to detect if the project is
+  editable. This allows correct support for projects that support PEP 660 and do not have
+  a `setup.py`. (`#65 <https://github.com/sbidoul/pip-deepfreeze/issues/65>`_)
+
+
 v0.9.0 (2020-12-27)
 ===================
 

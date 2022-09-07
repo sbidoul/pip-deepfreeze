@@ -1,3 +1,0 @@
-Remove ``--no-use-pip-constraints`` option. Users should switch to a pip
-version that supports URL constraints, which is all of them for the legacy
-resolver, and 21.1+ for the new resolver.

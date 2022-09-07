@@ -15,6 +15,9 @@ sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 default_section = "THIRDPARTY"
 
 [tool.towncrier]
+package = "pip_deepfreeze"
+package_dir = "src"
 filename = "HISTORY.rst"
 directory = "news"
 issue_format = "`#{issue} <https://github.com/sbidoul/pip-deepfreeze/issues/{issue}>`_"
+title_format = "{version} ({project_date})"
