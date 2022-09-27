@@ -31,8 +31,8 @@ This includes:
 - updating the environment with new dependencies as the project evolves,
 - uninstalling unused dependencies,
 - refreshing dependencies,
-- maintaining pinned versions in ``requirements.txt``,
-- pinning versions for extras in ``requirements-{extra}.txt``
+- maintaining pinned in ``requirements.txt`` lock files,
+- pinning versions for extras in ``requirements-{extra}.txt`` lock files,
 - displaying installed dependencies as a tree.
 
 A few characteristics of this project:
@@ -43,7 +43,7 @@ A few characteristics of this project:
 - It relies on the documented ``pip`` command line interface and its
   ubiquitous `requirements file
   format <https://pip.pypa.io/en/stable/user_guide/?highlight=requirements#requirements-files>`__.
-- It assumes your project is configured using a PEP 517 compliant build
+- It assumes your project is configured using a PEP 517/660 compliant build
   backend but otherwise makes no assumption on the specific backend
   used.
 - It has first class support for dependencies specified as VCS references.
@@ -51,12 +51,6 @@ A few characteristics of this project:
   that has ``pip`` installed, including python 2.
 - It is reasonably small and simple, with good test coverage and is hopefully
   easy to maintain.
-
-.. warning::
-
-   While ``pip-deepfreeze`` is functional already, this is to be considered as
-   alpha software for a little while, until we have gathered some feedback on
-   the CLI options.
 
 Installation
 ------------
@@ -87,11 +81,9 @@ Quick start
 .. image:: https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/a148bcce2920025a30bcc16cfb6dbc2b9a1ca68d/docs/synopsis.png
    :alt: pip-deepfreeze synopsis
 
-Make sure your application declares its direct dependencies using `setuptools
-<https://pypi.org/project/setuptools/>`__ (via the ``install_requires`` key in
-``setup.py`` or ``setup.cfg``), or any other compliant `PEP 517
-<https://www.python.org/dev/peps/pep-0517/>`__ build backend such as `flit
-<https://pypi.org/project/flit/>`__.
+Make sure your application declares its direct dependencies in `pyproject.toml
+<https://packaging.python.org/en/latest/specifications/declaring-project-metadata/>`_,
+or any other mechanism supported by your PEP 517/660 compliant build backend.
 
 Create and activate a virtual environment using your favorite tool. Run
 ``pip list`` to make sure ``pip``, ``setuptools`` and ``wheel`` are installed
@@ -143,8 +135,8 @@ How to
 
 Creating a new project.
 
-   Follow the instructions of your favorite PEP 517 compliant build tool, such
-   as ``setuptools``, ``flit`` or others. After declaring the first
+   Follow the instructions of your favorite PEP 517/660 compliant build tool, such
+   as ``hatch``, ``setuptools``, ``flit`` or others. After declaring the first
    dependencies, create and activate a virtualenv, then run ``pip-df sync`` in
    the project directory to generate pinned dependencies in
    ``requirements.txt``.
@@ -221,13 +213,11 @@ FAQ
 What should I put in ``requirements.txt.in``? Should I add all my dependencies
 there?
 
-   ``requirements.txt.in`` is optional. The dependencies of your project must
-   be declared primarily in ``setup.py`` or ``setup.cfg`` (if you use
-   ``setuptools``), or in ``pyproject.toml`` if you use another PEP 517 build
-   backend such as ``flit``. ``requirements.txt.in`` may contain additional
-   constraints if needed, such as version constraints on indirect dependencies
-   that you don't control, or VCS links for dependencies that you need to
-   install from VCS source.
+   ``requirements.txt.in`` is optional. The dependencies of your project must be
+   declared primarily in ``pyproject.toml`` (or the legacy ``setup.py/setup.cfg``).
+   ``requirements.txt.in`` may contain additional constraints if needed, such as version
+   constraints on indirect dependencies that you don't control, or VCS links for
+   dependencies that you need to install from VCS source.
 
 I have added a constraint in ``requirements.txt.in`` but ``pip-df sync`` does
 not honor it. What is going on?
@@ -325,7 +315,8 @@ pip-df sync
 
    Usage: pip-df sync [OPTIONS]
 
-     Install/update the environment to match the project requirements.
+     Install/update the environment to match the project requirements, and lock new
+     dependencies.
 
      Install/reinstall the project. Install/update dependencies to the latest
      allowed version according to pinned dependencies in requirements.txt or
