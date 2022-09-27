@@ -35,7 +35,7 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 "test" = ["pytest", "pytest-cov", "pytest-xdist", "virtualenv"]
-"mypy" = ["mypy==0.800"]
+"mypy" = ["mypy", "types-toml", "types-setuptools"]
 
 [project.entry-points.console_scripts]
 pip-df = "pip_deepfreeze.__main__:main"
