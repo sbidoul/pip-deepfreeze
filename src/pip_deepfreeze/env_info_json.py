@@ -57,7 +57,7 @@ def _get_version(dist_name):
 def _load_pyvenv_cfg(pyvenv_cfg_path):
     # type: (str) -> Dict[str, str]
     pyvenv_cfg = {}
-    with io.open(pyvenv_cfg_path, encoding="utf-8") as f:
+    with open(pyvenv_cfg_path, encoding="utf-8") as f:
         for line in f:
             key, _, value = line.partition("=")
             pyvenv_cfg[key.strip()] = value.strip()
@@ -72,7 +72,7 @@ def _find_pyvenv_cfg():
     ):
         try:
             pyvenv_cfg = _load_pyvenv_cfg(pyvenv_cfg_path)
-        except IOError:
+        except OSError:
             continue
         if "home" not in pyvenv_cfg:
             continue

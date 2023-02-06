@@ -12,7 +12,6 @@ moving this to a standalone library:
 
 # TODO better name than filename/base_filename
 
-from __future__ import absolute_import
 
 import argparse
 import codecs
@@ -27,7 +26,7 @@ from urllib.request import urlopen
 
 from .compat import Protocol
 
-ReqFileLines = Iterator[Tuple[int, Text, Text]]
+ReqFileLines = Iterator[Tuple[int, str, str]]
 
 
 __all__ = [
@@ -55,16 +54,11 @@ class HttpResponse(Protocol):
     @property
     def text(self) -> str:
         """The text content of the response."""
-
     def raise_for_status(self) -> None:
         """Raise if the response has an http error status."""
-
-
 class HttpClient(Protocol):
     def get(self, url: str) -> HttpResponse:
         """HTTP GET the URL."""
-
-
 class RequirementsFileParserError(Exception):
     pass
 
@@ -79,7 +73,7 @@ class OptionParsingError(RequirementsFileParserError):
         )
 
 
-class ParsedLine(object):
+class ParsedLine:
     def __init__(
         self,
         filename,  # type: str
@@ -200,15 +194,14 @@ def _parse(
         if not reqs_only or isinstance(line, RequirementLine):
             yield line
         if isinstance(line, NestedRequirementsLine) and recurse:
-            for inner_line in parse(
+            yield from parse(
                 filename=_file_or_url_join(line.requirements, line.filename),
                 recurse=recurse,
                 reqs_only=reqs_only,
                 strict=strict,
                 constraints=line.is_constraint,
                 session=session,
-            ):
-                yield inner_line
+            )
 
 
 def _file_or_url_join(filename: str, base_filename: Optional[str]) -> str:
