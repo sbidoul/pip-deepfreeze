@@ -1,9 +1,11 @@
 import shutil
 from pathlib import Path
+from typing import Any
 
 import typer
 from packaging.utils import canonicalize_name
 
+from .pyproject_toml import load_pyproject_toml
 from .sanity import check_env
 from .sync import sync as sync_operation
 from .tree import tree as tree_operation
@@ -92,6 +94,13 @@ def tree(
     )
 
 
+def project_root_callback(ctx: typer.Context, param: Any, value: Path) -> Path:
+    pyproject_toml = load_pyproject_toml(value)
+    if pyproject_toml:
+        ctx.default_map = pyproject_toml.get("tool", {}).get("pip-deepfreeze", {})
+    return value
+
+
 @app.callback()
 def callback(
     ctx: typer.Context,
@@ -110,6 +119,9 @@ def callback(
         ".",
         "--project-root",
         "-r",
+        # Process this parameter first so we can load default values from pyproject.toml
+        is_eager=True,
+        callback=project_root_callback,
         exists=True,
         dir_okay=True,
         file_okay=False,
