@@ -94,9 +94,8 @@ def get_project_name_from_pyproject_toml_pep621(
     pyproject_toml: Optional[PyProjectToml],
 ) -> Optional[str]:
     log_info(".", nl=False)
-    if not _get_build_backend(pyproject_toml):
+    if not pyproject_toml:
         return None
-    assert pyproject_toml
     project_name = pyproject_toml.get("project", {}).get("name")
     if not project_name:
         return None
