@@ -18,7 +18,7 @@ class Node:
     def __init__(self, req: Requirement, dist: Optional[InstalledDistribution]):
         self.req = req
         self.dist = dist
-        self.children = []  # type: List[Node]
+        self.children: List[Node] = []
 
     @staticmethod
     def key(req: Requirement) -> NodeKey:
@@ -28,7 +28,7 @@ class Node:
         )
 
     def print(self) -> None:
-        seen = set()  # type: Set[Node]
+        seen: Set[Node] = set()
 
         def _print(indent: List[str], node: Node) -> None:
             # inspired by https://stackoverflow.com/a/59109706
@@ -73,7 +73,7 @@ class Node:
 def tree(python: str, project_root: Path, extras: List[NormalizedName]) -> None:
     project_name = get_project_name(python, project_root)
     installed_dists = pip_list(python)
-    nodes = {}  # type: Dict[NodeKey, Node]
+    nodes: Dict[NodeKey, Node] = {}
 
     def add(req: Requirement) -> Node:
         key = Node.key(req)
