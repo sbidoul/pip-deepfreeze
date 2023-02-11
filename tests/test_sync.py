@@ -322,3 +322,42 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
     assert "pkga" not in requirements_c_txt
     assert "pkgb" not in requirements_c_txt
     assert "pkgc==0.0.2\n" in requirements_c_txt
+
+
+def test_post_sync_command(virtualenv_python, testpkgs, tmp_path):
+    (tmp_path / "requirements.txt.in").write_text(
+        textwrap.dedent(
+            f"""\
+            --no-index
+            --find-links {testpkgs}
+            """
+        )
+    )
+    (tmp_path / "pyproject.toml").write_text(
+        textwrap.dedent(
+            """\
+            [project]
+            name = "theproject"
+            version = "1.0"
+            """
+        )
+    )
+    res = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip_deepfreeze",
+            "--python",
+            virtualenv_python,
+            "sync",
+            "--post-sync-command",
+            "echo post-sync-cmd-1",
+            "--post-sync-command",
+            "echo post-sync-cmd-2",
+        ],
+        cwd=tmp_path,
+        text=True,
+        check=True,
+        capture_output=True,
+    )
+    assert res.stdout.endswith("post-sync-cmd-1\npost-sync-cmd-2\n")

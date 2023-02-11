@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, List
 
 import typer
 from packaging.utils import canonicalize_name
@@ -59,6 +59,14 @@ def sync(
             "If not specified, ask confirmation."
         ),
     ),
+    post_sync_commands: List[str] = typer.Option(
+        [],
+        "--post-sync-command",
+        help=(
+            "Command to run after the sync operation is complete. "
+            "Can be specified multiple times."
+        ),
+    ),
 ) -> None:
     """Install/update the environment to match the project requirements.
 
@@ -75,6 +83,7 @@ def sync(
         extras=[canonicalize_name(extra) for extra in comma_split(extras)],
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
+        post_sync_commands=post_sync_commands,
     )
 
 
