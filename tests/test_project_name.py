@@ -110,6 +110,22 @@ def test_get_project_name_from_pyproject_toml_pep621_no_project(tmp_path):
     )
 
 
+def test_get_project_name_from_pyproject_toml_pep621_no_build_system(tmp_path):
+    (tmp_path / "pyproject.toml").write_text(
+        textwrap.dedent(
+            """\
+            [project]
+            name = "theproject"
+            """
+        )
+    )
+    assert (
+        get_project_name_from_pyproject_toml_pep621(_load_pyproject_toml(tmp_path))
+        == "theproject"
+    )
+    assert get_project_name(sys.executable, tmp_path) == "theproject"
+
+
 def test_project_name_from_pep517_setup_py(tmp_path):
     setup_py = tmp_path / "setup.py"
     setup_py.write_text(
