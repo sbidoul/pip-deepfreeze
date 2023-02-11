@@ -374,10 +374,11 @@ Several other tools exist with a similar or overlapping scope as
 - `pip-tools <https://pypi.org/project/pip-tools/>`_. This is the one with the most
   similar features. Besides the reasons explained in `About`_ above I wanted to see
   if it was possible to do such a thing using the ``pip`` CLI only.
-- `pipdeptree <https://pypi.org/project/pipdeptree/>`_. Works similarly as
-  `pip-df tree`.
+- `PDM <https://pypi.org/project/pdm/>`_
 - `Poetry <https://python-poetry.org/>`_
 - `pipenv <https://pipenv.pypa.io/en/latest/>`_
+- `pipdeptree <https://pypi.org/project/pipdeptree/>`_. Works similarly as
+  `pip-df tree`.
 
 Development
 -----------
