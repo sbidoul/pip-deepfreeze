@@ -393,8 +393,10 @@ Several other tools exist with a similar or overlapping scope as
   install`` and ``pip freeze``. Some of the features here may serve as
   inspiration for future ``pip`` evolutions.
 - `pip-tools <https://pypi.org/project/pip-tools/>`_. This is the one with the most
-  similar features. Besides the reasons explained in `About`_ above I wanted to see
-  if it was possible to do such a thing using the ``pip`` CLI only.
+  similar features. Besides the reasons explained in `About`_ above I wanted to see if
+  it was possible to do such a thing using the ``pip`` CLI only. ``pip-deepfreeze`` is
+  also more opinionated than ``pip-tools`` and ``pipdeptree``,  as it always does an
+  editable install and it uses the build backend to obtain the top level dependencies.
 - `PDM <https://pypi.org/project/pdm/>`_
 - `Poetry <https://python-poetry.org/>`_
 - `pipenv <https://pipenv.pypa.io/en/latest/>`_
