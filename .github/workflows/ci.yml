@@ -14,9 +14,26 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.6", "3.11"]
-        os: ["windows-latest", "macos-latest"]
         include:
+          # windows
+          - os: "windows-latest"
+            python-version: "2.7"
+          - os: "windows-latest"
+            python-version: "3.6"
+          - os: "windows-latest"
+            python-version: "3.7"
+          - os: "windows-latest"
+            python-version: "3.11"
+          # macos
+          - os: "macos-latest"
+            python-version: "2.7"
+          - os: "macos-latest"
+            python-version: "3.6"
+          - os: "macos-latest"
+            python-version: "3.7"
+          - os: "macos-latest"
+            python-version: "3.11"
+          # ubuntu
           - os: ubuntu-20.04
             python-version: "2.7"
           - os: ubuntu-20.04
