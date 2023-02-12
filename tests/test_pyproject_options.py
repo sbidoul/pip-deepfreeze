@@ -23,16 +23,21 @@ def test_options_loaded_from_pyproject_toml_project_root(
 
             [tool.pip-deepfreeze.sync]
             extras = "a,b"
+            post_sync_commands = ["echo a", "echo b"]
             """
         )
     )
     sync_operation_mock = create_autospec(sync)
     monkeypatch.setattr("pip_deepfreeze.__main__.sync_operation", sync_operation_mock)
     runner = CliRunner(mix_stderr=False)
-    result = runner.invoke(app, ["-r", tmp_path, "sync"], obj=MainOptions())
+    result = runner.invoke(app, ["-r", str(tmp_path), "sync"], obj=MainOptions())
     assert result.exit_code == 0
     # TODO when dropping python 3.7, use call_args.kwargs
     assert sync_operation_mock.call_args[1]["extras"] == ["a", "b"]
+    assert sync_operation_mock.call_args[1]["post_sync_commands"] == [
+        "echo a",
+        "echo b",
+    ]
 
 
 def test_options_loaded_from_pyproject_toml_cwd(
@@ -49,6 +54,7 @@ def test_options_loaded_from_pyproject_toml_cwd(
 
             [tool.pip-deepfreeze.sync]
             extras = "a,b"
+            post_sync_commands = ["echo a", "echo b"]
             """
         )
     )
@@ -60,3 +66,7 @@ def test_options_loaded_from_pyproject_toml_cwd(
     assert result.exit_code == 0
     # TODO when dropping python 3.7, use call_args.kwargs
     assert sync_operation_mock.call_args[1]["extras"] == ["a", "b"]
+    assert sync_operation_mock.call_args[1]["post_sync_commands"] == [
+        "echo a",
+        "echo b",
+    ]

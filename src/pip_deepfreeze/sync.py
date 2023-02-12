@@ -1,3 +1,4 @@
+import subprocess
 import tempfile
 from pathlib import Path
 from typing import Iterator, List, Optional, Sequence
@@ -41,6 +42,7 @@ def sync(
     extras: List[NormalizedName],
     uninstall_unneeded: Optional[bool],
     project_root: Path,
+    post_sync_commands: Sequence[str] = (),
 ) -> None:
     project_name = get_project_name(python, project_root)
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
@@ -121,3 +123,7 @@ def sync(
                 f"that are not dependencies of {project_name_with_extras} "
                 f"are also installed: {unneeded_reqs_str}"
             )
+    # run post-sync commands
+    for command in post_sync_commands:
+        log_info(f"Running post-sync command: {command}")
+        subprocess.run(command, shell=True, check=True)

@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, List
 
 import typer
 from packaging.utils import canonicalize_name
@@ -47,13 +47,24 @@ def sync(
         "--extras",
         "-x",
         metavar="EXTRAS",
-        help="Extras to install and freeze to requirements-{EXTRA}.txt.",
+        help=(
+            "Comma separated list of extras "
+            "to install and freeze to requirements-{EXTRA}.txt."
+        ),
     ),
     uninstall_unneeded: bool = typer.Option(
         None,
         help=(
             "Uninstall distributions that are not dependencies of the project. "
             "If not specified, ask confirmation."
+        ),
+    ),
+    post_sync_commands: List[str] = typer.Option(
+        [],
+        "--post-sync-command",
+        help=(
+            "Command to run after the sync operation is complete. "
+            "Can be specified multiple times."
         ),
     ),
 ) -> None:
@@ -72,6 +83,7 @@ def sync(
         extras=[canonicalize_name(extra) for extra in comma_split(extras)],
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
+        post_sync_commands=post_sync_commands,
     )
 
 

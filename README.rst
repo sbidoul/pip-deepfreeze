@@ -335,8 +335,11 @@ pip-df sync
                                      your application to the latest allowed
                                      version.
 
-     -x, --extras EXTRAS             Extras to install and freeze to
-                                     requirements-{EXTRA}.txt.
+     -x, --extras EXTRAS             Comma separated list of extras to install
+                                     and freeze to requirements-{EXTRA}.txt.
+
+     --post-sync-command TEXT        Command to run after the sync operation is
+                                     complete. Can be specified multiple times.
 
      --uninstall-unneeded / --no-uninstall-unneeded
                                      Uninstall distributions that are not
@@ -363,11 +366,20 @@ pip-df tree
 Configuration
 -------------
 
-Some options can be provided in a `[tool.pip-deepfreeze]` section of your
+Some options can get default values from a `[tool.pip-deepfreeze]` section of your
 ``pyproject.toml`` file. The following options are supported:
 
-- `sync.extras`: provide a default value to the ``--extras`` option of the
-  ``sync`` command.
+- `sync.extras`: default value for the ``--extras`` option of the ``sync`` command.
+- `sync.post_sync_command`: default value (as a list of strings) for the
+  ``--post-sync-command`` options of the ``sync`` command.
+
+Example:
+
+```toml
+[tool.pip-deepfreeze.sync]
+extras = "test,doc"
+post_sync_commands = ["cat requirements.txt", "python -m pip list"]
+```
 
 Other tools
 -----------

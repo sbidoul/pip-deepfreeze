@@ -88,4 +88,18 @@ def testpkgs(tmp_path_factory):
             ],
         )
 
+    # Download some wheels so we can build pyproject-based packages without network.
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "wheel",
+            "setuptools",
+            "wheel",
+            "--wheel-dir",
+            str(testpkgs_dir),
+        ]
+    )
+
     return testpkgs_dir.as_uri()
