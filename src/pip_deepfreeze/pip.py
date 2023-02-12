@@ -1,8 +1,9 @@
 import json
+from importlib.resources import path as resource_path
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-from .compat import NormalizedName, resource_path, shlex_join
+from .compat import NormalizedName, shlex_join
 from .installed_dist import InstalledDistribution, InstalledDistributions
 from .list_installed_depends import (
     list_installed_depends,
