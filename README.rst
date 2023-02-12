@@ -366,20 +366,20 @@ pip-df tree
 Configuration
 -------------
 
-Some options can get default values from a `[tool.pip-deepfreeze]` section of your
+Some options can get default values from a ``[tool.pip-deepfreeze]`` section of your
 ``pyproject.toml`` file. The following options are supported:
 
-- `sync.extras`: default value for the ``--extras`` option of the ``sync`` command.
-- `sync.post_sync_command`: default value (as a list of strings) for the
+- ``sync.extras``: default value for the ``--extras`` option of the ``sync`` command.
+- ``sync.post_sync_command``: default value (as a list of strings) for the
   ``--post-sync-command`` options of the ``sync`` command.
 
 Example:
 
-```toml
-[tool.pip-deepfreeze.sync]
-extras = "test,doc"
-post_sync_commands = ["cat requirements.txt", "python -m pip list"]
-```
+.. code:: toml
+
+   [tool.pip-deepfreeze.sync]
+   extras = "test,doc"
+   post_sync_commands = ["cat requirements.txt", "python -m pip list"]
 
 Other tools
 -----------
