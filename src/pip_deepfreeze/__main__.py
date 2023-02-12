@@ -47,7 +47,10 @@ def sync(
         "--extras",
         "-x",
         metavar="EXTRAS",
-        help="Extras to install and freeze to requirements-{EXTRA}.txt.",
+        help=(
+            "Comma separated list of extras "
+            "to install and freeze to requirements-{EXTRA}.txt."
+        ),
     ),
     uninstall_unneeded: bool = typer.Option(
         None,

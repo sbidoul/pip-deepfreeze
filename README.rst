@@ -335,8 +335,8 @@ pip-df sync
                                      your application to the latest allowed
                                      version.
 
-     -x, --extras EXTRAS             Extras to install and freeze to
-                                     requirements-{EXTRA}.txt.
+     -x, --extras EXTRAS             Comma separated list of extras to install
+                                     and freeze to requirements-{EXTRA}.txt.
 
      --uninstall-unneeded / --no-uninstall-unneeded
                                      Uninstall distributions that are not
