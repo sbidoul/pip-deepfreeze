@@ -1,10 +1,11 @@
 import json
 import subprocess
+from importlib.resources import path as resource_path
 from typing import Optional, cast
 
 from packaging.version import Version
 
-from .compat import TypedDict, resource_path, shlex_join
+from .compat import TypedDict, shlex_join
 from .utils import log_error, log_warning
 
 EnvInfo = TypedDict(

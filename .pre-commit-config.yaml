@@ -25,7 +25,7 @@ repos:
       - id: mypy
         args: ["--strict"]
         exclude: '^(docs|tasks|tests)|setup\.py'
-        additional_dependencies: ["httpx", "importlib_resources", "packaging", "typer>=0.3.2", "types-toml", "types-setuptools"]
+        additional_dependencies: ["httpx", "packaging", "typer>=0.3.2", "types-toml", "types-setuptools"]
   - repo: https://github.com/PyCQA/flake8
     rev: "6.0.0"
     hooks:
