@@ -69,7 +69,7 @@ def test_sync_no_in_req(virtualenv_python, tmp_path):
     )
 
 
-def test_python_not_found(tmp_path):
+def test_python_not_found():
     runner = CliRunner()
     result = runner.invoke(app, ["--python", "this-is-not-a-python", "sync"])
     assert result.exit_code != 0
