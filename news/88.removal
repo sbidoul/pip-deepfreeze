@@ -1,2 +1,0 @@
-Drop support for running pip-deepfreeze under python 3.6. We still support 3.6 target
-environments.

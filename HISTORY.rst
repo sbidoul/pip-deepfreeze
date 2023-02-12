@@ -1,3 +1,27 @@
+1.1 (2023-02-12)
+================
+
+Features
+--------
+
+- Read some configuration defaults from ``pyproject.toml``. (`#83 <https://github.com/sbidoul/pip-deepfreeze/issues/83>`_)
+- Support pyproject.toml without build system to detect project name. (`#84 <https://github.com/sbidoul/pip-deepfreeze/issues/84>`_)
+- Add post-sync commands. (`#86 <https://github.com/sbidoul/pip-deepfreeze/issues/86>`_)
+
+
+Bugfixes
+--------
+
+- Read pyproject.toml using utf-8 encoding. (`#90 <https://github.com/sbidoul/pip-deepfreeze/issues/90>`_)
+
+
+Deprecations and Removals
+-------------------------
+
+- Drop support for running pip-deepfreeze under python 3.6. We still support 3.6 target
+  environments. (`#88 <https://github.com/sbidoul/pip-deepfreeze/issues/88>`_)
+
+
 1.0 (2022-09-27)
 ================
 
