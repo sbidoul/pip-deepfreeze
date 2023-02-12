@@ -2,31 +2,31 @@ import sys
 import textwrap
 
 from pip_deepfreeze.project_name import (
-    _load_pyproject_toml,
     get_project_name,
     get_project_name_from_pep517,
     get_project_name_from_pyproject_toml_flit,
     get_project_name_from_pyproject_toml_pep621,
     get_project_name_from_setup_cfg,
+    load_pyproject_toml,
 )
 
 
 def test_project_name_from_setup_cfg(tmp_path):
     (tmp_path / "setup.cfg").write_text("[metadata]\nname = theproject")
     assert (
-        get_project_name_from_setup_cfg(tmp_path, _load_pyproject_toml(tmp_path))
+        get_project_name_from_setup_cfg(tmp_path, load_pyproject_toml(tmp_path))
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"
     (tmp_path / "pyproject.toml").touch()
     assert (
-        get_project_name_from_setup_cfg(tmp_path, _load_pyproject_toml(tmp_path))
+        get_project_name_from_setup_cfg(tmp_path, load_pyproject_toml(tmp_path))
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"
     (tmp_path / "pyproject.toml").write_text("[build-system]")
     assert (
-        get_project_name_from_setup_cfg(tmp_path, _load_pyproject_toml(tmp_path))
+        get_project_name_from_setup_cfg(tmp_path, load_pyproject_toml(tmp_path))
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"
@@ -34,12 +34,12 @@ def test_project_name_from_setup_cfg(tmp_path):
         '[build-system]\nbuild-backend="setuptools.build_meta"'
     )
     assert (
-        get_project_name_from_setup_cfg(tmp_path, _load_pyproject_toml(tmp_path))
+        get_project_name_from_setup_cfg(tmp_path, load_pyproject_toml(tmp_path))
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"
     (tmp_path / "setup.cfg").write_text("[metadata]")
-    assert not get_project_name_from_setup_cfg(tmp_path, _load_pyproject_toml(tmp_path))
+    assert not get_project_name_from_setup_cfg(tmp_path, load_pyproject_toml(tmp_path))
 
 
 def test_get_project_name_from_pyproject_toml_flit(tmp_path):
@@ -55,7 +55,7 @@ def test_get_project_name_from_pyproject_toml_flit(tmp_path):
         )
     )
     assert (
-        get_project_name_from_pyproject_toml_flit(_load_pyproject_toml(tmp_path))
+        get_project_name_from_pyproject_toml_flit(load_pyproject_toml(tmp_path))
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"
@@ -72,7 +72,7 @@ def test_get_project_name_from_pyproject_toml_flit_no_module(tmp_path):
             """
         )
     )
-    assert not get_project_name_from_pyproject_toml_flit(_load_pyproject_toml(tmp_path))
+    assert not get_project_name_from_pyproject_toml_flit(load_pyproject_toml(tmp_path))
 
 
 def test_get_project_name_from_pyproject_toml_pep621(tmp_path):
@@ -88,7 +88,7 @@ def test_get_project_name_from_pyproject_toml_pep621(tmp_path):
         )
     )
     assert (
-        get_project_name_from_pyproject_toml_pep621(_load_pyproject_toml(tmp_path))
+        get_project_name_from_pyproject_toml_pep621(load_pyproject_toml(tmp_path))
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"
@@ -106,7 +106,7 @@ def test_get_project_name_from_pyproject_toml_pep621_no_project(tmp_path):
         )
     )
     assert not get_project_name_from_pyproject_toml_pep621(
-        _load_pyproject_toml(tmp_path)
+        load_pyproject_toml(tmp_path)
     )
 
 
@@ -120,7 +120,7 @@ def test_get_project_name_from_pyproject_toml_pep621_no_build_system(tmp_path):
         )
     )
     assert (
-        get_project_name_from_pyproject_toml_pep621(_load_pyproject_toml(tmp_path))
+        get_project_name_from_pyproject_toml_pep621(load_pyproject_toml(tmp_path))
         == "theproject"
     )
     assert get_project_name(sys.executable, tmp_path) == "theproject"

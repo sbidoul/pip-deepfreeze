@@ -9,21 +9,19 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, MutableMapping, Optional
+from typing import Optional
 
-import toml
 from packaging.utils import canonicalize_name
 
 from .compat import NormalizedName
+from .pyproject_toml import PyProjectToml, load_pyproject_toml
 from .utils import check_call, check_output, log_info
-
-PyProjectToml = MutableMapping[str, Any]
 
 
 @lru_cache(maxsize=1)
 def get_project_name(python: str, project_root: Path) -> NormalizedName:
     log_info("Getting project name..", nl=False)
-    pyproject_toml = _load_pyproject_toml(project_root)
+    pyproject_toml = load_pyproject_toml(project_root)
     name = (
         get_project_name_from_pyproject_toml_pep621(pyproject_toml)
         or get_project_name_from_setup_cfg(project_root, pyproject_toml)
@@ -32,14 +30,6 @@ def get_project_name(python: str, project_root: Path) -> NormalizedName:
     )
     log_info(" " + name)
     return canonicalize_name(name)
-
-
-def _load_pyproject_toml(project_root: Path) -> Optional[PyProjectToml]:
-    log_info(".", nl=False)
-    pyproject_toml_path = project_root / "pyproject.toml"
-    if not pyproject_toml_path.is_file():
-        return None
-    return toml.loads(pyproject_toml_path.read_text())
 
 
 def _get_build_backend(pyproject_toml: Optional[PyProjectToml]) -> Optional[str]:

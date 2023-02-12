@@ -360,6 +360,15 @@ pip-df tree
 
      --help               Show this message and exit.
 
+Configuration
+-------------
+
+Some options can be provided in a `[tool.pip-deepfreeze]` section of your
+``pyproject.toml`` file. The following options are supported:
+
+- `sync.extras`: provide a default value to the ``--extras`` option of the
+  ``sync`` command.
+
 Other tools
 -----------
 
