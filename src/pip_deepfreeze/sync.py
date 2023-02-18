@@ -126,4 +126,8 @@ def sync(
     # run post-sync commands
     for command in post_sync_commands:
         log_info(f"Running post-sync command: {command}")
-        subprocess.run(command, shell=True, check=True)
+        result = subprocess.run(command, shell=True, check=False)
+        if result.returncode != 0:
+            raise SystemExit(
+                f"Post-sync command {command} failed with exit code {result.returncode}"
+            )

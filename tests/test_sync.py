@@ -361,3 +361,21 @@ def test_post_sync_command(virtualenv_python, testpkgs, tmp_path):
         capture_output=True,
     )
     assert res.stdout.endswith("post-sync-cmd-1\npost-sync-cmd-2\n")
+    res = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip_deepfreeze",
+            "--python",
+            virtualenv_python,
+            "sync",
+            "--post-sync-command",
+            "notacommand",
+        ],
+        cwd=tmp_path,
+        text=True,
+        check=False,
+        capture_output=True,
+    )
+    assert res.returncode != 0
+    assert "Post-sync command notacommand failed" in res.stderr
