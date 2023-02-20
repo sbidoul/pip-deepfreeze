@@ -1,0 +1,2 @@
+Avoid needlessly reinstalling Direct URL requirements that are not pinned exactly as pip
+freeze does.
