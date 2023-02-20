@@ -1,4 +1,5 @@
 import contextlib
+import re
 import subprocess
 from pathlib import Path
 from subprocess import CalledProcessError
@@ -116,3 +117,21 @@ def make_project_name_with_extras(
         return project_name
     else:
         return project_name + "[" + ",".join(extras) + "]"
+
+
+_NORMALIZE_REQ_LINE_RE = re.compile(
+    r"^(?P<name>[a-zA-Z0-9-_.]+)(?P<arobas>\s*@\s*)(?P<rest>.*)$"
+)
+
+
+def normalize_req_line(req_line: str) -> str:
+    """Normalize a requirement line so they are comparable.
+
+    This is a little hack because some requirements.txt generator such
+    as pip-requirements-parser dont always generate the exact same
+    output as pip freeze.
+    """
+    mo = _NORMALIZE_REQ_LINE_RE.match(req_line)
+    if not mo:
+        return req_line
+    return mo.group("name") + " @ " + mo.group("rest")
