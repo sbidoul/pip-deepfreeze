@@ -142,6 +142,7 @@ def test_make_project_name_with_extras(project_name, extras, expected):
         ("prj==1.0", "prj==1.0"),
         ("name @https://g.c/o/p@branch", "name @ https://g.c/o/p@branch"),
         ("name@https://g.c/o/p@branch", "name @ https://g.c/o/p@branch"),
+        ("name[extra] @https://g.c/o/p@branch", "name[extra] @ https://g.c/o/p@branch"),
     ],
 )
 def test_normalize_req_line(req_line: str, expected: str) -> None:

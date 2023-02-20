@@ -120,7 +120,7 @@ def make_project_name_with_extras(
 
 
 _NORMALIZE_REQ_LINE_RE = re.compile(
-    r"^(?P<name>[a-zA-Z0-9-_.]+)(?P<arobas>\s*@\s*)(?P<rest>.*)$"
+    r"^(?P<name>[a-zA-Z0-9-_.\[\]]+)(?P<arobas>\s*@\s*)(?P<rest>.*)$"
 )
 
 
