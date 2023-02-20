@@ -267,7 +267,7 @@ def test_pip_upgrade_constraint_not_a_dep(virtualenv_python, testpkgs, tmp_path)
     assert list(_freeze_filter(pip_freeze(virtualenv_python))) == []
 
 
-def test_pip_upgrade_vcs_url(virtualenv_python, tmp_path):
+def test_pip_upgrade_vcs_url(virtualenv_python, tmp_path, capfd):
     """Test upgrading a VCS URL."""
     constraints = tmp_path / "requirements.txt.df"
     (tmp_path / "setup.py").write_text(
@@ -289,6 +289,15 @@ def test_pip_upgrade_vcs_url(virtualenv_python, tmp_path):
         "toml @ git+https://github.com/uiri/toml"
         "@4935f616ef78c35a968b2473e806d7049eba9af1"
     ]
+    assert "Uninstalling dependencies to update" not in capfd.readouterr().err
+    # reinstall, no change but different @url syntax
+    constraints.write_text("--no-index\ntoml@git+https://github.com/uiri/toml@0.10.0")
+    pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)
+    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == [
+        "toml @ git+https://github.com/uiri/toml"
+        "@4935f616ef78c35a968b2473e806d7049eba9af1"
+    ]
+    assert "Uninstalling dependencies to update" not in capfd.readouterr().err
     # upgrade to tag 0.10.1
     constraints.write_text("toml @ git+https://github.com/uiri/toml@0.10.1")
     pip_upgrade_project(virtualenv_python, constraints, project_root=tmp_path)

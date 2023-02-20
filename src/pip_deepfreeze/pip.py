@@ -16,7 +16,14 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .utils import check_call, check_output, log_debug, log_info, log_warning
+from .utils import (
+    check_call,
+    check_output,
+    log_debug,
+    log_info,
+    log_warning,
+    normalize_req_line,
+)
 
 
 def pip_upgrade_project(
@@ -33,7 +40,7 @@ def pip_upgrade_project(
     Ideally, this should be a native pip feature but
     - pip has difficulties upgrading direct URL requirements
       https://github.com/pypa/pip/issues/5780, https://github.com/pypa/pip/issues/7678
-      (need to check if the new resolver does the exepected thing).
+      (need to check if the new resolver does the expected thing).
     - We need to pass --upgrade for regular requirements otherwise pip will not attempt
       to install them (requirement already satisfied).
     - Passing --upgrade to pip makes it too slow to my taste (need to check performance
@@ -59,10 +66,10 @@ def pip_upgrade_project(
         if isinstance(req_line, RequirementLine):
             req_name = get_req_name(req_line.requirement)
             assert req_name  # XXX user error instead?
-            constraint_reqs[req_name] = req_line.requirement
+            constraint_reqs[req_name] = normalize_req_line(req_line.requirement)
     # 2. get installed frozen dependencies of project
     installed_reqs = {
-        get_req_name(req_line): req_line
+        get_req_name(req_line): normalize_req_line(req_line)
         for req_line in pip_freeze_dependencies(python, project_root, extras)[0]
     }
     assert all(installed_reqs.keys())  # XXX user error instead?

@@ -15,6 +15,7 @@ from pip_deepfreeze.utils import (
     log_notice,
     log_warning,
     make_project_name_with_extras,
+    normalize_req_line,
     open_with_rollback,
 )
 
@@ -132,3 +133,16 @@ def test_comma_split(s, expected):
 )
 def test_make_project_name_with_extras(project_name, extras, expected):
     assert make_project_name_with_extras(project_name, extras) == expected
+
+
+@pytest.mark.parametrize(
+    "req_line, expected",
+    [
+        ("prj", "prj"),
+        ("prj==1.0", "prj==1.0"),
+        ("name @https://g.c/o/p@branch", "name @ https://g.c/o/p@branch"),
+        ("name@https://g.c/o/p@branch", "name @ https://g.c/o/p@branch"),
+    ],
+)
+def test_normalize_req_line(req_line: str, expected: str) -> None:
+    assert normalize_req_line(req_line) == expected
