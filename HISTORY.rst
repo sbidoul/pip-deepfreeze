@@ -1,3 +1,19 @@
+1.2.0 (2023-04-10)
+==================
+
+Features
+--------
+
+- Don't show a stack trace when a post sync commands fails. (`#91 <https://github.com/sbidoul/pip-deepfreeze/issues/91>`_)
+
+
+Bugfixes
+--------
+
+- Avoid needlessly reinstalling Direct URL requirements that are not pinned exactly as pip
+  freeze does. (`#93 <https://github.com/sbidoul/pip-deepfreeze/issues/93>`_)
+
+
 1.1 (2023-02-12)
 ================
 
