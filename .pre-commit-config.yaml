@@ -20,7 +20,7 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.2.0
+    rev: v1.3.0
     hooks:
       - id: mypy
         args: ["--strict"]
@@ -36,12 +36,12 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.0
+    rev: v1.6.5
     hooks:
       - id: docformatter
         args: ["--in-place", "--wrap-summaries=88"]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.4.0
     hooks:
       - id: pyupgrade
         args: ["--py36-plus"]
