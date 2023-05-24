@@ -5,10 +5,12 @@ from typing import Iterator, List, Optional, Sequence
 
 import httpx
 import typer
+from packaging.utils import canonicalize_name
 
 from .compat import NormalizedName
 from .pip import pip_freeze_dependencies_by_extra, pip_uninstall, pip_upgrade_project
 from .project_name import get_project_name
+from .pyproject import is_pyproject
 from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
 from .req_parser import get_req_names
@@ -44,7 +46,10 @@ def sync(
     project_root: Path,
     post_sync_commands: Sequence[str] = (),
 ) -> None:
-    project_name = get_project_name(python, project_root)
+    if is_pyproject(project_root):
+        project_name = get_project_name(python, project_root)
+    else:
+        project_name = canonicalize_name("UNKNOWN")
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
     requirements_in = project_root / "requirements.txt.in"
     # upgrade project and its dependencies, if needed

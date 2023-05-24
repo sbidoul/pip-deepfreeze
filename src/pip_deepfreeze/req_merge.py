@@ -10,6 +10,14 @@ from .req_parser import get_req_name
 from .utils import log_error
 
 
+def _req_from_req_line(req_line: RequirementLine) -> str:
+    """Make a requirement from a RequirementLine."""
+    if req_line.is_editable:
+        return f"-e {req_line.requirement}"
+    else:
+        return req_line.requirement
+
+
 def prepare_frozen_reqs_for_upgrade(
     frozen_filenames: Iterable[Path],
     in_filename: Path,
@@ -42,7 +50,7 @@ def prepare_frozen_reqs_for_upgrade(
                 if not req_name:
                     log_error(f"Ignoring unnamed constraint {in_req.raw_line!r}.")
                     continue
-                in_reqs.append((req_name, in_req.requirement))
+                in_reqs.append((req_name, _req_from_req_line(in_req)))
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
     for frozen_filename in frozen_filenames:
         if frozen_filename.is_file() and not upgrade_all:

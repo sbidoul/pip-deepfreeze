@@ -10,6 +10,7 @@ from .list_installed_depends import (
     list_installed_depends_by_extra,
 )
 from .project_name import get_project_name
+from .pyproject import is_pyproject
 from .req_file_parser import (
     NestedRequirementsLine,
     RequirementLine,
@@ -86,15 +87,19 @@ def pip_upgrade_project(
         log_info(f"Uninstalling dependencies to update: {to_uninstall_str}")
         pip_uninstall(python, to_uninstall)
     # 4. install project with constraints
-    project_name = get_project_name(python, project_root)
-    log_info(f"Installing/updating {project_name}")
-    cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
-    cmd.append("-e")
-    if extras:
-        extras_str = ",".join(extras)
-        cmd.append(f"{project_root}[{extras_str}]")
+    if is_pyproject(project_root):
+        project_name = get_project_name(python, project_root)
+        log_info(f"Installing/updating {project_name}")
+        cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
+        cmd.append("-e")
+        if extras:
+            extras_str = ",".join(extras)
+            cmd.append(f"{project_root}[{extras_str}]")
+        else:
+            cmd.append(f"{project_root}")
     else:
-        cmd.append(f"{project_root}")
+        log_info("Installing/updating requirements.txt.in")
+        cmd = [python, "-m", "pip", "install", "-r", f"{constraints_filename}"]
     log_debug(f"Running {shlex_join(cmd)}")
     with open(constraints_filename) as f:
         constraints = f.read().strip()
@@ -135,6 +140,9 @@ def pip_freeze_dependencies(
     Dependencies are returned in pip freeze format. Unnamed requirements
     are ignored.
     """
+    if not is_pyproject(project_root):
+        # TODO this should list the dependencies of requirements.txt.in
+        return list(pip_freeze(python)), []
     project_name = get_project_name(python, project_root)
     dependencies_names = list_installed_depends(pip_list(python), project_name, extras)
     frozen_reqs = pip_freeze(python)
@@ -164,6 +172,9 @@ def pip_freeze_dependencies_by_extra(
     project itself). Dependencies are returned in pip freeze format.
     Unnamed requirements are ignored.
     """
+    if not is_pyproject(project_root):
+        # TODO this should list the dependencies of requirements.txt.in
+        return {None: list(pip_freeze(python))}, []
     project_name = get_project_name(python, project_root)
     dependencies_by_extras = list_installed_depends_by_extra(
         pip_list(python), project_name
