@@ -36,6 +36,7 @@ def test_sanity_pkg_resources(virtualenv_python, capsys):
 
 def test_sanity_wheel(virtualenv_python, capsys):
     assert check_env(virtualenv_python)
+    subprocess.check_call([virtualenv_python, "-m", "pip", "install", "-q", "pip<23.1"])
     subprocess.check_call([virtualenv_python, "-m", "pip", "uninstall", "-qy", "wheel"])
     # wheel is not strictly required, although pip works better with it
     assert check_env(virtualenv_python)

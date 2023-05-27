@@ -71,12 +71,12 @@ def check_env(python: str) -> bool:
             f"in particular if you use direct URL references. "
             f"You can upgrade pip it with {pip_install_cmd}."
         )
-    if not env_info.get("wheel_version"):
+    if not env_info.get("wheel_version") and Version(pip_version) < Version("23.1"):
         wheel_install_cmd = shlex_join([python, "-m", "pip", "install", "wheel"])
         log_warning(
             f"wheel is not available to {python}. "
             f"pip currently works best when the wheel package is installed, "
             f"in particular if you use direct URL references. "
-            f"You can install it with {wheel_install_cmd}."
+            f"You can install it with '{wheel_install_cmd}'."
         )
     return True
