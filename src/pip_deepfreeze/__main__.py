@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import Any, List
+from typing import Any, List, Optional
 
 import typer
 from packaging.utils import canonicalize_name
@@ -113,18 +113,34 @@ def project_root_callback(ctx: typer.Context, param: Any, value: Path) -> Path:
     return value
 
 
+def _find_python_from(pythons: List[str]) -> str:
+    for python in pythons:
+        python_abspath = shutil.which(python)
+        if python_abspath:
+            return python_abspath
+    log_error(f"Python interpreter not found ({', '.join(pythons)}).")
+    raise typer.Exit(1)
+
+
+def _find_python(python: Optional[str]) -> str:
+    if python:
+        return _find_python_from([python])
+    return _find_python_from(["py", "python"])
+
+
 @app.callback()
 def callback(
     ctx: typer.Context,
-    python: str = typer.Option(
-        "python",
+    python: Optional[str] = typer.Option(
+        None,
         "--python",
+        "--py",
         "-p",
         show_default=False,
         metavar="PYTHON",
         help=(
             "The python executable to use. Determines the python environment to "
-            "work on. Defaults to the 'python' executable found in PATH."
+            "work on. Defaults to the 'py' or 'python' executable found in PATH."
         ),
     ),
     project_root: Path = typer.Option(
@@ -147,12 +163,8 @@ def callback(
     if verbose:
         increase_verbosity()
     # find python
-    python_abspath = shutil.which(python)
-    if not python_abspath:
-        log_error(f"Python interpreter {python!r} not found.")
-        raise typer.Exit(1)
-    ctx.obj.python = python_abspath
-    log_debug(f"Using python {python_abspath}")
+    ctx.obj.python = _find_python(python)
+    log_debug(f"Using python {ctx.obj.python}")
     # sanity checks
     if not check_env(ctx.obj.python):
         raise typer.Exit(1)
