@@ -1,3 +1,4 @@
+from abc import ABC, abstractproperty
 from typing import Any, Dict, List, Optional
 
 from packaging.requirements import Requirement
@@ -21,7 +22,9 @@ class DirectUrl:
             return str(url)
 
 
-class InstalledDistribution:
+class InstalledDistribution(ABC):
+    """Abstract class for an installed distribution."""
+
     def __init__(self, data: Dict[str, Any]):
         self.data = data
 
@@ -44,7 +47,22 @@ class InstalledDistribution:
 
     @property
     def requires_dist(self) -> List[Requirement]:
+        """Requires-Dist metadata."""
         return [Requirement(r) for r in self.data["metadata"].get("requires_dist", [])]
+
+    @abstractproperty
+    def requires(self) -> List[Requirement]:
+        """Base dependencies, filtered for the environment."""
+        ...
+
+    @abstractproperty
+    def extra_requires(self) -> Dict[NormalizedName, List[Requirement]]:
+        """Extra dependencies, filtered for the environment."""
+        ...
+
+
+class EnvInfoInstalledDistribution(InstalledDistribution):
+    """An InstalledDistribution built from env_info_json.py output."""
 
     @property
     def requires(self) -> List[Requirement]:
@@ -55,6 +73,34 @@ class InstalledDistribution:
         return {
             canonicalize_name(extra): [Requirement(req) for req in reqs]
             for extra, reqs in self.data.get("extra_requires", {}).items()
+        }
+
+
+class PipInspectInstalledDistribution(InstalledDistribution):
+    """An InstalledDistribution built from pip inspect output."""
+
+    def __init__(self, data: Dict[str, Any], environment: Dict[str, str]):
+        super().__init__(data)
+        self.environment = environment
+
+    @property
+    def requires(self) -> List[Requirement]:
+        return [
+            req
+            for req in self.requires_dist
+            if req.marker is None or req.marker.evaluate(self.environment)
+        ]
+
+    @property
+    def extra_requires(self) -> Dict[NormalizedName, List[Requirement]]:
+        return {
+            canonicalize_name(extra): [
+                req
+                for req in self.requires_dist
+                if req.marker is not None
+                and req.marker.evaluate(dict(self.environment, extra=extra))
+            ]
+            for extra in self.data["metadata"].get("provides_extra", [])
         }
 
 

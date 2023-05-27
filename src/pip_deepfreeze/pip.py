@@ -1,10 +1,16 @@
 import json
 from importlib.resources import path as resource_path
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, cast
 
-from .compat import NormalizedName, shlex_join
-from .installed_dist import InstalledDistribution, InstalledDistributions
+from packaging.version import Version
+
+from .compat import NormalizedName, TypedDict, shlex_join
+from .installed_dist import (
+    EnvInfoInstalledDistribution,
+    InstalledDistributions,
+    PipInspectInstalledDistribution,
+)
 from .list_installed_depends import (
     list_installed_depends,
     list_installed_depends_by_extra,
@@ -16,6 +22,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
+from .sanity import get_pip_version
 from .utils import (
     check_call,
     check_output,
@@ -24,6 +31,12 @@ from .utils import (
     log_warning,
     normalize_req_line,
 )
+
+
+class PipInspectReport(TypedDict, total=False):
+    version: str
+    installed: List[Dict[str, Any]]
+    environment: Dict[str, str]
 
 
 def pip_upgrade_project(
@@ -106,16 +119,40 @@ def pip_upgrade_project(
     check_call(cmd)
 
 
-def pip_list(python: str) -> InstalledDistributions:
-    """List installed distributions.
-
-    Currently works via pip_list_json.py, but this could become a native
-    pip feature in the future.
-    """
+def _pip_list__env_info_json(python: str) -> InstalledDistributions:
     with resource_path("pip_deepfreeze", "pip_list_json.py") as pip_list_json:
         json_dists = json.loads(check_output([python, str(pip_list_json)]))
-        dists = [InstalledDistribution(json_dist) for json_dist in json_dists]
+        dists = [EnvInfoInstalledDistribution(json_dist) for json_dist in json_dists]
         return {dist.name: dist for dist in dists}
+
+
+def _pip_inspect(python: str) -> PipInspectReport:
+    return cast(
+        PipInspectReport,
+        json.loads(check_output([python, "-m", "pip", "--quiet", "inspect"])),
+    )
+
+
+def _pip_list__pip_inspect(python: str) -> InstalledDistributions:
+    inspect = _pip_inspect(python)
+    if inspect["version"] not in ("0", "1"):
+        raise SystemExit(
+            f"Unspported 'pip inspect' output format version '{inspect['version']}'"
+        )
+    environment = inspect["environment"]
+    dists = [
+        PipInspectInstalledDistribution(json_dist, environment)
+        for json_dist in inspect["installed"]
+    ]
+    return {dist.name: dist for dist in dists}
+
+
+def pip_list(python: str) -> InstalledDistributions:
+    """List installed distributions."""
+    if get_pip_version(python) >= Version("22.2"):
+        return _pip_list__pip_inspect(python)
+    else:
+        return _pip_list__env_info_json(python)
 
 
 def pip_freeze(python: str) -> Iterable[str]:

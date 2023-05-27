@@ -2,11 +2,9 @@
 """List installed distributions with some of their metadata in json format.
 
 This currently assumes pkg_resources is installed.
-TODO: use importlib.metadata and fallback on pkg_resources if not available.
+In environments without setuptools, we'll use 'pip inspect'.
 
 This script must be python 2 compatible.
-
-This may one day become a native pip feature (https://github.com/pypa/pip/pull/8008).
 """
 
 import json

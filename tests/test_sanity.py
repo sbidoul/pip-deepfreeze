@@ -25,10 +25,11 @@ def test_sanity_pip_version(virtualenv_python, capsys):
 
 def test_sanity_pkg_resources(virtualenv_python, capsys):
     assert check_env(virtualenv_python)
+    subprocess.check_call([virtualenv_python, "-m", "pip", "install", "-q", "pip<22.2"])
     subprocess.check_call(
         [virtualenv_python, "-m", "pip", "uninstall", "-qy", "setuptools"]
     )
-    # pkg_resources is currently required
+    # pkg_resources is required when `pip inspect` is not available
     assert not check_env(virtualenv_python)
     captured = capsys.readouterr()
     assert "pkg_resources is not available" in captured.err

@@ -25,7 +25,7 @@ classifiers = [
 requires-python = ">=3.7"
 dependencies=[
     "httpx",
-    "packaging>=20.4",
+    "packaging>=23",
     "toml",
     "typer[all]>=0.3.2",
     "typing-extensions ; python_version<'3.8'",  # for Protocol, TypedDict
