@@ -2,7 +2,7 @@ import shlex
 import sys
 from typing import TYPE_CHECKING, Iterable, NewType
 
-__all__ = ["shlex_join", "NormalizedName", "Protocol", "TypedDict"]
+__all__ = ["shlex_join", "tomllib", "NormalizedName", "Protocol", "TypedDict"]
 
 if sys.version_info >= (3, 8):
     from shlex import join as shlex_join
@@ -23,3 +23,9 @@ if TYPE_CHECKING:
     from packaging.utils import NormalizedName
 else:
     NormalizedName = NewType("NormalizedName", str)
+
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
