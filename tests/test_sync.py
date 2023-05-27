@@ -73,7 +73,7 @@ def test_python_not_found():
     runner = CliRunner()
     result = runner.invoke(app, ["--python", "this-is-not-a-python", "sync"])
     assert result.exit_code != 0
-    assert "Python interpreter 'this-is-not-a-python' not found" in result.output
+    assert "Python interpreter not found (this-is-not-a-python)" in result.output
 
 
 @pytest.fixture

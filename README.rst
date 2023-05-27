@@ -71,9 +71,9 @@ Using `pip <https://pypi.org/project/pip/>`__:
 
    It is *not* recommended to install ``pip-deepfreeze`` in the same environment as your
    application, so its dependencies do not interfere with your app. By default it works
-   with the ``python`` found in your ``PATH`` (which does what you normally expect in an
-   activated virtualenv), but you can ask it to work within another environment using
-   the ``--python`` option.
+   with the ``py`` or ``python`` executable found in your ``PATH`` (which does what you
+   normally expect in an activated virtualenv), but you can ask it to work within
+   another environment using the ``--python`` option.
 
 Quick start
 -----------
