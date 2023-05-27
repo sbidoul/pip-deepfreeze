@@ -1,9 +1,8 @@
 from typing import Dict, Optional, Sequence, Set
 
 from packaging.requirements import Requirement
-from packaging.utils import canonicalize_name
+from packaging.utils import NormalizedName, canonicalize_name
 
-from .compat import NormalizedName
 from .installed_dist import InstalledDistributions
 from .utils import make_project_name_with_extras
 

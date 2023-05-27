@@ -3,9 +3,8 @@ from typing import Dict, List, Optional, Set, Tuple
 
 import typer
 from packaging.requirements import Requirement
-from packaging.utils import canonicalize_name
+from packaging.utils import NormalizedName, canonicalize_name
 
-from .compat import NormalizedName
 from .installed_dist import InstalledDistribution
 from .pip import pip_list
 from .project_name import get_project_name

@@ -5,8 +5,8 @@ from typing import Iterator, List, Optional, Sequence
 
 import httpx
 import typer
+from packaging.utils import NormalizedName
 
-from .compat import NormalizedName
 from .pip import pip_freeze_dependencies_by_extra, pip_uninstall, pip_upgrade_project
 from .project_name import get_project_name
 from .req_file_parser import OptionsLine, parse as parse_req_file

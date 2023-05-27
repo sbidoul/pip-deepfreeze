@@ -11,9 +11,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-from packaging.utils import canonicalize_name
+from packaging.utils import NormalizedName, canonicalize_name
 
-from .compat import NormalizedName
 from .pyproject_toml import PyProjectToml, load_pyproject_toml
 from .utils import check_call, check_output, log_info
 
