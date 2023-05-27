@@ -14,6 +14,12 @@ from .utils import make_project_name_with_extras
 NodeKey = Tuple[NormalizedName, Tuple[NormalizedName, ...]]
 
 
+def _req_name_with_extras(req: Requirement) -> str:
+    if req.extras:
+        return f"{req.name}[{','.join(sorted(req.extras))}]"
+    return req.name
+
+
 class Node:
     def __init__(self, req: Requirement, dist: Optional[InstalledDistribution]):
         self.req = req
@@ -36,7 +42,7 @@ class Node:
             BRANCH = "│   "
             TEE = "├── "
             LAST = "└── "
-            typer.echo(f"{''.join(indent)}{node.req}", nl=False)
+            typer.echo(f"{''.join(indent)}{_req_name_with_extras(node.req)}", nl=False)
             if node in seen:
                 typer.secho(" ⬆", dim=True)
                 return

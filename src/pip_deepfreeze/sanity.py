@@ -1,5 +1,6 @@
 import json
 import subprocess
+from functools import lru_cache
 from importlib.resources import path as resource_path
 from typing import Optional, cast
 
@@ -23,6 +24,7 @@ EnvInfo = TypedDict(
 )
 
 
+@lru_cache()
 def _get_env_info(python: str) -> EnvInfo:
     with resource_path("pip_deepfreeze", "env_info_json.py") as env_info_json_script:
         try:
@@ -35,7 +37,15 @@ def _get_env_info(python: str) -> EnvInfo:
             return cast(EnvInfo, json.loads(env_info_json))
 
 
+def get_pip_version(python: str) -> Version:
+    pip_version = _get_env_info(python).get("pip_version")
+    # assert because we have checked the pip availability before
+    assert pip_version, "pip is not available"
+    return Version(pip_version)
+
+
 def check_env(python: str) -> bool:
+    _get_env_info.cache_clear()
     env_info = _get_env_info(python)
     if not env_info.get("in_virtualenv"):
         log_error(
@@ -50,17 +60,27 @@ def check_env(python: str) -> bool:
             f"refusing to start."
         )
         return False
-    if not env_info.get("has_pkg_resources"):
+    pip_version = env_info.get("pip_version")
+    if not env_info.get("has_pkg_resources") and (
+        # pip_version is None if pkg_resources is not installed for python<3.8
+        not pip_version
+        or Version(pip_version) < Version("22.2")
+    ):
         setuptools_install_cmd = shlex_join(
             [python, "-m", "pip", "install", "setuptools"]
         )
+        pip_upgrade_cmd = shlex_join(
+            [python, "-m", "pip", "install", "--upgrade", "pip"]
+        )
         log_error(
             f"pkg_resources is not available to {python}. It is currently "
-            f"required by pip-deepfreeze. "
-            f"You can install it with {setuptools_install_cmd}."
+            f"required by pip-deepfreeze unless you have pip>=22.2. "
+            f"You can either upgrade pip with '{pip_upgrade_cmd}' or "
+            f"installs pkg_resources with '{setuptools_install_cmd}'."
         )
         return False
-    pip_version = env_info.get("pip_version")
+    # Testing for pip must be done after testing for pkg_resources, because
+    # pkg_resources is needed to obtain the pip version for python < 3.8.
     if not pip_version:
         log_error(f"pip is not available to {python}. Please install it.")
         return False
@@ -69,7 +89,7 @@ def check_env(python: str) -> bool:
         log_warning(
             f"pip-deepfreeze works best with pip>=20.1, "
             f"in particular if you use direct URL references. "
-            f"You can upgrade pip it with {pip_install_cmd}."
+            f"You can upgrade pip it with '{pip_install_cmd}'."
         )
     if not env_info.get("wheel_version") and Version(pip_version) < Version("23.1"):
         wheel_install_cmd = shlex_join([python, "-m", "pip", "install", "wheel"])
