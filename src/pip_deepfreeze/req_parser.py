@@ -2,9 +2,7 @@ import re
 from typing import Iterable, List, Optional
 
 from packaging.requirements import InvalidRequirement, Requirement
-from packaging.utils import canonicalize_name
-
-from .compat import NormalizedName
+from packaging.utils import NormalizedName, canonicalize_name
 
 # normalization regex from https://www.python.org/dev/peps/pep-0503/
 _canonicalize_regex = re.compile(r"[-_.]+")

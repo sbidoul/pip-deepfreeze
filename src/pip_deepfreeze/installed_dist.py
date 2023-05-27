@@ -2,9 +2,7 @@ from abc import ABC, abstractproperty
 from typing import Any, Dict, List, Optional
 
 from packaging.requirements import Requirement
-from packaging.utils import canonicalize_name
-
-from .compat import NormalizedName
+from packaging.utils import NormalizedName, canonicalize_name
 
 
 class DirectUrl:

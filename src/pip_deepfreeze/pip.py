@@ -3,9 +3,10 @@ from importlib.resources import path as resource_path
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, cast
 
+from packaging.utils import NormalizedName
 from packaging.version import Version
 
-from .compat import NormalizedName, TypedDict, shlex_join
+from .compat import TypedDict, shlex_join
 from .installed_dist import (
     EnvInfoInstalledDistribution,
     InstalledDistributions,
