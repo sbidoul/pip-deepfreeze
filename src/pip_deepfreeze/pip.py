@@ -199,6 +199,8 @@ def pip_freeze_dependencies_by_extra(
 
 def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
     """Uninstall packages."""
-    if list(requirements):
-        cmd = [python, "-m", "pip", "uninstall", "--yes"] + list(requirements)
-        check_call(cmd)
+    reqs = list(requirements)
+    if not reqs:
+        return
+    cmd = [python, "-m", "pip", "uninstall", "--yes"] + reqs
+    check_call(cmd)
