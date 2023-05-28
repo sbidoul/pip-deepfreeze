@@ -9,6 +9,7 @@ Prints a json dictionary with the following keys:
 - setuptools_version: str
 - wheel_version: str
 - in_virtualenv: bool
+- python_version: str (major.minor)
 
 This script must be python 2 compatible.
 """
@@ -96,6 +97,7 @@ def main():
     result["pip_version"] = _get_version("pip")
     result["setuptools_version"] = _get_version("setuptools")
     result["wheel_version"] = _get_version("wheel")
+    result["python_version"] = "%d.%d" % sys.version_info[:2]
     json.dump(result, sys.stdout)
 
 

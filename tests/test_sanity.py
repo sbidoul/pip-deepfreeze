@@ -1,10 +1,11 @@
 import subprocess
+import sys
 from pathlib import Path
 
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
-from pip_deepfreeze.sanity import check_env
+from pip_deepfreeze.sanity import check_env, get_python_version_info
 
 
 def test_sanity_pip(virtualenv_python, capsys):
@@ -70,3 +71,7 @@ def test_sanity_venv_system_site_packages(
     assert not check_env(virtualenv_python_with_system_site_packages)
     captured = capsys.readouterr()
     assert "virtualenv that includes system site packages", captured.stderr
+
+
+def test_sanity_get_python_version_info(virtualenv_python):
+    assert get_python_version_info(virtualenv_python) == sys.version_info[:2]
