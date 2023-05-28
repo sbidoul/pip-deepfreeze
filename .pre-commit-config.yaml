@@ -26,23 +26,8 @@ repos:
         args: ["--strict"]
         exclude: '^(docs|tasks|tests)|setup\.py'
         additional_dependencies: ["httpx", "packaging", "typer>=0.3.2"]
-  - repo: https://github.com/PyCQA/flake8
-    rev: "6.0.0"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.0.270
     hooks:
-      - id: flake8
-        additional_dependencies: ["flake8-bugbear==23.1.20"]
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.5
-    hooks:
-      - id: docformatter
-        args: ["--in-place", "--wrap-summaries=88"]
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.4.0
-    hooks:
-      - id: pyupgrade
-        exclude: (env_info_json.py|pip_list_json.py)$
-        args: ["--py37-plus"]
+      - id: ruff

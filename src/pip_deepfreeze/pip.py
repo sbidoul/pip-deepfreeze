@@ -240,5 +240,5 @@ def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
     reqs = list(requirements)
     if not reqs:
         return
-    cmd = [python, "-m", "pip", "uninstall", "--yes"] + reqs
+    cmd = [python, "-m", "pip", "uninstall", "--yes", *reqs]
     check_call(cmd)

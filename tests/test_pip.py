@@ -35,8 +35,8 @@ def test_pip_freeze(to_install, expected, virtualenv_python, testpkgs):
             "--no-index",
             "--find-links",
             testpkgs,
+            *to_install,
         ]
-        + to_install
     )
     assert list(pip_freeze(virtualenv_python)) == expected
 
@@ -78,8 +78,8 @@ def test_pip_freeze_dependencies(
             testpkgs,
             "-e",
             str(tmp_path),  # str required for py < 3.8 on windows
+            *other_installs,
         ]
-        + other_installs
     )
     assert list(pip_freeze_dependencies(virtualenv_python, tmp_path)) == expected
 
@@ -154,8 +154,8 @@ def test_pip_freeze_dependencies_by_extra(
             testpkgs,
             "-e",
             install,
+            *other_installs,
         ]
-        + other_installs
     )
     assert (
         list(
@@ -184,8 +184,8 @@ def test_pip_uninstall(to_install, to_uninstall, expected, virtualenv_python, te
                 "--no-index",
                 "--find-links",
                 testpkgs,
+                *to_install,
             ]
-            + to_install
         )
     pip_uninstall(virtualenv_python, to_uninstall)
     assert list(pip_freeze(virtualenv_python)) == expected
