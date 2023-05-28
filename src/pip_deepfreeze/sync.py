@@ -3,13 +3,12 @@ import tempfile
 from pathlib import Path
 from typing import Iterator, List, Optional, Sequence
 
-import httpx
 import typer
 from packaging.utils import NormalizedName
+from pip_requirements_parser import RequirementsFile  # type: ignore[import]
 
 from .pip import pip_freeze_dependencies_by_extra, pip_uninstall, pip_upgrade_project
 from .project_name import get_project_name
-from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
 from .req_parser import get_req_names
 from .utils import (
@@ -84,15 +83,10 @@ def sync(
             # output pip options in main requirements only
             if not extra and requirements_in.exists():
                 # XXX can we avoid this second parse of requirements.txt.in?
-                for parsed_req_line in parse_req_file(
-                    str(requirements_in),
-                    reqs_only=False,
-                    recurse=True,
-                    strict=True,
-                    session=httpx.Client(),
-                ):
-                    if isinstance(parsed_req_line, OptionsLine):
-                        print(parsed_req_line.raw_line, file=f)
+                for option_line in RequirementsFile.from_file(
+                    str(requirements_in), include_nested=True
+                ).options:
+                    print(option_line.requirement_line.line, file=f)
             # output frozen dependencies of project
             for req_line in frozen_reqs:
                 print(req_line, file=f)
