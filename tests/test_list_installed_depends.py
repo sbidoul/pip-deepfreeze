@@ -31,8 +31,8 @@ def test_list_installed_depends(
             "--no-index",
             "--find-links",
             testpkgs,
+            *to_install,
         ]
-        + to_install
     )
     assert list_installed_depends(pip_list(virtualenv_python), distribution) == expected
 

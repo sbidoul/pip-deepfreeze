@@ -81,10 +81,10 @@ def log_error(msg: str) -> None:
 def check_call(cmd: Sequence[Union[str, Path]], cwd: Optional[Path] = None) -> int:
     try:
         return subprocess.check_call(cmd, cwd=cwd)
-    except CalledProcessError:
+    except CalledProcessError as e:
         cmd_str = shlex_join(str(item) for item in cmd)
         log_error(f"Error running: {cmd_str}.")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from e
 
 
 def check_output(
@@ -94,10 +94,10 @@ def check_output(
 ) -> str:
     try:
         return subprocess.check_output(cmd, cwd=cwd, text=True, env=env)
-    except CalledProcessError:
+    except CalledProcessError as e:
         cmd_str = shlex_join(str(item) for item in cmd)
         log_error(f"Error running: {cmd_str}.")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from e
 
 
 def comma_split(s: Optional[str]) -> List[str]:
