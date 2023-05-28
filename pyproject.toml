@@ -79,3 +79,7 @@ max-complexity = 13
 [tool.ruff.isort]
 known-first-party = ["pip_deepfreeze"]
 combine-as-imports = true
+
+[tool.mypy]
+strict = true
+show_error_codes = true
