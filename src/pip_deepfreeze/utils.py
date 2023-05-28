@@ -93,7 +93,7 @@ def check_output(
     env: Optional[Dict[str, str]] = None,
 ) -> str:
     try:
-        return subprocess.check_output(cmd, cwd=cwd, universal_newlines=True, env=env)
+        return subprocess.check_output(cmd, cwd=cwd, text=True, env=env)
     except CalledProcessError:
         cmd_str = shlex_join(str(item) for item in cmd)
         log_error(f"Error running: {cmd_str}.")

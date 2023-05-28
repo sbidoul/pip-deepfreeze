@@ -44,4 +44,5 @@ repos:
     rev: v3.4.0
     hooks:
       - id: pyupgrade
-        args: ["--py36-plus"]
+        exclude: (env_info_json.py|pip_list_json.py)$
+        args: ["--py37-plus"]

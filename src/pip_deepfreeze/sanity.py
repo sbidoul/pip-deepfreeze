@@ -29,7 +29,7 @@ def _get_env_info(python: str) -> EnvInfo:
     with resource_path("pip_deepfreeze", "env_info_json.py") as env_info_json_script:
         try:
             env_info_json = subprocess.check_output(
-                [python, str(env_info_json_script)], universal_newlines=True
+                [python, str(env_info_json_script)], text=True
             )
         except subprocess.CalledProcessError:
             return EnvInfo(in_virtualenv=False)
