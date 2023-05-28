@@ -1,0 +1,2 @@
+Use `pip-requirements-parser <https://pypi.org/project/pip-requirements-parser/>`_
+instead of our own copy of pip's parser.

@@ -5,6 +5,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, cast
 
 from packaging.utils import NormalizedName
 from packaging.version import Version
+from pip_requirements_parser import RequirementsFile  # type: ignore[import]
 
 from .compat import TypedDict, shlex_join
 from .installed_dist import (
@@ -17,11 +18,6 @@ from .list_installed_depends import (
     list_installed_depends_by_extra,
 )
 from .project_name import get_project_name
-from .req_file_parser import (
-    NestedRequirementsLine,
-    RequirementLine,
-    parse as parse_req_file,
-)
 from .req_parser import get_req_name
 from .sanity import get_pip_version
 from .utils import (
@@ -73,14 +69,14 @@ def pip_upgrade_project(
     """
     # 1. parse constraints
     constraint_reqs = {}
-    for req_line in parse_req_file(
-        str(constraints_filename), recurse=False, reqs_only=False
-    ):
-        assert not isinstance(req_line, NestedRequirementsLine)
-        if isinstance(req_line, RequirementLine):
-            req_name = get_req_name(req_line.requirement)
-            assert req_name  # XXX user error instead?
-            constraint_reqs[req_name] = normalize_req_line(req_line.requirement)
+    parsed_constraints_file = RequirementsFile.from_file(
+        str(constraints_filename), include_nested=False
+    )
+    for constraint_req in parsed_constraints_file.requirements:
+        assert constraint_req.name  # XXX user error instead?
+        constraint_reqs[constraint_req.name] = normalize_req_line(
+            constraint_req.requirement_line.line
+        )
     # 2. get installed frozen dependencies of project
     installed_reqs = {
         get_req_name(req_line): normalize_req_line(req_line)
