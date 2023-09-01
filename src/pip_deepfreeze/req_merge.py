@@ -42,7 +42,7 @@ def prepare_frozen_reqs_for_upgrade(
                 if not req_name:
                     log_error(f"Ignoring unnamed constraint {in_req.raw_line!r}.")
                     continue
-                in_reqs.append((req_name, in_req.requirement))
+                in_reqs.append((req_name, in_req))
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
     for frozen_filename in frozen_filenames:
         if frozen_filename.is_file() and not upgrade_all:
@@ -61,6 +61,6 @@ def prepare_frozen_reqs_for_upgrade(
                 frozen_reqs.add(req_name)
                 yield frozen_req.requirement
     # 3. emit in_reqs that have not been emitted as frozen reqs
-    for req_name, in_req_str in in_reqs:
+    for req_name, in_req in in_reqs:
         if req_name not in frozen_reqs:
-            yield in_req_str
+            yield in_req.raw_line
