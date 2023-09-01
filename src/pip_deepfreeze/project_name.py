@@ -108,11 +108,10 @@ def get_project_name_from_pep517(python: str, project_root: Path) -> str:
                 "install",
                 "--target",
                 pep517_install_dir,
-                "pep517==0.8.2",
+                "pep517==0.8.2",  # because we use an undocumented function of pep517
             ]
         )
         log_info(".", nl=False)
-        # XXX this uses an undocumented function of pep517
         name = check_output(
             [
                 python,
