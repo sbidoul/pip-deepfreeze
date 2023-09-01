@@ -80,12 +80,10 @@ def test_file_url(tmp_path):
     assert subreqs_uri.startswith("file://")
     reqs.write_text(
         textwrap.dedent(
-            """\
+            f"""\
             req1
-            -r {}
-            """.format(
-                subreqs_uri
-            )
+            -r {subreqs_uri}
+            """
         )
     )
     subreqs.write_text("req2")
@@ -205,12 +203,10 @@ def test_relative_file_uri(tmp_path):
     subsubreqs = tmp_path / "subdir" / "subsubreqs.txt"
     reqs.write_text(
         textwrap.dedent(
-            """\
+            f"""\
             req1
-            -r {}
-            """.format(
-                subreqs_uri
-            )
+            -r {subreqs_uri}
+            """
         )
     )
     subreqs.write_text(
