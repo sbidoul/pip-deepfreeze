@@ -23,13 +23,12 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies=[
     "httpx",
     "packaging>=23",
     "tomli ; python_version<'3.11'",
     "typer[all]>=0.3.2",
-    "typing-extensions ; python_version<'3.8'",  # for Protocol, TypedDict
 ]
 dynamic = ["version"]
 
@@ -68,7 +67,7 @@ exclude = [
     "tests/test_pip_list_json.py",
     "tests/test_env_info_json.py",
 ]
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.per-file-ignores]
 "__main__.py" = ["B008"]

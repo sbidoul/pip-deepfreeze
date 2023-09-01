@@ -47,8 +47,8 @@ A few characteristics of this project:
   backend but otherwise makes no assumption on the specific backend
   used.
 - It has first class support for dependencies specified as VCS references.
-- It is written in Python 3.7+, yet works in any virtual environment
-  that has ``pip`` installed, including python 2 and python 3.6.
+- It is written in Python 3.8+, yet works in any virtual environment
+  that has ``pip`` installed, including python 2 and python 3.6 and 3.7.
 - It is reasonably small and simple, with good test coverage and is hopefully
   easy to maintain.
 

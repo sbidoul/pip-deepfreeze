@@ -21,11 +21,9 @@ import os
 import re
 import shlex
 import sys
-from typing import Iterable, Iterator, List, NoReturn, Optional, Text, Tuple, Union
+from typing import Iterable, Iterator, List, NoReturn, Optional, Protocol, Text, Tuple, Union
 from urllib import parse as urllib_parse
 from urllib.request import urlopen
-
-from .compat import Protocol
 
 ReqFileLines = Iterator[Tuple[int, Text, Text]]
 

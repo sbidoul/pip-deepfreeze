@@ -1,31 +1,27 @@
 import json
+import shlex
 import subprocess
 from functools import lru_cache
 from importlib.resources import path as resource_path
-from typing import Optional, Tuple, cast
+from typing import Optional, Tuple, TypedDict, cast
 
 from packaging.version import Version
 
-from .compat import TypedDict, shlex_join
 from .utils import log_error, log_warning
 
-EnvInfo = TypedDict(
-    "EnvInfo",
-    {
-        "in_virtualenv": Optional[bool],
-        "include_system_site_packages": Optional[bool],
-        "has_pkg_resources": Optional[bool],
-        "has_importlib_metadata": Optional[bool],
-        "pip_version": Optional[str],
-        "setuptools_version": Optional[str],
-        "wheel_version": Optional[str],
-        "python_version": str,
-    },
-    total=False,
-)
+
+class EnvInfo(TypedDict, total=False):
+    in_virtualenv: Optional[bool]
+    include_system_site_packages: Optional[bool]
+    has_pkg_resources: Optional[bool]
+    has_importlib_metadata: Optional[bool]
+    pip_version: Optional[str]
+    setuptools_version: Optional[str]
+    wheel_version: Optional[str]
+    python_version: str
 
 
-@lru_cache()
+@lru_cache
 def _get_env_info(python: str) -> EnvInfo:
     with resource_path("pip_deepfreeze", "env_info_json.py") as env_info_json_script:
         try:
@@ -73,10 +69,10 @@ def check_env(python: str) -> bool:
         not pip_version
         or Version(pip_version) < Version("22.2")
     ):
-        setuptools_install_cmd = shlex_join(
+        setuptools_install_cmd = shlex.join(
             [python, "-m", "pip", "install", "setuptools"]
         )
-        pip_upgrade_cmd = shlex_join(
+        pip_upgrade_cmd = shlex.join(
             [python, "-m", "pip", "install", "--upgrade", "pip"]
         )
         log_error(
@@ -92,14 +88,14 @@ def check_env(python: str) -> bool:
         log_error(f"pip is not available to {python}. Please install it.")
         return False
     if Version(pip_version) < Version("20.1"):
-        pip_install_cmd = shlex_join([python, "-m", "pip", "install", "pip>=20.1"])
+        pip_install_cmd = shlex.join([python, "-m", "pip", "install", "pip>=20.1"])
         log_warning(
             f"pip-deepfreeze works best with pip>=20.1, "
             f"in particular if you use direct URL references. "
             f"You can upgrade pip it with '{pip_install_cmd}'."
         )
     if not env_info.get("wheel_version") and Version(pip_version) < Version("23.1"):
-        wheel_install_cmd = shlex_join([python, "-m", "pip", "install", "wheel"])
+        wheel_install_cmd = shlex.join([python, "-m", "pip", "install", "wheel"])
         log_warning(
             f"wheel is not available to {python}. "
             f"pip currently works best when the wheel package is installed, "

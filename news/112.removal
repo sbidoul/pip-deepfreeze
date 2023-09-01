@@ -1,0 +1,2 @@
+Drop support for running pip-deepfreeze under python 3.7. We still support 3.7 target
+environments.

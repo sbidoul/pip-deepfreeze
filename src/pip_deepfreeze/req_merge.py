@@ -1,10 +1,10 @@
+import shlex
 from pathlib import Path
 from typing import Iterable, Iterator, Optional
 
 import httpx
 from packaging.utils import canonicalize_name
 
-from .compat import shlex_join
 from .req_file_parser import OptionsLine, RequirementLine, parse
 from .req_parser import get_req_name
 from .utils import log_error
@@ -36,7 +36,7 @@ def prepare_frozen_reqs_for_upgrade(
             session=httpx.Client(),
         ):
             if isinstance(in_req, OptionsLine):
-                yield shlex_join(in_req.options)
+                yield shlex.join(in_req.options)
             elif isinstance(in_req, RequirementLine):
                 req_name = get_req_name(in_req.requirement)
                 if not req_name:

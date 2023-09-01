@@ -1,12 +1,12 @@
 import json
+import shlex
 from importlib.resources import path as resource_path
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, cast
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, TypedDict, cast
 
 from packaging.utils import NormalizedName
 from packaging.version import Version
 
-from .compat import TypedDict, shlex_join
 from .installed_dist import (
     EnvInfoInstalledDistribution,
     InstalledDistributions,
@@ -109,7 +109,7 @@ def pip_upgrade_project(
         cmd.append(f"{project_root}[{extras_str}]")
     else:
         cmd.append(f"{project_root}")
-    log_debug(f"Running {shlex_join(cmd)}")
+    log_debug(f"Running {shlex.join(cmd)}")
     with open(constraints_filename) as f:
         constraints = f.read().strip()
         if constraints:
