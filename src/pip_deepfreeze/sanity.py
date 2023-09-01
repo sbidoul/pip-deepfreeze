@@ -2,7 +2,7 @@ import json
 import subprocess
 from functools import lru_cache
 from importlib.resources import path as resource_path
-from typing import Optional, cast
+from typing import Optional, Tuple, cast
 
 from packaging.version import Version
 
@@ -19,6 +19,7 @@ EnvInfo = TypedDict(
         "pip_version": Optional[str],
         "setuptools_version": Optional[str],
         "wheel_version": Optional[str],
+        "python_version": str,
     },
     total=False,
 )
@@ -42,6 +43,12 @@ def get_pip_version(python: str) -> Version:
     # assert because we have checked the pip availability before
     assert pip_version, "pip is not available"
     return Version(pip_version)
+
+
+def get_python_version_info(python: str) -> Tuple[int, ...]:
+    python_version = _get_env_info(python).get("python_version")
+    assert python_version
+    return tuple(map(int, python_version.split(".", 1)))
 
 
 def check_env(python: str) -> bool:
