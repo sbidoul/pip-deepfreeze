@@ -1,7 +1,7 @@
 exclude: |
     (?x)
-    ^src/pip_deepfreeze/env_info_json.py|
-    ^src/pip_deepfreeze/pip_list_json.py|
+    ^src/pip_deepfreeze/env-info-json.py|
+    ^src/pip_deepfreeze/pip-list-json.py|
     ^src/pip_deepfreeze/req_file_parser.py|
     ^tests/conftest.py|
     ^tests/test_pip_list_json.py

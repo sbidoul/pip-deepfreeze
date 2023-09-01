@@ -4,7 +4,7 @@ import subprocess
 
 # /!\ this test file must be python 2 compatible /!\
 ENV_INFO_JSON = os.path.join(
-    os.path.dirname(__file__), "..", "src", "pip_deepfreeze", "env_info_json.py"
+    os.path.dirname(__file__), "..", "src", "pip_deepfreeze", "env-info-json.py"
 )
 
 

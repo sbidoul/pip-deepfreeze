@@ -62,8 +62,8 @@ select = [
     "E", "F", "W", "C90", "B", "I", "UP", "RUF"
 ]
 exclude = [
-    "src/pip_deepfreeze/pip_list_json.py",
-    "src/pip_deepfreeze/env_info_json.py",
+    "src/pip_deepfreeze/pip-list-json.py",
+    "src/pip_deepfreeze/env-info-json.py",
     "tests/test_pip_list_json.py",
     "tests/test_env_info_json.py",
 ]

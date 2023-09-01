@@ -9,7 +9,7 @@ import pytest
 
 # /!\ this test file must be python 2 compatible /!\
 PIP_LIST_JSON = os.path.join(
-    os.path.dirname(__file__), "..", "src", "pip_deepfreeze", "pip_list_json.py"
+    os.path.dirname(__file__), "..", "src", "pip_deepfreeze", "pip-list-json.py"
 )
 
 
