@@ -32,9 +32,8 @@ def test_options_loaded_from_pyproject_toml_project_root(
     runner = CliRunner(mix_stderr=False)
     result = runner.invoke(app, ["-r", str(tmp_path), "sync"], obj=MainOptions())
     assert result.exit_code == 0
-    # TODO when dropping python 3.7, use call_args.kwargs
-    assert sync_operation_mock.call_args[1]["extras"] == ["a", "b"]
-    assert sync_operation_mock.call_args[1]["post_sync_commands"] == [
+    assert sync_operation_mock.call_args.kwargs["extras"] == ["a", "b"]
+    assert sync_operation_mock.call_args.kwargs["post_sync_commands"] == [
         "echo a",
         "echo b",
     ]
@@ -64,9 +63,8 @@ def test_options_loaded_from_pyproject_toml_cwd(
     runner = CliRunner(mix_stderr=False)
     result = runner.invoke(app, ["sync"], obj=MainOptions())
     assert result.exit_code == 0
-    # TODO when dropping python 3.7, use call_args.kwargs
-    assert sync_operation_mock.call_args[1]["extras"] == ["a", "b"]
-    assert sync_operation_mock.call_args[1]["post_sync_commands"] == [
+    assert sync_operation_mock.call_args.kwargs["extras"] == ["a", "b"]
+    assert sync_operation_mock.call_args.kwargs["post_sync_commands"] == [
         "echo a",
         "echo b",
     ]

@@ -25,7 +25,7 @@ def test_tree(virtualenv_python, testpkgs, tmp_path):
             "--no-index",
             "-f",
             testpkgs,
-            str(tmp_path),  # str required for py < 3.8 on windows
+            tmp_path,
         ]
     )
     runner = CliRunner(mix_stderr=False)

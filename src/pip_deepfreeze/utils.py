@@ -1,13 +1,12 @@
 import contextlib
 import re
+import shlex
 import subprocess
 from pathlib import Path
 from subprocess import CalledProcessError
 from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, Union
 
 import typer
-
-from .compat import shlex_join
 
 
 @contextlib.contextmanager
@@ -82,7 +81,7 @@ def check_call(cmd: Sequence[Union[str, Path]], cwd: Optional[Path] = None) -> i
     try:
         return subprocess.check_call(cmd, cwd=cwd)
     except CalledProcessError as e:
-        cmd_str = shlex_join(str(item) for item in cmd)
+        cmd_str = shlex.join(str(item) for item in cmd)
         log_error(f"Error running: {cmd_str}.")
         raise typer.Exit(1) from e
 
@@ -95,7 +94,7 @@ def check_output(
     try:
         return subprocess.check_output(cmd, cwd=cwd, text=True, env=env)
     except CalledProcessError as e:
-        cmd_str = shlex_join(str(item) for item in cmd)
+        cmd_str = shlex.join(str(item) for item in cmd)
         log_error(f"Error running: {cmd_str}.")
         raise typer.Exit(1) from e
 

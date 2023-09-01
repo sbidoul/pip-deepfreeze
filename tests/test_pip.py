@@ -77,7 +77,7 @@ def test_pip_freeze_dependencies(
             "--find-links",
             testpkgs,
             "-e",
-            str(tmp_path),  # str required for py < 3.8 on windows
+            tmp_path,
             *other_installs,
         ]
     )
