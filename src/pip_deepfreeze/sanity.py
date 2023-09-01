@@ -23,7 +23,7 @@ class EnvInfo(TypedDict, total=False):
 
 @lru_cache
 def _get_env_info(python: str) -> EnvInfo:
-    with resource_path("pip_deepfreeze", "env_info_json.py") as env_info_json_script:
+    with resource_path("pip_deepfreeze", "env-info-json.py") as env_info_json_script:
         try:
             env_info_json = subprocess.check_output(
                 [python, str(env_info_json_script)], text=True

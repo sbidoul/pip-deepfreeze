@@ -121,7 +121,7 @@ def pip_upgrade_project(
 
 
 def _pip_list__env_info_json(python: str) -> InstalledDistributions:
-    with resource_path("pip_deepfreeze", "pip_list_json.py") as pip_list_json:
+    with resource_path("pip_deepfreeze", "pip-list-json.py") as pip_list_json:
         json_dists = json.loads(check_output([python, str(pip_list_json)]))
         dists = [EnvInfoInstalledDistribution(json_dist) for json_dist in json_dists]
         return {dist.name: dist for dist in dists}
