@@ -1,7 +1,9 @@
+import atexit
 import contextlib
 import re
 import shlex
 import subprocess
+import tempfile
 from pathlib import Path
 from subprocess import CalledProcessError
 from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, Union
@@ -134,3 +136,13 @@ def normalize_req_line(req_line: str) -> str:
     if not mo:
         return req_line
     return mo.group("name") + " @ " + mo.group("rest")
+
+
+def get_temp_path_in_dir(dir: Path, prefix: str, suffix: str) -> Path:
+    """Create a temporary file in a directory and register it for deletion at exit."""
+    with tempfile.NamedTemporaryFile(
+        dir=dir, prefix=prefix, suffix=suffix, delete=False
+    ) as tf:
+        path = Path(tf.name)
+        atexit.register(path.unlink)
+        return path
