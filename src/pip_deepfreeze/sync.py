@@ -1,5 +1,4 @@
 import subprocess
-import tempfile
 from pathlib import Path
 from typing import Iterator, List, Optional, Sequence
 
@@ -13,6 +12,7 @@ from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
 from .req_parser import get_req_names
 from .utils import (
+    get_temp_path_in_dir,
     log_debug,
     log_info,
     make_project_name_with_extras,
@@ -48,14 +48,10 @@ def sync(
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
     requirements_in = project_root / "requirements.txt.in"
     # upgrade project and its dependencies, if needed
-    with tempfile.NamedTemporaryFile(
-        dir=project_root,
-        prefix="requirements.",
-        suffix=".txt.df",
-        mode="w",
-        encoding="utf-8",
-        delete=False,
-    ) as constraints:
+    constraints_path = get_temp_path_in_dir(
+        dir=project_root, prefix="requirements.", suffix=".txt.df"
+    )
+    with constraints_path.open(mode="w", encoding="utf-8") as constraints:
         for req_line in prepare_frozen_reqs_for_upgrade(
             _make_requirements_paths(project_root, extras),
             requirements_in,
@@ -63,16 +59,12 @@ def sync(
             to_upgrade,
         ):
             print(req_line, file=constraints)
-    constraints_path = Path(constraints.name)
-    try:
-        pip_upgrade_project(
-            python,
-            constraints_path,
-            project_root,
-            extras=extras,
-        )
-    finally:
-        constraints_path.unlink()
+    pip_upgrade_project(
+        python,
+        constraints_path,
+        project_root,
+        extras=extras,
+    )
     # freeze dependencies
     frozen_reqs_by_extra, unneeded_reqs = pip_freeze_dependencies_by_extra(
         python, project_root, extras
