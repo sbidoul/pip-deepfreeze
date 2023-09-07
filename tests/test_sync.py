@@ -113,6 +113,37 @@ def test_sync_project_root(virtualenv_python, editable_foobar_path):
     assert (editable_foobar_path / "requirements.txt").exists()
 
 
+def test_sync_editable_dep(virtualenv_python, tmp_path):
+    pyproject_toml = tmp_path / "pyproject.toml"
+    pyproject_toml.write_text(
+        textwrap.dedent(
+            """
+            [project]
+            name = "foobar"
+            version = "0.1"
+            dependencies = ["pip-test-package"]
+            """
+        )
+    )
+    constraints = tmp_path / "requirements.txt.in"
+    constraints.write_text(
+        "-e git+https://github.com/PyPA/pip-test-package#egg=pip-test-package\n"
+    )
+    subprocess.check_call(
+        [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
+        cwd=tmp_path,
+    )
+    requirements_path = tmp_path / "requirements.txt"
+    assert requirements_path.is_file()
+    assert "-e " in requirements_path.read_text(), requirements_path.read_text()
+    # test that a second run keeps editableness
+    subprocess.check_call(
+        [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
+        cwd=tmp_path,
+    )
+    assert "-e " in requirements_path.read_text(), requirements_path.read_text()
+
+
 def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
     setup_py = tmp_path / "setup.py"
     setup_py.write_text(

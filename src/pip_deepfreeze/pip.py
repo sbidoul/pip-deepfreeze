@@ -27,6 +27,7 @@ from .sanity import get_pip_version
 from .utils import (
     check_call,
     check_output,
+    get_temp_path_in_dir,
     log_debug,
     log_info,
     log_warning,
@@ -59,6 +60,7 @@ def pip_upgrade_project(
       to install them (requirement already satisfied).
     - Passing --upgrade to pip makes it too slow to my taste (need to check performance
       with the new resolver).
+    - pip does not support editable contraints
 
     In the meantime, here is our upgrade algorithm:
     1. List installed dependencies of project (pip_freeze_dependencies).
@@ -71,16 +73,29 @@ def pip_upgrade_project(
     update the version specifier in requirements.txt, and reinstalling the project with
     this function.
     """
-    # 1. parse constraints
+    constraints_without_editables_filename = get_temp_path_in_dir(
+        dir=project_root, prefix="requirements.", suffix=".txt.df"
+    )
+    editable_constraints = []
     constraint_reqs = {}
-    for req_line in parse_req_file(
-        str(constraints_filename), recurse=False, reqs_only=False
-    ):
-        assert not isinstance(req_line, NestedRequirementsLine)
-        if isinstance(req_line, RequirementLine):
-            req_name = get_req_name(req_line.requirement)
-            assert req_name  # XXX user error instead?
-            constraint_reqs[req_name] = normalize_req_line(req_line.requirement)
+    # 1. parse constraints, filter out editable constraints that pip does not support
+    with constraints_without_editables_filename.open(
+        mode="w", encoding="utf-8"
+    ) as constraints_without_editables_file:
+        for req_line in parse_req_file(
+            str(constraints_filename), recurse=False, reqs_only=False
+        ):
+            assert not isinstance(req_line, NestedRequirementsLine)
+            if isinstance(req_line, RequirementLine):
+                req_name = get_req_name(req_line.requirement)
+                assert req_name  # XXX user error instead?
+                constraint_reqs[req_name] = normalize_req_line(req_line.requirement)
+                if not req_line.is_editable:
+                    print(req_line.raw_line, file=constraints_without_editables_file)
+                else:
+                    editable_constraints.extend(["-e", req_line.requirement])
+            else:
+                print(req_line.raw_line, file=constraints_without_editables_file)
     # 2. get installed frozen dependencies of project
     installed_reqs = {
         get_req_name(req_line): normalize_req_line(req_line)
@@ -102,7 +117,15 @@ def pip_upgrade_project(
     # 4. install project with constraints
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd = [python, "-m", "pip", "install", "-c", f"{constraints_filename}"]
+    cmd = [
+        python,
+        "-m",
+        "pip",
+        "install",
+        "-c",
+        f"{constraints_without_editables_filename}",
+        *editable_constraints,
+    ]
     cmd.append("-e")
     if extras:
         extras_str = ",".join(extras)
@@ -110,13 +133,14 @@ def pip_upgrade_project(
     else:
         cmd.append(f"{project_root}")
     log_debug(f"Running {shlex.join(cmd)}")
-    with open(constraints_filename) as f:
-        constraints = f.read().strip()
-        if constraints:
-            log_debug(f"with {constraints_filename}:")
-            log_debug(constraints)
-        else:
-            log_debug(f"with empty {constraints_filename}.")
+    constraints = constraints_without_editables_filename.read_text(
+        encoding="utf-8"
+    ).strip()
+    if constraints:
+        log_debug(f"with {constraints_without_editables_filename}:")
+        log_debug(constraints)
+    else:
+        log_debug(f"with empty {constraints_without_editables_filename}.")
     check_call(cmd)
 
 
