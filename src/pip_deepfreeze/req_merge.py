@@ -59,7 +59,7 @@ def prepare_frozen_reqs_for_upgrade(
                 if req_name in to_upgrade_set:
                     continue
                 frozen_reqs.add(req_name)
-                yield frozen_req.requirement
+                yield frozen_req.raw_line
     # 3. emit in_reqs that have not been emitted as frozen reqs
     for req_name, in_req in in_reqs:
         if req_name not in frozen_reqs:
