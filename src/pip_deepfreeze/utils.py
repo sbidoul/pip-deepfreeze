@@ -8,6 +8,7 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, Union
 
+import httpx
 import typer
 
 
@@ -146,3 +147,13 @@ def get_temp_path_in_dir(dir: Path, prefix: str, suffix: str) -> Path:
         path = Path(tf.name)
         atexit.register(path.unlink)
         return path
+
+
+class HttpFetcher:
+    def __init__(self) -> None:
+        self._client = httpx.Client()
+
+    def __call__(self, url: str) -> str:
+        resp = self._client.get(url)
+        resp.raise_for_status()
+        return resp.text

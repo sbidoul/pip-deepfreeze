@@ -2,7 +2,6 @@ import subprocess
 from pathlib import Path
 from typing import Iterator, List, Optional, Sequence
 
-import httpx
 import typer
 from packaging.utils import NormalizedName
 
@@ -12,6 +11,7 @@ from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
 from .req_parser import get_req_names
 from .utils import (
+    HttpFetcher,
     get_temp_path_in_dir,
     log_debug,
     log_info,
@@ -81,7 +81,7 @@ def sync(
                     reqs_only=False,
                     recurse=True,
                     strict=True,
-                    session=httpx.Client(),
+                    http_fetcher=HttpFetcher(),
                 ):
                     if isinstance(parsed_req_line, OptionsLine):
                         print(parsed_req_line.raw_line, file=f)

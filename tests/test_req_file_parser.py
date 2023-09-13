@@ -115,14 +115,16 @@ class MockHttpResponse:
             raise RuntimeError(f"mock error opening {self.url}")
 
 
-class MockHttpSession:
+class MockHttpFetcher:
     def __init__(self, url, text):
         self.url = url
         self.text = text
 
-    def get(self, url):
+    def __call__(self, url):
+        if self.text is None:
+            raise RuntimeError(f"could not open {self.url}")
         assert url == self.url
-        return MockHttpResponse(self.url, self.text)
+        return self.text
 
 
 def test_http_url(tmp_path):
@@ -139,10 +141,10 @@ def test_http_url(tmp_path):
     )
     with pytest.raises(RequirementsFileParserError) as e:
         list(parse(str(reqs)))
-    assert f"Cannot get {subreqs_url} because no http session is available" in str(
+    assert f"Cannot get {subreqs_url} because no http fetcher is available" in str(
         e.value
     )
-    lines = list(parse(str(reqs), session=MockHttpSession(subreqs_url, "req2")))
+    lines = list(parse(str(reqs), http_fetcher=MockHttpFetcher(subreqs_url, "req2")))
     assert all(isinstance(line, RequirementLine) for line in lines)
     assert [line.requirement for line in lines] == ["req1", "req2"]
     lines = list(parse(str(reqs), recurse=False))
@@ -154,7 +156,7 @@ def test_http_url_notfound(tmp_path):
     reqs = tmp_path / "reqs.txt"
     reqs.write_text(f"-r {subreqs_url}")
     with pytest.raises(RequirementsFileParserError) as e:
-        list(parse(str(reqs), session=MockHttpSession(subreqs_url, None)))
+        list(parse(str(reqs), http_fetcher=MockHttpFetcher(subreqs_url, None)))
     assert "Could not open requirements file" in str(e.value)
     assert "notfound.txt" in str(e.value)
 
