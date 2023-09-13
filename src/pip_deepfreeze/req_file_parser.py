@@ -21,7 +21,7 @@ import os
 import re
 import shlex
 import sys
-from typing import Iterable, Iterator, List, NoReturn, Optional, Protocol, Text, Tuple, Union
+from typing import Callable, Iterable, Iterator, List, NoReturn, Optional, Text, Tuple, Union
 from urllib import parse as urllib_parse
 from urllib.request import urlopen
 
@@ -49,19 +49,7 @@ _URL_SLASH_DRIVE_RE = re.compile(r"/*([a-z])\|", re.I)
 _ENV_VAR_RE = re.compile(r"(?P<var>\$\{(?P<name>[A-Z0-9_]+)\})")
 
 
-class HttpResponse(Protocol):
-    @property
-    def text(self) -> str:
-        """The text content of the response."""
-
-    def raise_for_status(self) -> None:
-        """Raise if the response has an http error status."""
-
-
-class HttpClient(Protocol):
-    def get(self, url: str) -> HttpResponse:
-        """HTTP GET the URL."""
-
+HttpFetcher = Callable[[str], str]
 
 class RequirementsFileParserError(Exception):
     pass
@@ -148,17 +136,17 @@ def parse(
     reqs_only=True,  # type: bool
     strict=False,  # type: bool
     constraints=False,  # type: bool
-    session=None,  # type: Optional[HttpClient]
+    http_fetcher=None,  # type: Optional[HttpFetcher]
 ):
     # type: (...) -> Iterator[ParsedLine]
     return _parse(
-        _get_file_lines(filename, session),
+        _get_file_lines(filename, http_fetcher),
         filename,
         recurse=recurse,
         reqs_only=reqs_only,
         strict=strict,
         constraints=constraints,
-        session=session,
+        http_fetcher=http_fetcher,
     )
 
 
@@ -169,7 +157,7 @@ def parse_lines(
     reqs_only=True,  # type: bool
     strict=False,  # type: bool
     constraints=False,  # type: bool
-    session=None,  # type: Optional[HttpClient]
+    http_fetcher=None,  # type: Optional[HttpFetcher]
 ):
     # type: (...) -> Iterator[ParsedLine]
     return _parse(
@@ -179,7 +167,7 @@ def parse_lines(
         reqs_only=reqs_only,
         strict=strict,
         constraints=constraints,
-        session=session,
+        http_fetcher=http_fetcher,
     )
 
 
@@ -190,7 +178,7 @@ def _parse(
     reqs_only=True,  # type: bool
     strict=False,  # type: bool
     constraints=False,  # type: bool
-    session=None,  # type: Optional[HttpClient]
+    http_fetcher=None,  # type: Optional[HttpFetcher]
 ):
     # type: (...) -> Iterator[ParsedLine]
     """Parse a given file or URL, yielding parsed lines."""
@@ -204,7 +192,7 @@ def _parse(
                 reqs_only=reqs_only,
                 strict=strict,
                 constraints=line.is_constraint,
-                session=session,
+                http_fetcher=http_fetcher,
             ):
                 yield inner_line
 
@@ -462,25 +450,23 @@ def _get_url_scheme(url):
     return url.split(":", 1)[0].lower()
 
 
-def _get_file_lines(url, session):
-    # type: (str, Optional[HttpClient]) -> Iterable[str]
+def _get_file_lines(url, http_fetcher):
+    # type: (str, Optional[HttpFetcher]) -> Iterable[str]
     """Gets the content of a file as unicode; it may be a filename, file: URL, or
     http: URL. Respects # -*- coding: declarations on the retrieved files.
 
-    :param url:         File path or url.
-    :param session:     HttpClient instance.
+    :param url:          File path or url.
+    :param http_fetcher: HttpFetcher instance.
     """
     scheme = _get_url_scheme(url)
     if scheme in ["http", "https"]:
-        if not session:
+        if not http_fetcher:
             # FIXME better exception
             raise RequirementsFileParserError(
-                "Cannot get {url} because no http session is available.".format(url=url)
+                "Cannot get {url} because no http fetcher is available.".format(url=url)
             )
         try:
-            resp = session.get(url)
-            resp.raise_for_status()
-            content = resp.text
+            content = http_fetcher(url)
         except Exception as exc:
             raise RequirementsFileParserError(
                 "Could not open requirements file: {}".format(exc)
