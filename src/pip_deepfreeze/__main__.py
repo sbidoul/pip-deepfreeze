@@ -130,9 +130,10 @@ def _find_python(python: Optional[str]) -> str:
 
 
 def _version(value: Any) -> None:
-    version = importlib.metadata.version("pip-deepfreeze")
-    typer.echo(f"pip-deepfreeze {version}")
-    raise typer.Exit()
+    if value:
+        version = importlib.metadata.version("pip-deepfreeze")
+        typer.echo(f"pip-deepfreeze {version}")
+        raise typer.Exit()
 
 
 @app.callback()
