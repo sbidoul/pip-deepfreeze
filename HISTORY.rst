@@ -5,28 +5,28 @@ Features
 --------
 
 - Use ``pip inspect`` when the target pip supports it. This allows working in virtual
-  environments where ``pkg_resources and thus ``setuptools`` are not installed. (`#97
+  environments where ``setuptools`` (and thus ``pkg_resources``) are not installed. (`#97
   <https://github.com/sbidoul/pip-deepfreeze/issues/97>`_)
+- Don't warn about the absence of the ``wheel`` package when using ``pip`` >= 23.1.
+  (`#101 <https://github.com/sbidoul/pip-deepfreeze/issues/101>`_)
 - Search for ``py``, then ``python``  executable in ``PATH`` when the ``--python``
   option is not provided. This should provide a better experience on `Windows
   <https://docs.python.org/3/using/windows.html#launcher>`_ and for users of the the
   `Python Launcher for Unix <https://python-launcher.app/>`_. (`#100
   <https://github.com/sbidoul/pip-deepfreeze/issues/100>`_)
-- Don't warn about the absence of the ``wheel`` package when using ``pip`` >= 23.1.
-  (`#101 <https://github.com/sbidoul/pip-deepfreeze/issues/101>`_)
-- Support named editable requirements in constraint files (requirements.txt.in) and lock
-  files (requirements*.txt). (`#110
+- Support named editable requirements in constraint files (``requirements.txt.in``) and
+  lock files (``requirements*.txt``). (`#110
   <https://github.com/sbidoul/pip-deepfreeze/issues/110>`_)
 - Improved handling of the temporary requirements file created during sync. (`#115
   <https://github.com/sbidoul/pip-deepfreeze/issues/115>`_)
-- Work around pip limitation that cause repeated metadata recomputation for VCS URLs.
+- Work around a pip limitation that causes repeated metadata recomputation for VCS URLs.
   When a constraint is provided with a VCS URL with a mutable reference, pip installs it
   but does not cache the wheel. During subsequent ``pip-df sync`` runs, the metadata is
-  therefore recomputed (because it is not cached), but the wheel is not built because
+  therefore recomputed (because it is not cached), but the wheel is never built because
   pip rightly considers it is already installed. So it is never cached and this causes
   performance issues. As a workaround we fixup ``direct_url.json`` with a fake commit to
   force reinstallation (and therefore caching of the wheel) during subsequent sync with
-  the commit id. (`#119 <https://github.com/sbidoul/pip-deepfreeze/issues/119>`_)
+  the pinned commit id. (`#119 <https://github.com/sbidoul/pip-deepfreeze/issues/119>`_)
 - Add ``pip-deepfreeze --version``. (`#120
   <https://github.com/sbidoul/pip-deepfreeze/issues/120>`_)
 
