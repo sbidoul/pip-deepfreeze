@@ -1,0 +1,1 @@
+Add ``pip-deepfreeze --version``.
