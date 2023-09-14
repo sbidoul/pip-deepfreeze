@@ -1,3 +1,4 @@
+import importlib.metadata
 import shutil
 from pathlib import Path
 from typing import Any, List, Optional
@@ -128,6 +129,12 @@ def _find_python(python: Optional[str]) -> str:
     return _find_python_from(["py", "python"])
 
 
+def _version(value: Any) -> None:
+    version = importlib.metadata.version("pip-deepfreeze")
+    typer.echo(f"pip-deepfreeze {version}")
+    raise typer.Exit()
+
+
 @app.callback()
 def callback(
     ctx: typer.Context,
@@ -155,6 +162,13 @@ def callback(
         file_okay=False,
         resolve_path=True,
         help="The project root directory.",
+    ),
+    version: bool = typer.Option(
+        None,
+        "--version",
+        callback=_version,
+        help="Show the version and exit.",
+        is_eager=True,
     ),
     verbose: bool = typer.Option(False, "--verbose", "-v", show_default=False),
 ) -> None:
