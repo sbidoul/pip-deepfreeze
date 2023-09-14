@@ -285,19 +285,18 @@ Global options
 
    Usage: pip-df [OPTIONS] COMMAND [ARGS]...
 
-     A simple pip freeze workflow for Python application developers.
+   A simple pip freeze workflow for Python application developers.
 
    Options:
-     -p, --python PYTHON           The python executable to use. Determines the
+     -p, --python, --py PYTHON     The python executable to use. Determines the
                                    python environment to work on. Defaults to the
-                                   'python' executable found in PATH.
-
+                                   'py' or 'python' executable found in PATH.
      -r, --project-root DIRECTORY  The project root directory.  [default: .]
+     --version                     Show the version and exit.
      -v, --verbose
      --install-completion          Install completion for the current shell.
      --show-completion             Show completion for the current shell, to copy
                                    it or customize the installation.
-
      --help                        Show this message and exit.
 
    Commands:
