@@ -266,3 +266,14 @@ def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
         return
     cmd = [python, "-m", "pip", "uninstall", "--yes", *reqs]
     check_call(cmd)
+
+
+def pip_fixup_vcs_direct_urls(python: str) -> None:
+    # This will become unnecessary when pip caches metadata or
+    # caches wheels that are built from a git ref that is not a commit
+    # (it could cache it under a modified link where the git ref is replaced
+    # by the commit id).
+    with resource_path(
+        "pip_deepfreeze", "fixup-vcs-direct-urls.py"
+    ) as fixup_vcs_direct_urls:
+        check_call([python, fixup_vcs_direct_urls])

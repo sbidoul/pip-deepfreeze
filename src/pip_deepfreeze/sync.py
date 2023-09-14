@@ -5,7 +5,12 @@ from typing import Iterator, List, Optional, Sequence
 import typer
 from packaging.utils import NormalizedName
 
-from .pip import pip_freeze_dependencies_by_extra, pip_uninstall, pip_upgrade_project
+from .pip import (
+    pip_fixup_vcs_direct_urls,
+    pip_freeze_dependencies_by_extra,
+    pip_uninstall,
+    pip_upgrade_project,
+)
 from .project_name import get_project_name
 from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
@@ -115,6 +120,8 @@ def sync(
                 f"that are not dependencies of {project_name_with_extras} "
                 f"are also installed: {unneeded_reqs_str}"
             )
+    # fixup VCS direct_url.json (see fixup-vcs-direct-urls.py for details on why)
+    pip_fixup_vcs_direct_urls(python)
     # run post-sync commands
     for command in post_sync_commands:
         log_info(f"Running post-sync command: {command}")
