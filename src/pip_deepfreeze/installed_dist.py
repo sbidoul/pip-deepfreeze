@@ -1,5 +1,5 @@
 from abc import ABC, abstractproperty
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, cast
 
 from packaging.requirements import Requirement
 from packaging.utils import NormalizedName, canonicalize_name
@@ -52,6 +52,10 @@ class InstalledDistribution(ABC):
         return canonicalize_name(self.data["metadata"]["name"])
 
     @property
+    def metadata_name(self) -> str:
+        return cast(str, self.data["metadata"]["name"])
+
+    @property
     def version(self) -> str:
         version = self.data["metadata"]["version"]
         assert isinstance(version, str)
@@ -83,8 +87,8 @@ class InstalledDistribution(ABC):
         """Convert to a pip requirement string."""
         direct_url = self.direct_url
         if direct_url is None:
-            return f"{self.name}=={self.version}"
-        return direct_url.as_pip_requirement(self.name)
+            return f"{self.metadata_name}=={self.version}"
+        return direct_url.as_pip_requirement(self.metadata_name)
 
 
 class EnvInfoInstalledDistribution(InstalledDistribution):
@@ -142,3 +146,11 @@ class PipInstallReportItemInstalledDistribution(InstalledDistributionWithEnviron
 
 
 InstalledDistributions = Dict[NormalizedName, InstalledDistribution]
+
+
+def installed_distributions_as_pip_requirements(
+    installed_distributions: InstalledDistributions,
+) -> Iterator[str]:
+    """Iterate installed distributions as pip frozen requirements."""
+    for _, dist in sorted(installed_distributions.items()):
+        yield dist.as_pip_requirement()
