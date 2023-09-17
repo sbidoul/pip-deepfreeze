@@ -38,7 +38,7 @@ def test_pip_freeze(to_install, expected, virtualenv_python, testpkgs):
             *to_install,
         ]
     )
-    assert list(pip_freeze(virtualenv_python)) == expected
+    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == expected
 
 
 @pytest.mark.parametrize(
@@ -81,7 +81,10 @@ def test_pip_freeze_dependencies(
             *other_installs,
         ]
     )
-    assert list(pip_freeze_dependencies(virtualenv_python, tmp_path)) == expected
+    res = pip_freeze_dependencies(virtualenv_python, tmp_path)
+    unneeded_reqs = res[-1]
+    unneeded_reqs[:] = list(_freeze_filter(unneeded_reqs))
+    assert list(res) == expected
 
 
 @pytest.mark.parametrize(
@@ -157,12 +160,10 @@ def test_pip_freeze_dependencies_by_extra(
             *other_installs,
         ]
     )
-    assert (
-        list(
-            pip_freeze_dependencies_by_extra(virtualenv_python, tmp_path, freeze_extras)
-        )
-        == expected
-    )
+    res = pip_freeze_dependencies_by_extra(virtualenv_python, tmp_path, freeze_extras)
+    unneeded_reqs = res[-1]
+    unneeded_reqs[:] = list(_freeze_filter(unneeded_reqs))
+    assert list(res) == expected
 
 
 @pytest.mark.parametrize(
@@ -188,15 +189,14 @@ def test_pip_uninstall(to_install, to_uninstall, expected, virtualenv_python, te
             ]
         )
     pip_uninstall(virtualenv_python, to_uninstall)
-    assert list(pip_freeze(virtualenv_python)) == expected
+    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == expected
 
 
 def _freeze_filter(reqs: Iterable[str]) -> Iterator[str]:
     """Filter out comments and -e."""
+    filters = ("#", "-e ", "pip==", "setuptools==", "wheel==", "distribute==")
     for req in reqs:
-        if req.startswith("#"):
-            continue
-        if req.startswith("-e"):
+        if any(req.startswith(f) for f in filters):
             continue
         yield req
 
