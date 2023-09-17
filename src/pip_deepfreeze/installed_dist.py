@@ -102,9 +102,7 @@ class EnvInfoInstalledDistribution(InstalledDistribution):
         }
 
 
-class PipInspectInstalledDistribution(InstalledDistribution):
-    """An InstalledDistribution built from pip inspect output."""
-
+class InstalledDistributionWithEnvironment(InstalledDistribution):
     def __init__(self, data: Dict[str, Any], environment: Dict[str, str]):
         super().__init__(data)
         self.environment = environment
@@ -128,6 +126,19 @@ class PipInspectInstalledDistribution(InstalledDistribution):
             ]
             for extra in self.data["metadata"].get("provides_extra", [])
         }
+
+
+class PipInspectInstalledDistribution(InstalledDistributionWithEnvironment):
+    """An InstalledDistribution built from pip inspect output."""
+
+
+class PipInstallReportItemInstalledDistribution(InstalledDistributionWithEnvironment):
+    """An InstalledDistribution built from pip installation report."""
+
+    def __init__(self, data: Dict[str, Any], environment: Dict[str, str]):
+        if data.get("is_direct"):
+            data = dict(data, direct_url=data["download_info"])
+        super().__init__(data, environment)
 
 
 InstalledDistributions = Dict[NormalizedName, InstalledDistribution]
