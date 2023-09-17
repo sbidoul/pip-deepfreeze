@@ -1,5 +1,6 @@
 import json
 import shlex
+import tempfile
 from importlib.resources import path as resource_path
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, TypedDict, cast
@@ -11,6 +12,7 @@ from .installed_dist import (
     EnvInfoInstalledDistribution,
     InstalledDistributions,
     PipInspectInstalledDistribution,
+    PipInstallReportItemInstalledDistribution,
 )
 from .list_installed_depends import (
     list_installed_depends,
@@ -39,6 +41,64 @@ class PipInspectReport(TypedDict, total=False):
     version: str
     installed: List[Dict[str, Any]]
     environment: Dict[str, str]
+
+
+class PipInstallReport(TypedDict, total=False):
+    version: str
+    install: List[Dict[str, Any]]
+    environment: Dict[str, str]
+
+
+def _install_report_to_installed_distributions(
+    report: PipInstallReport,
+) -> InstalledDistributions:
+    environment = report["environment"]
+    dists = [
+        PipInstallReportItemInstalledDistribution(json_dist, environment)
+        for json_dist in report["install"]
+    ]
+    return {dist.name: dist for dist in dists}
+
+
+def pip_dry_run_install_project(
+    python: str,
+    constraints_filename: Path,
+    project_root: Path,
+    extras: Optional[Sequence[NormalizedName]] = None,
+) -> InstalledDistributions:
+    # dry-run install project with constraints
+    with tempfile.NamedTemporaryFile() as report:
+        report.close()
+        project_name = get_project_name(python, project_root)
+        log_info(f"Dry-run installing {project_name}")
+        cmd = [
+            python,
+            "-m",
+            "pip",
+            "install",
+            "--dry-run",
+            "--ignore-installed",
+            "--report",
+            report.name,
+            "-c",
+            f"{constraints_filename}",
+        ]
+        cmd.append("-e")
+        if extras:
+            extras_str = ",".join(extras)
+            cmd.append(f"{project_root}[{extras_str}]")
+        else:
+            cmd.append(f"{project_root}")
+        log_debug(f"Running {shlex.join(cmd)}")
+        constraints = constraints_filename.read_text(encoding="utf-8").strip()
+        if constraints:
+            log_debug(f"with {constraints_filename}:")
+            log_debug(constraints)
+        else:
+            log_debug(f"with empty {constraints_filename}.")
+        check_call(cmd)
+        with open(report.name, encoding="utf-8") as json_file:
+            return _install_report_to_installed_distributions(json.load(json_file))
 
 
 def pip_upgrade_project(

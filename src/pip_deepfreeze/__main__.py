@@ -6,6 +6,7 @@ from typing import Any, List, Optional
 import typer
 from packaging.utils import canonicalize_name
 
+from .lock import lock as lock_operation
 from .pyproject_toml import load_pyproject_toml
 from .sanity import check_env
 from .sync import sync as sync_operation
@@ -85,6 +86,59 @@ def sync(
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
         post_sync_commands=post_sync_commands,
+    )
+
+
+@app.command()
+def lock(
+    ctx: typer.Context,
+    to_upgrade: str = typer.Option(
+        None,
+        "--update",
+        "-u",
+        metavar="DEP1,DEP2,...",
+        help=(
+            "Make sure selected dependencies are upgraded (or downgraded) to "
+            "the latest allowed version. If DEP is not part of your application "
+            "dependencies anymore, this option has no effect."
+        ),
+    ),
+    upgrade_all: bool = typer.Option(
+        False,
+        "--update-all",
+        help=(
+            "Upgrade (or downgrade) all dependencies of your application to "
+            "the latest allowed version."
+        ),
+        show_default=False,
+    ),
+    extras: str = typer.Option(
+        None,
+        "--extras",
+        "-x",
+        metavar="EXTRAS",
+        help=(
+            "Comma separated list of extras "
+            "to install and freeze to requirements-{EXTRA}.txt."
+        ),
+    ),
+    post_lock_commands: List[str] = typer.Option(
+        [],
+        "--post-lock-command",
+        help=(
+            "Command to run after the lock operation is complete. "
+            "Can be specified multiple times."
+        ),
+    ),
+) -> None:
+    """Generate/update lock files without modifying the environment."""
+    lock_operation(
+        ctx.obj.python,
+        upgrade_all,
+        comma_split(to_upgrade),
+        extras=[canonicalize_name(extra) for extra in comma_split(extras)],
+        project_root=ctx.obj.project_root,
+        post_lock_commands=post_lock_commands,
     )
 
 
