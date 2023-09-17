@@ -10,14 +10,35 @@ class DirectUrl:
         self.data = data
 
     def __str__(self) -> str:
+        return self.as_pip_requirement()
+
+    def as_pip_requirement(self, name: Optional[str] = None) -> str:
+        """Convert to a pip requirement string, with or without name."""
+        fragments = []
         url = self.data.get("url")
         vcs_info = self.data.get("vcs_info")
         if vcs_info:
             vcs = vcs_info.get("vcs")
             commit_id = vcs_info.get("commit_id")
-            return f"{vcs}+{url}@{commit_id}"
+            url = f"{vcs}+{url}@{commit_id}"
         else:
-            return str(url)
+            url = str(url)
+        subdirectory = self.data.get("subdirectory")
+        if subdirectory:
+            fragments.append(f"subdirectory={subdirectory}")
+        if self.is_editable and name:
+            fragments.append(f"egg={name}")
+        if fragments:
+            url += "#" + "&".join(fragments)
+        if self.is_editable:
+            return f"-e {url}"
+        if not name:
+            return url
+        return f"{name} @ {url}"
+
+    @property
+    def is_editable(self) -> bool:
+        return bool(self.data.get("dir_info", {}).get("editable"))
 
 
 class InstalledDistribution(ABC):
@@ -57,6 +78,13 @@ class InstalledDistribution(ABC):
     def extra_requires(self) -> Dict[NormalizedName, List[Requirement]]:
         """Extra dependencies, filtered for the environment."""
         ...
+
+    def as_pip_requirement(self) -> str:
+        """Convert to a pip requirement string."""
+        direct_url = self.direct_url
+        if direct_url is None:
+            return f"{self.name}=={self.version}"
+        return direct_url.as_pip_requirement(self.name)
 
 
 class EnvInfoInstalledDistribution(InstalledDistribution):
