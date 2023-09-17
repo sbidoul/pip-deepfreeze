@@ -215,22 +215,15 @@ def pip_freeze_dependencies(
     return dependencies_reqs, unneeded_reqs
 
 
-def pip_freeze_dependencies_by_extra(
-    python: str, project_root: Path, extras: Sequence[NormalizedName]
+def _dependencies_by_extra(
+    project_name: NormalizedName,
+    extras: Sequence[NormalizedName],
+    installed_distributions: InstalledDistributions,
+    frozen_reqs: Iterable[str],
 ) -> Tuple[Dict[Optional[NormalizedName], List[str]], List[str]]:
-    """Run pip freeze, returning only dependencies of the project.
-
-    Return the list of installed direct and indirect dependencies of the
-    project grouped by extra, and the list of other installed
-    dependencies that are not dependencies of the project (except the
-    project itself). Dependencies are returned in pip freeze format.
-    Unnamed requirements are ignored.
-    """
-    project_name = get_project_name(python, project_root)
     dependencies_by_extras = list_installed_depends_by_extra(
-        pip_list(python), project_name
+        installed_distributions, project_name
     )
-    frozen_reqs = pip_freeze(python)
     dependencies_reqs = {}  # type: Dict[Optional[NormalizedName], List[str]]
     for extra in extras:
         if extra not in dependencies_by_extras:
@@ -257,6 +250,25 @@ def pip_freeze_dependencies_by_extra(
         if unneeded:
             unneeded_reqs.append(frozen_req)
     return dependencies_reqs, unneeded_reqs
+
+
+def pip_freeze_dependencies_by_extra(
+    python: str, project_root: Path, extras: Sequence[NormalizedName]
+) -> Tuple[Dict[Optional[NormalizedName], List[str]], List[str]]:
+    """Run pip freeze, returning only dependencies of the project.
+
+    Return the list of installed direct and indirect dependencies of the
+    project grouped by extra, and the list of other installed
+    dependencies that are not dependencies of the project (except the
+    project itself). Dependencies are returned in pip freeze format.
+    Unnamed requirements are ignored.
+    """
+    project_name = get_project_name(python, project_root)
+    installed_distributions = pip_list(python)
+    frozen_reqs = pip_freeze(python)
+    return _dependencies_by_extra(
+        project_name, extras, installed_distributions, frozen_reqs
+    )
 
 
 def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
