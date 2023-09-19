@@ -157,3 +157,14 @@ class HttpFetcher:
         resp = self._client.get(url)
         resp.raise_for_status()
         return resp.text
+
+
+def run_commands(commands: Sequence[str], cwd: Path, command_type: str) -> None:
+    for command in commands:
+        log_info(f"Running {command_type} command: {command}")
+        result = subprocess.run(command, shell=True, check=False, cwd=cwd)
+        if result.returncode != 0:
+            raise SystemExit(
+                f"{command_type.capitalize()} command {command} "
+                "failed with exit code {result.returncode}"
+            )
