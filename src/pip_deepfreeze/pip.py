@@ -182,7 +182,7 @@ def pip_list(python: str) -> InstalledDistributions:
 
 def pip_freeze(python: str) -> Iterable[str]:
     """Run pip freeze."""
-    cmd = [python, "-m", "pip", "freeze"]
+    cmd = [python, "-m", "pip", "freeze", "--all"]
     return check_output(cmd).splitlines()
 
 

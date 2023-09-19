@@ -94,8 +94,11 @@ def sync(
             for req_line in frozen_reqs:
                 print(req_line, file=f)
     # uninstall unneeded dependencies, if asked to do so
-    if unneeded_reqs:
-        unneeded_req_names = get_req_names(unneeded_reqs)
+    unneeded_req_names = sorted(
+        set(str(s) for s in get_req_names(unneeded_reqs))
+        - set(["pip", "setuptools", "wheel", "distribute"])
+    )
+    if unneeded_req_names:
         unneeded_reqs_str = ",".join(unneeded_req_names)
         prompted = False
         if uninstall_unneeded is None:
