@@ -1,4 +1,3 @@
-import subprocess
 from pathlib import Path
 from typing import Iterator, List, Optional, Sequence
 
@@ -22,6 +21,7 @@ from .utils import (
     log_info,
     make_project_name_with_extras,
     open_with_rollback,
+    run_commands,
 )
 
 
@@ -123,10 +123,4 @@ def sync(
     # fixup VCS direct_url.json (see fixup-vcs-direct-urls.py for details on why)
     pip_fixup_vcs_direct_urls(python)
     # run post-sync commands
-    for command in post_sync_commands:
-        log_info(f"Running post-sync command: {command}")
-        result = subprocess.run(command, shell=True, check=False)
-        if result.returncode != 0:
-            raise SystemExit(
-                f"Post-sync command {command} failed with exit code {result.returncode}"
-            )
+    run_commands(post_sync_commands, project_root, "post-sync")
