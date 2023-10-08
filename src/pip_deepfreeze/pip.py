@@ -23,7 +23,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .sanity import get_pip_version
+from .sanity import _get_env_info, get_pip_version
 from .utils import (
     check_call,
     check_output,
@@ -269,6 +269,9 @@ def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
 
 
 def pip_fixup_vcs_direct_urls(python: str) -> None:
+    if Version(_get_env_info(python)["python_version"]) < Version("3.6"):
+        # Not supported, and not needed with pip's legacy resolver.
+        return
     # This will become unnecessary when pip caches metadata or
     # caches wheels that are built from a git ref that is not a commit
     # (it could cache it under a modified link where the git ref is replaced
