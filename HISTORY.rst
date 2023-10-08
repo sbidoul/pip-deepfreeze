@@ -1,3 +1,23 @@
+v1.4.0 (2023-10-08)
+===================
+
+Features
+--------
+
+- Pin pip, setuptools, wheel and distribute when they are dependencies of the project.
+  Before they were not pinned in the ``requirements*.txt`` lock file because they were not
+  reported by pip freeze. Now we pin them but never propose to uninstall them. (`#123 <https://github.com/sbidoul/pip-deepfreeze/issues/123>`_)
+
+
+Bugfixes
+--------
+
+- Set working directory to project root when running post sync commands. (`#126 <https://github.com/sbidoul/pip-deepfreeze/issues/126>`_)
+- Don't attempt to fixup VCS direct URLs for older python versions. It did not work with
+  python 2.7 and pip's legacy resolver that is the default with these older pythons does
+  not need this workaround. (`#127 <https://github.com/sbidoul/pip-deepfreeze/issues/127>`_)
+
+
 1.3 (2023-09-14)
 ================
 
