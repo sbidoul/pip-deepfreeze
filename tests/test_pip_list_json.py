@@ -55,6 +55,10 @@ PIP_LIST_JSON = os.path.join(
         )
     ],
 )
+@pytest.mark.skipif(
+    sys.version_info >= (3, 12),
+    reason="pip-list-json.py not used in python 3.12+",
+)
 def test_pip_list_json(
     to_install, expected, virtualenv_python_with_pytest_cov, testpkgs
 ):

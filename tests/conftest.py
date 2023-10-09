@@ -18,7 +18,9 @@ def virtualenv_python(tmp_path):
     else:
         python = venv / "bin" / "python"
     # use latest pip
-    subprocess.check_call([str(python), "-m", "pip", "install", "-U", "pip"])
+    subprocess.check_call(
+        [str(python), "-m", "pip", "install", "-U", "pip", "setuptools", "wheel"]
+    )
     return str(python)
 
 
