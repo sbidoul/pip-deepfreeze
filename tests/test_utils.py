@@ -140,6 +140,9 @@ def test_make_project_name_with_extras(project_name, extras, expected):
     [
         ("prj", "prj"),
         ("prj==1.0", "prj==1.0"),
+        ("prj.X-Y_Z", "prj-x-y-z"),
+        ("prj.X-Y_Z==1.0", "prj-x-y-z==1.0"),
+        ("prj.X-Y_Z@http://g.c/o/p", "prj-x-y-z @ http://g.c/o/p"),
         ("name @https://g.c/o/p@branch", "name @ https://g.c/o/p@branch"),
         ("name@https://g.c/o/p@branch", "name @ https://g.c/o/p@branch"),
         ("name[extra] @https://g.c/o/p@branch", "name[extra] @ https://g.c/o/p@branch"),
