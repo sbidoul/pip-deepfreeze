@@ -222,7 +222,7 @@ def _pip_list__pip_inspect(python: str) -> InstalledDistributions:
     inspect = _pip_inspect(python)
     if inspect["version"] not in ("0", "1"):
         raise SystemExit(
-            f"Unspported 'pip inspect' output format version '{inspect['version']}'"
+            f"Unsupported 'pip inspect' output format version '{inspect['version']}'"
         )
     environment = inspect["environment"]
     dists = [
