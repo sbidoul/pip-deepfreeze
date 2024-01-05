@@ -10,6 +10,7 @@ from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, 
 
 import httpx
 import typer
+from packaging.utils import canonicalize_name
 
 
 @contextlib.contextmanager
@@ -122,7 +123,7 @@ def make_project_name_with_extras(
 
 
 _NORMALIZE_REQ_LINE_RE = re.compile(
-    r"^(?P<name>[a-zA-Z0-9-_.\[\]]+)(?P<arobas>\s*@\s*)(?P<rest>.*)$"
+    r"^(?P<name>[a-zA-Z0-9-_.\[\]]+)(?P<arobas>\s*@\s*)?(?P<rest>.*)$"
 )
 
 
@@ -132,11 +133,18 @@ def normalize_req_line(req_line: str) -> str:
     This is a little hack because some requirements.txt generator such
     as pip-requirements-parser dont always generate the exact same
     output as pip freeze.
+
+    Moreover, setuptools 69 stopped normalizing the name in the wheels it generates,
+    so users of different setuptools version can see different pip freeze results.
     """
     mo = _NORMALIZE_REQ_LINE_RE.match(req_line)
     if not mo:
         return req_line
-    return mo.group("name") + " @ " + mo.group("rest")
+    return (
+        canonicalize_name(mo.group("name"))
+        + (" @ " if mo.group("arobas") else "")
+        + mo.group("rest")
+    )
 
 
 def get_temp_path_in_dir(dir: Path, prefix: str, suffix: str) -> Path:
