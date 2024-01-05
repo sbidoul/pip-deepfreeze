@@ -1,5 +1,17 @@
-v1.4.0 (2023-10-08)
-===================
+1.5 (2024-01-05)
+================
+
+Features
+--------
+
+- Normalize distribution names in the generated lock files. This change, which will
+  cause some churn in generated ``requirements*.txt`` files, was made following a
+  setuptools 69 evolution that started preserving underscores in distribution names.
+  (`#132 <https://github.com/sbidoul/pip-deepfreeze/issues/132>`_)
+
+
+1.4.0 (2023-10-08)
+==================
 
 Features
 --------
