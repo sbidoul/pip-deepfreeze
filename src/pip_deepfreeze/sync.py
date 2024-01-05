@@ -22,6 +22,7 @@ from .utils import (
     make_project_name_with_extras,
     make_requirements_path,
     make_requirements_paths,
+    normalize_req_line,
     open_with_rollback,
     run_commands,
 )
@@ -79,7 +80,7 @@ def sync(
                         print(parsed_req_line.raw_line, file=f)
             # output frozen dependencies of project
             for req_line in frozen_reqs:
-                print(req_line, file=f)
+                print(normalize_req_line(req_line), file=f)
     # uninstall unneeded dependencies, if asked to do so
     unneeded_req_names = sorted(
         set(str(s) for s in get_req_names(unneeded_reqs))
