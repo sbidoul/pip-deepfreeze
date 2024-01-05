@@ -65,6 +65,7 @@ def testpkgs(tmp_path_factory):
             extras_require={"c": ["pkgc<0.0.3"], "b": ["pkgb"]},
         ),
         dict(name="pkge", install_requires=["pkgd[b,c]"]),
+        dict(name="pkg-F.G_H"),  # to test name normalization
     ]
 
     testpkgs_dir = tmp_path_factory.mktemp("testpkgs")
