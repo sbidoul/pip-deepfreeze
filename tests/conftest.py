@@ -82,6 +82,7 @@ def testpkgs(tmp_path_factory):
                 "-m",
                 "pip",
                 "wheel",
+                "--no-build-isolation",
                 "--no-deps",
                 str(setup_py_dir),
                 "--wheel-dir",
