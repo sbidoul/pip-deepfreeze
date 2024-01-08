@@ -17,6 +17,7 @@ import io
 import json
 import os
 import sys
+import warnings
 
 try:
     from typing import Dict, Optional, Union
@@ -25,7 +26,9 @@ except ImportError:
 
 
 try:
+    warnings.filterwarnings(action="ignore", category=DeprecationWarning)
     import pkg_resources  # noqa
+    warnings.resetwarnings()
 except ImportError:
     pkg_resources = None
 
