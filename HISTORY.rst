@@ -1,3 +1,13 @@
+1.6.0 (2024-01-10)
+==================
+
+Bugfixes
+--------
+
+- Silence a deprecation warning about ``pkg_resources``. (`#133 <https://github.com/sbidoul/pip-deepfreeze/issues/133>`_)
+- Sort requirement files by canonical requirement name to help ensure stability and comparability. (`#134 <https://github.com/sbidoul/pip-deepfreeze/issues/134>`_)
+
+
 1.5 (2024-01-05)
 ================
 
