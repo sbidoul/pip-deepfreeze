@@ -13,7 +13,7 @@ from .pip import (
 from .project_name import get_project_name
 from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
-from .req_parser import get_req_names
+from .req_parser import get_req_name, get_req_names
 from .utils import (
     HttpFetcher,
     get_temp_path_in_dir,
@@ -26,6 +26,13 @@ from .utils import (
     open_with_rollback,
     run_commands,
 )
+
+
+def _req_line_sort_key(req_line: str) -> str:
+    req_name = get_req_name(req_line)
+    if req_name is None:
+        return req_line
+    return req_name
 
 
 def sync(
@@ -78,8 +85,9 @@ def sync(
                 ):
                     if isinstance(parsed_req_line, OptionsLine):
                         print(parsed_req_line.raw_line, file=f)
-            # output frozen dependencies of project
-            for req_line in frozen_reqs:
+            # output frozen dependencies of project,
+            # sorted by canonical requirement name
+            for req_line in sorted(frozen_reqs, key=_req_line_sort_key):
                 print(normalize_req_line(req_line), file=f)
     # uninstall unneeded dependencies, if asked to do so
     unneeded_req_names = sorted(
