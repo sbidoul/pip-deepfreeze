@@ -4,6 +4,7 @@ Analyze the configuration files for some known build backends
 (setuptools' setup.cfg, flit, generic PEP 621). Fallback to a slower PEP
 517 metadata preparation.
 """
+
 import configparser
 import os
 from functools import lru_cache
