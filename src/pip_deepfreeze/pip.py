@@ -1,9 +1,15 @@
+import importlib.util
 import json
+import os
 import shlex
+import sys
+from enum import Enum
+from functools import lru_cache
 from importlib.resources import path as resource_path
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, TypedDict, cast
 
+import typer
 from packaging.utils import NormalizedName
 from packaging.version import Version
 
@@ -29,6 +35,7 @@ from .utils import (
     check_output,
     get_temp_path_in_dir,
     log_debug,
+    log_error,
     log_info,
     log_warning,
     normalize_req_line,
@@ -41,11 +48,53 @@ class PipInspectReport(TypedDict, total=False):
     environment: Dict[str, str]
 
 
+class Installer(str, Enum):
+    default = "default"
+    envpip = "env-pip"
+    uv = "uv"
+
+
+@lru_cache
+def _has_uv() -> bool:
+    return bool(importlib.util.find_spec("uv"))
+
+
+def _env_pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
+    return [python, "-m", "pip", "install"], {}
+
+
+def _uv_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
+    # TODO when https://github.com/astral-sh/uv/issues/1396 is implemented,
+    # we will not need to return the VIRTUAL_ENV environment variable.
+    return [sys.executable, "-m", "uv", "pip", "install"], {
+        "VIRTUAL_ENV": str(Path(python).parent.parent)
+    }
+
+
+def _install_cmd_and_env(
+    installer: Installer, python: str
+) -> Tuple[List[str], Dict[str, str]]:
+    if installer == Installer.default:
+        installer = Installer.envpip
+    if installer == Installer.envpip:
+        return _env_pip_install_cmd_and_env(python)
+    elif installer == Installer.uv:
+        if not _has_uv():
+            log_error(
+                "The 'uv' installer was requested but it is not available. "
+                "Please install pip-deepfreeze with the 'uv' extra to use it."
+            )
+            raise typer.Exit(1)
+        return _uv_install_cmd_and_env(python)
+    raise NotImplementedError(f"Installer {installer} is not implemented.")
+
+
 def pip_upgrade_project(
     python: str,
     constraints_filename: Path,
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
+    installer: Installer = Installer.envpip,
 ) -> None:
     """Upgrade a project.
 
@@ -117,15 +166,14 @@ def pip_upgrade_project(
     # 4. install project with constraints
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd = [
-        python,
-        "-m",
-        "pip",
-        "install",
-        "-c",
-        f"{constraints_without_editables_filename}",
-        *editable_constraints,
-    ]
+    cmd, env = _install_cmd_and_env(installer, python)
+    cmd.extend(
+        [
+            "-c",
+            f"{constraints_without_editables_filename}",
+            *editable_constraints,
+        ]
+    )
     cmd.append("-e")
     if extras:
         extras_str = ",".join(extras)
@@ -141,7 +189,7 @@ def pip_upgrade_project(
         log_debug(constraints)
     else:
         log_debug(f"with empty {constraints_without_editables_filename}.")
-    check_call(cmd)
+    check_call(cmd, os.environ.copy().update(env))
 
 
 def _pip_list__env_info_json(python: str) -> InstalledDistributions:

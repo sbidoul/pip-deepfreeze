@@ -6,6 +6,7 @@ from typing import Any, List, Optional
 import typer
 from packaging.utils import canonicalize_name
 
+from .pip import Installer
 from .pyproject_toml import load_pyproject_toml
 from .sanity import check_env
 from .sync import sync as sync_operation
@@ -68,6 +69,9 @@ def sync(
             "Can be specified multiple times."
         ),
     ),
+    installer: Installer = typer.Option(
+        "default",
+    ),
 ) -> None:
     """Install/update the environment to match the project requirements.
 
@@ -85,6 +89,7 @@ def sync(
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
         post_sync_commands=post_sync_commands,
+        installer=installer,
     )
 
 

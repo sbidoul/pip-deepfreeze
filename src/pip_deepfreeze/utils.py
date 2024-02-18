@@ -81,9 +81,13 @@ def log_error(msg: str) -> None:
     typer.secho(msg, fg=typer.colors.RED, err=True)
 
 
-def check_call(cmd: Sequence[Union[str, Path]], cwd: Optional[Path] = None) -> int:
+def check_call(
+    cmd: Sequence[Union[str, Path]],
+    cwd: Optional[Path] = None,
+    env: Optional[Dict[str, str]] = None,
+) -> int:
     try:
-        return subprocess.check_call(cmd, cwd=cwd)
+        return subprocess.check_call(cmd, cwd=cwd, env=env)
     except CalledProcessError as e:
         cmd_str = shlex.join(str(item) for item in cmd)
         log_error(f"Error running: {cmd_str}.")
