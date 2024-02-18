@@ -189,7 +189,7 @@ def pip_upgrade_project(
         log_debug(constraints)
     else:
         log_debug(f"with empty {constraints_without_editables_filename}.")
-    check_call(cmd, os.environ.copy().update(env))
+    check_call(cmd, env=dict(os.environ, **env))
 
 
 def _pip_list__env_info_json(python: str) -> InstalledDistributions:
