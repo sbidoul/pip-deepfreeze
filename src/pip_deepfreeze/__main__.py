@@ -70,7 +70,7 @@ def sync(
         ),
     ),
     installer: Installer = typer.Option(
-        "default",
+        "pip",
     ),
 ) -> None:
     """Install/update the environment to match the project requirements.

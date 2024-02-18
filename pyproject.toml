@@ -27,6 +27,7 @@ requires-python = ">=3.8"
 dependencies=[
     "httpx",
     "packaging>=23",
+    "pip>=22.2",
     "tomli ; python_version<'3.11'",
     "typer[all]>=0.3.2",
 ]

@@ -44,7 +44,7 @@ def sync(
     uninstall_unneeded: Optional[bool],
     project_root: Path,
     post_sync_commands: Sequence[str] = (),
-    installer: Installer = Installer.envpip,
+    installer: Installer = Installer.pip,
 ) -> None:
     project_name = get_project_name(python, project_root)
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
