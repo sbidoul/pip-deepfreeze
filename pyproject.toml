@@ -59,9 +59,6 @@ title_format = "{version} ({project_date})"
 
 [tool.ruff]
 fix = true
-select = [
-    "E", "F", "W", "C90", "B", "I", "UP", "RUF"
-]
 exclude = [
     "src/pip_deepfreeze/pip-list-json.py",
     "src/pip_deepfreeze/env-info-json.py",
@@ -70,13 +67,18 @@ exclude = [
 ]
 target-version = "py38"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint]
+select = [
+    "E", "F", "W", "C90", "B", "I", "UP", "RUF"
+]
+
+[tool.ruff.lint.per-file-ignores]
 "__main__.py" = ["B008"]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 13
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["pip_deepfreeze"]
 combine-as-imports = true
 
