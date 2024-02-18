@@ -11,7 +11,7 @@ from pip_deepfreeze.sanity import check_env, get_python_version_info
 
 @pytest.mark.xfail(
     reason=(
-        "check_env succeeds because the pip inversion installed with pip-deepfreeze "
+        "check_env succeeds because the pip version installed with pip-deepfreeze "
         "is compatible with the target environment."
     )
 )
