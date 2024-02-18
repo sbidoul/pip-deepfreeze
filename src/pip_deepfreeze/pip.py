@@ -29,7 +29,7 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .sanity import _get_env_info, get_pip_version
+from .sanity import _get_env_info, get_pip_command, get_pip_version
 from .utils import (
     check_call,
     check_output,
@@ -49,8 +49,7 @@ class PipInspectReport(TypedDict, total=False):
 
 
 class Installer(str, Enum):
-    default = "default"
-    envpip = "env-pip"
+    pip = "pip"
     uv = "uv"
 
 
@@ -59,8 +58,8 @@ def _has_uv() -> bool:
     return bool(importlib.util.find_spec("uv"))
 
 
-def _env_pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
-    return [python, "-m", "pip", "install"], {}
+def _pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
+    return [*get_pip_command(python), "install"], {}
 
 
 def _uv_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
@@ -74,10 +73,8 @@ def _uv_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
 def _install_cmd_and_env(
     installer: Installer, python: str
 ) -> Tuple[List[str], Dict[str, str]]:
-    if installer == Installer.default:
-        installer = Installer.envpip
-    if installer == Installer.envpip:
-        return _env_pip_install_cmd_and_env(python)
+    if installer == Installer.pip:
+        return _pip_install_cmd_and_env(python)
     elif installer == Installer.uv:
         if not _has_uv():
             log_error(
@@ -94,7 +91,7 @@ def pip_upgrade_project(
     constraints_filename: Path,
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
-    installer: Installer = Installer.envpip,
+    installer: Installer = Installer.pip,
 ) -> None:
     """Upgrade a project.
 
@@ -202,7 +199,7 @@ def _pip_list__env_info_json(python: str) -> InstalledDistributions:
 def _pip_inspect(python: str) -> PipInspectReport:
     return cast(
         PipInspectReport,
-        json.loads(check_output([python, "-m", "pip", "--quiet", "inspect"])),
+        json.loads(check_output([*get_pip_command(python), "--quiet", "inspect"])),
     )
 
 
@@ -230,7 +227,7 @@ def pip_list(python: str) -> InstalledDistributions:
 
 def pip_freeze(python: str) -> Iterable[str]:
     """Run pip freeze."""
-    cmd = [python, "-m", "pip", "freeze", "--all"]
+    cmd = [*get_pip_command(python), "freeze", "--all"]
     return check_output(cmd).splitlines()
 
 
@@ -312,7 +309,7 @@ def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
     reqs = list(requirements)
     if not reqs:
         return
-    cmd = [python, "-m", "pip", "uninstall", "--yes", *reqs]
+    cmd = [*get_pip_command(python), "uninstall", "--yes", *reqs]
     check_call(cmd)
 
 

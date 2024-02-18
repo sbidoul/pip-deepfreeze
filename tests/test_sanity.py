@@ -2,12 +2,19 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
 from pip_deepfreeze.sanity import check_env, get_python_version_info
 
 
+@pytest.mark.xfail(
+    reason=(
+        "check_env succeeds because the pip inversion installed with pip-deepfreeze "
+        "is compatible with the target environment."
+    )
+)
 def test_sanity_pip(virtualenv_python, capsys):
     assert check_env(virtualenv_python)
     subprocess.check_call([virtualenv_python, "-m", "pip", "uninstall", "-y", "pip"])

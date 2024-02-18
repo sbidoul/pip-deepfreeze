@@ -341,11 +341,7 @@ pip-df sync
                                      dependencies of the project. If not
                                      specified, ask confirmation.
 
-     --installer [default|env-pip|uv]
-                                     The installer to use. For now the default is
-                                     to use 'pip' that is installed in the target
-                                     environment. To use 'uv', pip-deepfreeze must be
-                                     installed with the 'uv' extra.
+     --installer [pip|uv]
 
      --help                          Show this message and exit.
 
