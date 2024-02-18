@@ -33,6 +33,7 @@ dependencies=[
 dynamic = ["version"]
 
 [project.optional-dependencies]
+"uv" = ["uv"]
 "test" = ["pytest", "pytest-cov", "pytest-xdist", "virtualenv", "setuptools", "wheel"]
 "mypy" = ["mypy", "types-toml", "types-setuptools"]
 

@@ -5,6 +5,7 @@ import typer
 from packaging.utils import NormalizedName
 
 from .pip import (
+    Installer,
     pip_fixup_vcs_direct_urls,
     pip_freeze_dependencies_by_extra,
     pip_uninstall,
@@ -43,6 +44,7 @@ def sync(
     uninstall_unneeded: Optional[bool],
     project_root: Path,
     post_sync_commands: Sequence[str] = (),
+    installer: Installer = Installer.envpip,
 ) -> None:
     project_name = get_project_name(python, project_root)
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
@@ -64,6 +66,7 @@ def sync(
         constraints_path,
         project_root,
         extras=extras,
+        installer=installer,
     )
     # freeze dependencies
     frozen_reqs_by_extra, unneeded_reqs = pip_freeze_dependencies_by_extra(
