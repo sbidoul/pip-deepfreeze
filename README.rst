@@ -71,6 +71,12 @@ Using `pip <https://pypi.org/project/pip/>`__:
    normally expect in an activated virtualenv), but you can ask it to work within
    another environment using the ``--python`` option.
 
+.. note::
+
+   ``pip-deepfreeze`` has experimental support for the `uv
+   <https://github.com/astral-sh/uv>`_ installer. To use it, install with ``pipx install
+   pip-deepfreeze[uv]`` and run ``pip-df sync --installer=uv``.
+
 Quick start
 -----------
 
