@@ -1,3 +1,15 @@
+1.7.0 (2024-02-22)
+==================
+
+Features
+--------
+
+- Support environments where pip is not installed. (`#98 <https://github.com/sbidoul/pip-deepfreeze/issues/98>`_)
+- Add experimental support for `uv <https://github.com/astral-sh/uv>`_ as the installation
+  command. A new ``--installer`` option is available to select the installer
+  to use. (`#135 <https://github.com/sbidoul/pip-deepfreeze/issues/135>`_)
+
+
 1.6.0 (2024-01-10)
 ==================
 
