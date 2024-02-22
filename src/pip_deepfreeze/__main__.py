@@ -8,7 +8,7 @@ from packaging.utils import canonicalize_name
 
 from .pip import Installer
 from .pyproject_toml import load_pyproject_toml
-from .sanity import check_env
+from .sanity import check_env, get_python_version_info
 from .sync import sync as sync_operation
 from .tree import tree as tree_operation
 from .utils import comma_split, increase_verbosity, log_debug, log_error
@@ -81,6 +81,10 @@ def sync(
     update of dependencies to to the latest version that matches
     constraints. Optionally uninstall unneeded dependencies.
     """
+    if installer == Installer.uv and get_python_version_info(ctx.obj.python) < (3, 7):
+        log_error("The 'uv' installer requires Python 3.7 or later.")
+        raise typer.Exit(1)
+
     sync_operation(
         ctx.obj.python,
         upgrade_all,
