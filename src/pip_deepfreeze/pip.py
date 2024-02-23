@@ -3,6 +3,7 @@ import json
 import os
 import shlex
 import sys
+import textwrap
 from enum import Enum
 from functools import lru_cache
 from importlib.resources import path as resource_path
@@ -186,7 +187,7 @@ def pip_upgrade_project(
     ).strip()
     if constraints:
         log_debug(f"with {constraints_without_editables_filename}:")
-        log_debug(constraints)
+        log_debug(textwrap.indent(constraints, prefix="  "))
     else:
         log_debug(f"with empty {constraints_without_editables_filename}.")
     check_call(cmd, env=dict(os.environ, **env))
