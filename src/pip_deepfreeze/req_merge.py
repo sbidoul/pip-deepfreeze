@@ -10,7 +10,7 @@ from .utils import HttpFetcher, log_error
 
 
 def prepare_frozen_reqs_for_upgrade(
-    frozen_filenames: Iterable[Path],
+    frozen_requirements_paths: Iterable[Path],
     constraints_path: Path,
     upgrade_all: bool = False,
     to_upgrade: Optional[Iterable[str]] = None,
@@ -43,10 +43,10 @@ def prepare_frozen_reqs_for_upgrade(
                     continue
                 constraints_reqs.append((req_name, in_req))
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
-    for frozen_filename in frozen_filenames:
-        if frozen_filename.is_file() and not upgrade_all:
+    for frozen_requirements_path in frozen_requirements_paths:
+        if frozen_requirements_path.is_file() and not upgrade_all:
             for frozen_req in parse(
-                str(frozen_filename), recurse=True, reqs_only=True, strict=True
+                str(frozen_requirements_path), recurse=True, reqs_only=True, strict=True
             ):
                 assert isinstance(frozen_req, RequirementLine)
                 req_name = get_req_name(frozen_req.requirement)
