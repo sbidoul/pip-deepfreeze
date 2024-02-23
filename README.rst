@@ -119,7 +119,7 @@ To update one or more dependencies to the latest allowed version, run:
 If you need to add some dependencies from VCS references (e.g. when a library
 with a patch you need is not available as a release on a package index), add
 the dependency as usual in your project, then add the VCS reference to a file
-named ``requirements.txt.in`` like this::
+named ``constraints.txt`` like this::
 
    DEPENDENCYNAME @ git+https://g.c/org/project@branch
 
@@ -129,7 +129,7 @@ reference pinned at the exact commit that was installed (you need pip version
 the same branch, simply use ``pip-df sync --update DEPENDENCYNAME``.
 
 When, later again, your branch is merged upstream and the project has published
-a release, remove the line from ``requirements.txt.in`` and run ``pip-df sync
+a release, remove the line from ``constraints.txt`` and run ``pip-df sync
 --update DEPENDENCYNAME`` to update to the latest released version.
 
 How to
@@ -173,11 +173,11 @@ Refreshing all pinned dependencies.
    ``pip-df sync --update-all``. This is equivalent to removing
    ``requirements.txt`` then running ``pip-df sync``. This is also roughly
    equivalent to reinstalling in an empty virtualenv with ``pip install -e . -c
-   requirements.txt.in`` then running ``pip freeze > requirements.txt``.
+   constraints.txt`` then running ``pip freeze > requirements.txt``.
 
 Using another package index than PyPI.
 
-   Create a file named ``requirements.txt.in`` in your project root, and add
+   Create a file named ``constraints.txt`` in your project root, and add
    pip options to it, such as ``--extra-index-url`` or ``--find-links``. You
    can add any option that `pip supports in requirements files
    <https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format>`_.
@@ -189,14 +189,14 @@ Installing dependencies from VCS.
    it. Assume for instance your project depends on the ``packaging`` library
    and you want to install a pull request you made to it. To do so, make sure
    ``packaging`` is declared as a regular dependency of your project. Then
-   add the VCS reference in ``requirements.txt.in`` like so::
+   add the VCS reference in ``constraints.txt`` like so::
 
       packaging @ git+https://github.com/you/packaging@your-branch
 
    Then run ``pip-df sync --update packaging`` to install from the branch and
    pin the exact commit in ``requirements.txt`` for reproducibility. When
    upstream merges your PR and cuts a release, you can simply remove the line
-   from ``requirements.txt.in`` and run ``pip-df sync --update packaging`` to
+   from ``constraints.txt`` and run ``pip-df sync --update packaging`` to
    refresh to the latest released version.
 
 Working with extras.
@@ -212,16 +212,16 @@ Working with extras.
 FAQ
 ---
 
-What should I put in ``requirements.txt.in``? Should I add all my dependencies
+What should I put in ``constraints.txt``? Should I add all my dependencies
 there?
 
-   ``requirements.txt.in`` is optional. The dependencies of your project must be
+   ``constraints.txt`` is optional. The dependencies of your project must be
    declared primarily in ``pyproject.toml`` (or the legacy ``setup.py/setup.cfg``).
-   ``requirements.txt.in`` may contain additional constraints if needed, such as version
+   ``constraints.txt`` may contain additional constraints if needed, such as version
    constraints on indirect dependencies that you don't control, or VCS links for
    dependencies that you need to install from VCS source.
 
-I have added a constraint in ``requirements.txt.in`` but ``pip-df sync`` does
+I have added a constraint in ``constraints.txt`` but ``pip-df sync`` does
 not honor it. What is going on?
 
    ``pip-df sync`` always gives priority to versions pinned in ``requirements.txt``,
@@ -243,7 +243,7 @@ not honor it. What is going on?
 How can I pass options to pip?
 
    The most reliable and repeatable way to pass options to pip is to add them
-   in ``requirements.txt.in``. The pip documentation lists `options that are
+   in ``constraints.txt``. The pip documentation lists `options that are
    allowed in requirements files
    <https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format>`_.
    Global options can also be set in the pip configuration file or passed via
@@ -321,7 +321,7 @@ pip-df sync
 
      Install/reinstall the project. Install/update dependencies to the latest
      allowed version according to pinned dependencies in requirements.txt or
-     constraints in requirements.txt.in. On demand update of dependencies to to
+     constraints in constraints.txt. On demand update of dependencies to to
      the latest version that matches constraints. Optionally uninstall unneeded
      dependencies.
 
