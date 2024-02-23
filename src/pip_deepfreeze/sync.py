@@ -53,6 +53,7 @@ def sync(
     merged_constraints_path = get_temp_path_in_dir(
         dir=project_root, prefix="requirements.", suffix=".txt.df"
     )
+    installer_options = []
     with merged_constraints_path.open(mode="w", encoding="utf-8") as constraints:
         for req_line in prepare_frozen_reqs_for_upgrade(
             make_frozen_requirements_paths(project_root, extras),
@@ -60,13 +61,17 @@ def sync(
             upgrade_all,
             to_upgrade,
         ):
-            print(req_line, file=constraints)
+            if isinstance(req_line, OptionsLine):
+                installer_options.extend(req_line.options)
+            else:
+                print(req_line.raw_line, file=constraints)
     pip_upgrade_project(
         python,
         merged_constraints_path,
         project_root,
         extras=extras,
         installer=installer,
+        installer_options=installer_options,
     )
     # freeze dependencies
     frozen_reqs_by_extra, unneeded_reqs = pip_freeze_dependencies_by_extra(
@@ -90,8 +95,8 @@ def sync(
                         print(parsed_req_line.raw_line, file=f)
             # output frozen dependencies of project,
             # sorted by canonical requirement name
-            for req_line in sorted(frozen_reqs, key=_req_line_sort_key):
-                print(normalize_req_line(req_line), file=f)
+            for frozen_req in sorted(frozen_reqs, key=_req_line_sort_key):
+                print(normalize_req_line(frozen_req), file=f)
     # uninstall unneeded dependencies, if asked to do so
     unneeded_req_names = sorted(
         set(str(s) for s in get_req_names(unneeded_reqs))

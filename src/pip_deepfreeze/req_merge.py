@@ -1,10 +1,9 @@
-import shlex
 from pathlib import Path
 from typing import Iterable, Iterator, Optional
 
 from packaging.utils import canonicalize_name
 
-from .req_file_parser import OptionsLine, RequirementLine, parse
+from .req_file_parser import OptionsLine, ParsedLine, RequirementLine, parse
 from .req_parser import get_req_name
 from .utils import HttpFetcher, log_error
 
@@ -14,13 +13,15 @@ def prepare_frozen_reqs_for_upgrade(
     constraints_path: Path,
     upgrade_all: bool = False,
     to_upgrade: Optional[Iterable[str]] = None,
-) -> Iterator[str]:
+) -> Iterator[ParsedLine]:
     """Merge frozen requirements and constraints.
 
     pip options are taken from the constraints file. All frozen
     requirements are preserved, unless an upgrade is explicitly
     requested via ``upgrade_all`` or ``to_upgrade``. Other constraints
     not in frozen requirements are added.
+
+    Yield tuples of (req_line, is_option).
     """
     to_upgrade_set = {canonicalize_name(r) for r in to_upgrade or []}
     constraints_reqs = []
@@ -35,7 +36,7 @@ def prepare_frozen_reqs_for_upgrade(
             http_fetcher=HttpFetcher(),
         ):
             if isinstance(constraint_req, OptionsLine):
-                yield shlex.join(constraint_req.options)
+                yield constraint_req
             elif isinstance(constraint_req, RequirementLine):
                 constraint_req_name = get_req_name(constraint_req.requirement)
                 if not constraint_req_name:
@@ -60,8 +61,8 @@ def prepare_frozen_reqs_for_upgrade(
                 if constraint_req_name in to_upgrade_set:
                     continue
                 frozen_reqs_names.add(constraint_req_name)
-                yield frozen_req.raw_line
+                yield frozen_req
     # 3. emit constraints requirements that have not been emitted as frozen reqs
     for constraint_req_name, constraint_req in constraints_reqs:
         if constraint_req_name not in frozen_reqs_names:
-            yield constraint_req.raw_line
+            yield constraint_req

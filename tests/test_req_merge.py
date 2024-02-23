@@ -51,7 +51,8 @@ def test_merge(in_reqs, frozen_reqs, upgrade_all, to_upgrade, expected, tmp_path
     frozen_filename.write_text("\n".join(frozen_reqs))
     assert (
         set(
-            prepare_frozen_reqs_for_upgrade(
+            r.raw_line
+            for r in prepare_frozen_reqs_for_upgrade(
                 [frozen_filename], constraints_filename, upgrade_all, to_upgrade
             )
         )
@@ -64,7 +65,10 @@ def test_merge_missing_in(tmp_path):
     frozen_filename = tmp_path / "requirements.txt"
     frozen_filename.write_text("pkga==1.0.0")
     assert set(
-        prepare_frozen_reqs_for_upgrade([frozen_filename], constraints_filename)
+        r.raw_line
+        for r in prepare_frozen_reqs_for_upgrade(
+            [frozen_filename], constraints_filename
+        )
     ) == {"pkga==1.0.0"}
 
 
@@ -73,7 +77,10 @@ def test_merge_missing_frozen(tmp_path):
     constraints_filename.write_text("pkga")
     frozen_filename = tmp_path / "requirements.txt"
     assert set(
-        prepare_frozen_reqs_for_upgrade([frozen_filename], constraints_filename)
+        r.raw_line
+        for r in prepare_frozen_reqs_for_upgrade(
+            [frozen_filename], constraints_filename
+        )
     ) == {"pkga"}
 
 
@@ -94,7 +101,12 @@ def test_req_merge_unnamed_frozen(tmp_path, capsys):
     frozen_filename = tmp_path / "requirements.txt"
     frozen_filename.write_text("-e .")
     assert (
-        set(prepare_frozen_reqs_for_upgrade([frozen_filename], constraints_filename))
+        set(
+            r.raw_line
+            for r in prepare_frozen_reqs_for_upgrade(
+                [frozen_filename], constraints_filename
+            )
+        )
         == set()
     )
     captured = capsys.readouterr()
@@ -108,5 +120,8 @@ def test_req_merge_named_editable(tmp_path):
     )
     frozen_filename = tmp_path / "requirements.txt"
     assert set(
-        prepare_frozen_reqs_for_upgrade([frozen_filename], constraints_filename)
-    ) == set(["-e git+https://github.com/pypa/pip-test-package#egg=pip-test-package"])
+        r.raw_line
+        for r in prepare_frozen_reqs_for_upgrade(
+            [frozen_filename], constraints_filename
+        )
+    ) == {"-e git+https://github.com/pypa/pip-test-package#egg=pip-test-package"}
