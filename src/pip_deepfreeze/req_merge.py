@@ -27,39 +27,41 @@ def prepare_frozen_reqs_for_upgrade(
     frozen_reqs_names = set()
     # 1. emit options from constraints_path, collect in_reqs
     if constraints_path.is_file():
-        for in_req in parse(
+        for constraint_req in parse(
             str(constraints_path),
             recurse=True,
             reqs_only=False,
             strict=True,
             http_fetcher=HttpFetcher(),
         ):
-            if isinstance(in_req, OptionsLine):
-                yield shlex.join(in_req.options)
-            elif isinstance(in_req, RequirementLine):
-                req_name = get_req_name(in_req.requirement)
-                if not req_name:
-                    log_error(f"Ignoring unnamed constraint {in_req.raw_line!r}.")
+            if isinstance(constraint_req, OptionsLine):
+                yield shlex.join(constraint_req.options)
+            elif isinstance(constraint_req, RequirementLine):
+                constraint_req_name = get_req_name(constraint_req.requirement)
+                if not constraint_req_name:
+                    log_error(
+                        f"Ignoring unnamed constraint {constraint_req.raw_line!r}."
+                    )
                     continue
-                constraints_reqs.append((req_name, in_req))
-    # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
+                constraints_reqs.append((constraint_req_name, constraint_req))
+    # 2. emit existing frozen requirements unless upgrade_all or it is in to_upgrade
     for frozen_requirements_path in frozen_requirements_paths:
         if frozen_requirements_path.is_file() and not upgrade_all:
             for frozen_req in parse(
                 str(frozen_requirements_path), recurse=True, reqs_only=True, strict=True
             ):
                 assert isinstance(frozen_req, RequirementLine)
-                req_name = get_req_name(frozen_req.requirement)
-                if not req_name:
+                constraint_req_name = get_req_name(frozen_req.requirement)
+                if not constraint_req_name:
                     log_error(
                         f"Ignoring unnamed frozen requirement {frozen_req.raw_line!r}."
                     )
                     continue
-                if req_name in to_upgrade_set:
+                if constraint_req_name in to_upgrade_set:
                     continue
-                frozen_reqs_names.add(req_name)
+                frozen_reqs_names.add(constraint_req_name)
                 yield frozen_req.raw_line
-    # 3. emit in_reqs that have not been emitted as frozen reqs
-    for req_name, in_req in constraints_reqs:
-        if req_name not in frozen_reqs_names:
-            yield in_req.raw_line
+    # 3. emit constraints requirements that have not been emitted as frozen reqs
+    for constraint_req_name, constraint_req in constraints_reqs:
+        if constraint_req_name not in frozen_reqs_names:
+            yield constraint_req.raw_line
