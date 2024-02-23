@@ -11,7 +11,7 @@ from .utils import HttpFetcher, log_error
 
 def prepare_frozen_reqs_for_upgrade(
     frozen_filenames: Iterable[Path],
-    in_filename: Path,
+    constraints_path: Path,
     upgrade_all: bool = False,
     to_upgrade: Optional[Iterable[str]] = None,
 ) -> Iterator[str]:
@@ -23,12 +23,12 @@ def prepare_frozen_reqs_for_upgrade(
     not in frozen requirements are added.
     """
     to_upgrade_set = {canonicalize_name(r) for r in to_upgrade or []}
-    in_reqs = []
+    constraints_reqs = []
     frozen_reqs = set()
-    # 1. emit options from in_filename, collect in_reqs
-    if in_filename.is_file():
+    # 1. emit options from constraints_path, collect in_reqs
+    if constraints_path.is_file():
         for in_req in parse(
-            str(in_filename),
+            str(constraints_path),
             recurse=True,
             reqs_only=False,
             strict=True,
@@ -41,7 +41,7 @@ def prepare_frozen_reqs_for_upgrade(
                 if not req_name:
                     log_error(f"Ignoring unnamed constraint {in_req.raw_line!r}.")
                     continue
-                in_reqs.append((req_name, in_req))
+                constraints_reqs.append((req_name, in_req))
     # 2. emit frozen_reqs unless upgrade_all or it is in to_upgrade
     for frozen_filename in frozen_filenames:
         if frozen_filename.is_file() and not upgrade_all:
@@ -60,6 +60,6 @@ def prepare_frozen_reqs_for_upgrade(
                 frozen_reqs.add(req_name)
                 yield frozen_req.raw_line
     # 3. emit in_reqs that have not been emitted as frozen reqs
-    for req_name, in_req in in_reqs:
+    for req_name, in_req in constraints_reqs:
         if req_name not in frozen_reqs:
             yield in_req.raw_line
