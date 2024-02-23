@@ -182,16 +182,16 @@ def run_commands(commands: Sequence[str], cwd: Path, command_type: str) -> None:
             )
 
 
-def make_requirements_path(project_root: Path, extra: Optional[str]) -> Path:
+def make_frozen_requirements_path(project_root: Path, extra: Optional[str]) -> Path:
     if extra:
         return project_root / f"requirements-{extra}.txt"
     else:
         return project_root / "requirements.txt"
 
 
-def make_requirements_paths(
+def make_frozen_requirements_paths(
     project_root: Path, extras: Sequence[str]
 ) -> Iterator[Path]:
-    yield make_requirements_path(project_root, None)
+    yield make_frozen_requirements_path(project_root, None)
     for extra in extras:
-        yield make_requirements_path(project_root, extra)
+        yield make_frozen_requirements_path(project_root, extra)
