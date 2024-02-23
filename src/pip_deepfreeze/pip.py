@@ -92,6 +92,7 @@ def pip_upgrade_project(
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
     installer: Installer = Installer.pip,
+    installer_options: Optional[List[str]] = None,
 ) -> None:
     """Upgrade a project.
 
@@ -164,6 +165,8 @@ def pip_upgrade_project(
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
     cmd, env = _install_cmd_and_env(installer, python)
+    if installer_options:
+        cmd.extend(installer_options)
     cmd.extend(
         [
             "-c",
