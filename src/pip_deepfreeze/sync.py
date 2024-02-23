@@ -50,10 +50,10 @@ def sync(
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
     requirements_in = project_root / "requirements.txt.in"
     # upgrade project and its dependencies, if needed
-    constraints_path = get_temp_path_in_dir(
+    merged_constraints_path = get_temp_path_in_dir(
         dir=project_root, prefix="requirements.", suffix=".txt.df"
     )
-    with constraints_path.open(mode="w", encoding="utf-8") as constraints:
+    with merged_constraints_path.open(mode="w", encoding="utf-8") as constraints:
         for req_line in prepare_frozen_reqs_for_upgrade(
             make_requirements_paths(project_root, extras),
             requirements_in,
@@ -63,7 +63,7 @@ def sync(
             print(req_line, file=constraints)
     pip_upgrade_project(
         python,
-        constraints_path,
+        merged_constraints_path,
         project_root,
         extras=extras,
         installer=installer,
