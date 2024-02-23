@@ -24,7 +24,7 @@ def prepare_frozen_reqs_for_upgrade(
     """
     to_upgrade_set = {canonicalize_name(r) for r in to_upgrade or []}
     constraints_reqs = []
-    frozen_reqs = set()
+    frozen_reqs_names = set()
     # 1. emit options from constraints_path, collect in_reqs
     if constraints_path.is_file():
         for in_req in parse(
@@ -57,9 +57,9 @@ def prepare_frozen_reqs_for_upgrade(
                     continue
                 if req_name in to_upgrade_set:
                     continue
-                frozen_reqs.add(req_name)
+                frozen_reqs_names.add(req_name)
                 yield frozen_req.raw_line
     # 3. emit in_reqs that have not been emitted as frozen reqs
     for req_name, in_req in constraints_reqs:
-        if req_name not in frozen_reqs:
+        if req_name not in frozen_reqs_names:
             yield in_req.raw_line
