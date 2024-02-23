@@ -95,15 +95,13 @@ def check_env(python: str) -> bool:
         (
             # target pip does not have pip inspect: we need pkg_resources to
             # inspect with env-info-json.py
-            pip_version
-            and Version(pip_version) < Version("22.2")
+            pip_version and Version(pip_version) < Version("22.2")
         )
         or (
             # pip not installed in target python env and local pip is not compatible
             # with target python, so we'll need pkg_resources to inspect with
             # env-info-json.py
-            not pip_version
-            and not local_pip_compatible(python)
+            not pip_version and not local_pip_compatible(python)
         )
     ):
         setuptools_install_cmd = shlex.join(
