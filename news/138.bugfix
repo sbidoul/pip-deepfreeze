@@ -1,3 +1,0 @@
-Improve compatibility with uv, by passing installer options via command line instead of
-requirements file (this does not change how options are set by the user in
-``requirements.txt.in``).

@@ -1,3 +1,23 @@
+1.8.0 (2024-02-23)
+==================
+
+Features
+--------
+
+- Read constraints from ``constraints.txt`` (and fallback to ``requirements.txt.in`` if
+  it is absent), as this name better matches the purpose of the file. (`#59
+  <https://github.com/sbidoul/pip-deepfreeze/issues/59>`_)
+
+
+Bugfixes
+--------
+
+- Improve compatibility with ``uv``, by passing installer options via command line instead
+  of requirements file (this does not change how options are set by the user in
+  ``constraints.txt`` or ``requirements.txt.in``). (`#138
+  <https://github.com/sbidoul/pip-deepfreeze/issues/138>`_)
+
+
 1.7.0 (2024-02-22)
 ==================
 
