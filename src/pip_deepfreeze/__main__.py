@@ -5,6 +5,7 @@ from typing import Any, List, Optional
 
 import typer
 from packaging.utils import canonicalize_name
+from packaging.version import Version
 
 from .pip import Installer
 from .pyproject_toml import load_pyproject_toml
@@ -173,6 +174,12 @@ def callback(
         resolve_path=True,
         help="The project root directory.",
     ),
+    min_version: Optional[str] = typer.Option(
+        None,
+        "--min-version",
+        metavar="VERSION",
+        help="Minimum version of pip-deepfreeze required.",
+    ),
     version: bool = typer.Option(
         None,
         "--version",
@@ -183,6 +190,14 @@ def callback(
     verbose: bool = typer.Option(False, "--verbose", "-v", show_default=False),
 ) -> None:
     """A simple pip freeze workflow for Python application developers."""
+    if min_version:
+        current_version = importlib.metadata.version("pip-deepfreeze")
+        if Version(current_version) < Version(min_version):
+            log_error(
+                f"pip-deepfreeze {min_version} or later is required. "
+                f"Current version is {current_version}."
+            )
+            raise typer.Exit(1)
     # handle verbosity/quietness
     if verbose:
         increase_verbosity()
