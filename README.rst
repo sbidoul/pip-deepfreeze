@@ -298,6 +298,7 @@ Global options
                                    python environment to work on. Defaults to the
                                    'py' or 'python' executable found in PATH.
      -r, --project-root DIRECTORY  The project root directory.  [default: .]
+     --min-version      VERSION    Minimum version of pip-deepfreeze required.
      --version                     Show the version and exit.
      -v, --verbose
      --install-completion          Install completion for the current shell.
