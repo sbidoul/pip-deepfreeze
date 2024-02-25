@@ -8,7 +8,7 @@ import pytest
 
 
 @pytest.fixture
-def virtualenv_python(tmp_path):
+def virtualenv_python(tmp_path, testpkgs):
     """Return a python executable path within an isolated virtualenv, using a pip
     version that has the new resolver."""
     venv = tmp_path / "venv"
@@ -18,7 +18,21 @@ def virtualenv_python(tmp_path):
     else:
         python = venv / "bin" / "python"
     # use latest pip
-    subprocess.check_call([str(python), "-m", "pip", "install", "-U", "pip"])
+    subprocess.check_call(
+        [
+            str(python),
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--find-links",
+            testpkgs,
+            "-U",
+            "pip",
+            "setuptools",
+            "wheel",
+        ]
+    )
     return str(python)
 
 
@@ -70,26 +84,6 @@ def testpkgs(tmp_path_factory):
 
     testpkgs_dir = tmp_path_factory.mktemp("testpkgs")
 
-    for testpkg_kw in testpkgs_kw:
-        setup_py_dir = tmp_path_factory.mktemp("testpkg")
-        (setup_py_dir / "setup.py").write_text(
-            "from setuptools import setup; setup(**{!r})".format(testpkg_kw)
-        )
-        (setup_py_dir / "setup.cfg").write_text("[bdist_wheel]\nuniversal = 1")
-        subprocess.check_call(
-            [
-                sys.executable,
-                "-m",
-                "pip",
-                "wheel",
-                "--no-build-isolation",
-                "--no-deps",
-                str(setup_py_dir),
-                "--wheel-dir",
-                str(testpkgs_dir),
-            ],
-        )
-
     # Download some wheels so we can build pyproject-based packages without network.
     subprocess.check_call(
         [
@@ -103,5 +97,27 @@ def testpkgs(tmp_path_factory):
             str(testpkgs_dir),
         ]
     )
+
+    for testpkg_kw in testpkgs_kw:
+        setup_py_dir = tmp_path_factory.mktemp("testpkg")
+        (setup_py_dir / "setup.py").write_text(
+            "from setuptools import setup; setup(**{!r})".format(testpkg_kw)
+        )
+        (setup_py_dir / "setup.cfg").write_text("[bdist_wheel]\nuniversal = 1")
+        subprocess.check_call(
+            [
+                sys.executable,
+                "-m",
+                "pip",
+                "wheel",
+                "--no-index",
+                "--find-links",
+                str(testpkgs_dir),
+                "--no-deps",
+                str(setup_py_dir),
+                "--wheel-dir",
+                str(testpkgs_dir),
+            ],
+        )
 
     return testpkgs_dir.as_uri()

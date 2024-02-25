@@ -30,7 +30,7 @@ jobs:
             python-version: "3.8"
             python: python
           - os: "windows-latest"
-            python-version: "3.11"
+            python-version: "3.12"
             python: python
           # macos
           - os: "macos-latest"
@@ -43,7 +43,7 @@ jobs:
             python-version: "3.8"
             python: python
           - os: "macos-latest"
-            python-version: "3.11"
+            python-version: "3.12"
             python: python
           # ubuntu
           - os: ubuntu-20.04
@@ -66,6 +66,9 @@ jobs:
             python: python
           - os: ubuntu-latest
             python-version: "3.11"
+            python: python
+          - os: ubuntu-latest
+            python-version: "3.12"
             python: python
     steps:
       - uses: "actions/checkout@v3"

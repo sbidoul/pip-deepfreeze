@@ -31,6 +31,10 @@ def test_sanity_pip_version(virtualenv_python, capsys):
     assert "works best with pip>=20.1" in captured.err
 
 
+@pytest.mark.skipif(
+    sys.version_info >= (3, 12),
+    reason="All pip versions that support Python 3.12 have pip inspect",
+)
 def test_sanity_pkg_resources(virtualenv_python, capsys):
     assert check_env(virtualenv_python)
     subprocess.check_call([virtualenv_python, "-m", "pip", "install", "-q", "pip<22.2"])
@@ -43,11 +47,19 @@ def test_sanity_pkg_resources(virtualenv_python, capsys):
     assert "pkg_resources is not available" in captured.err
 
 
+@pytest.mark.skipif(
+    sys.version_info >= (3, 12),
+    reason=(
+        "All pip versions that support Python 3.12 have do not do setup.py install "
+        "so checking for the presence of wheel is not required."
+    ),
+)
 def test_sanity_wheel(virtualenv_python, capsys):
     assert check_env(virtualenv_python)
     subprocess.check_call([virtualenv_python, "-m", "pip", "install", "-q", "pip<23.1"])
     subprocess.check_call([virtualenv_python, "-m", "pip", "uninstall", "-qy", "wheel"])
-    # wheel is not strictly required, although pip works better with it
+    # wheel is not strictly required, although older pip versions did work better with
+    # it. Recent pip versions do not use setup.py install so wheel is not required.
     assert check_env(virtualenv_python)
     captured = capsys.readouterr()
     assert "wheel is not available" in captured.err
