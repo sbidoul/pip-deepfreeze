@@ -23,7 +23,7 @@ the dependencies of a Python *application* in a virtual environment.
 
 This includes:
 
-- installing the project and its dependencies,
+- installing the project in editable mode, and its dependencies,
 - updating the environment with new dependencies as the project evolves,
 - uninstalling unused dependencies,
 - refreshing dependencies,
@@ -33,7 +33,7 @@ This includes:
 
 A few characteristics of this project:
 
-- It is easy to use.
+- It is easy to use, with a single ``pip-df sync`` command.
 - It is fast, with very little overhead on top of a regular
   ``pip install`` + ``pip freeze``.
 - It relies on the documented ``pip`` command line interface and its
@@ -45,6 +45,8 @@ A few characteristics of this project:
 - It has first class support for dependencies specified as VCS references.
 - It is written in Python 3.8+, yet works in any virtual environment
   that has ``pip`` installed, including python 2 and python 3.6 and 3.7.
+- It works with pip-less virtual environments created with ``python3 -m venv
+  --without-pip``.
 - It is reasonably small and simple, with good test coverage and is hopefully
   easy to maintain.
 
