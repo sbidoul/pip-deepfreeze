@@ -73,12 +73,6 @@ Using `pip <https://pypi.org/project/pip/>`__:
    normally expect in an activated virtualenv), but you can ask it to work within
    another environment using the ``--python`` option.
 
-.. note::
-
-   ``pip-deepfreeze`` has experimental support for the `uv
-   <https://github.com/astral-sh/uv>`_ installer. To use it, install with ``pipx install
-   pip-deepfreeze[uv]`` and run ``pip-df sync --installer=uv``.
-
 Quick start
 -----------
 
@@ -108,6 +102,12 @@ You can then add this ``requirement.txt`` to version control, and other people
 collaborating on the project can install the project and its known good
 dependencies using ``pip-df sync`` (or ``pip install -r requirements.txt -e .``
 in a fresh virtualenv).
+
+.. note::
+
+   ``pip-deepfreeze`` has experimental support for the `uv
+   <https://github.com/astral-sh/uv>`_ installer. To use it, run ``pip-df sync
+   --installer=uv``.
 
 When you add or remove dependencies of your project, run ``pip-df sync`` again
 to update your environment and ``requirements.txt``.

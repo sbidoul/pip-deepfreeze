@@ -1,11 +1,9 @@
-import importlib.util
 import json
 import os
 import shlex
 import sys
 import textwrap
 from enum import Enum
-from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, TypedDict, cast
 
@@ -30,7 +28,12 @@ from .req_file_parser import (
     parse as parse_req_file,
 )
 from .req_parser import get_req_name
-from .sanity import _get_env_info, get_pip_command, get_pip_version
+from .sanity import (
+    _get_env_info,
+    get_pip_command,
+    get_pip_version,
+    get_python_version_info,
+)
 from .utils import (
     check_call,
     check_output,
@@ -54,11 +57,6 @@ class Installer(str, Enum):
     uv = "uv"
 
 
-@lru_cache
-def _has_uv() -> bool:
-    return bool(importlib.util.find_spec("uv"))
-
-
 def _pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
     return [*get_pip_command(python), "install"], {}
 
@@ -77,11 +75,8 @@ def _install_cmd_and_env(
     if installer == Installer.pip:
         return _pip_install_cmd_and_env(python)
     elif installer == Installer.uv:
-        if not _has_uv():
-            log_error(
-                "The 'uv' installer was requested but it is not available. "
-                "Please install pip-deepfreeze with the 'uv' extra to use it."
-            )
+        if get_python_version_info(python) < (3, 7):
+            log_error("The 'uv' installer requires Python 3.7 or later.")
             raise typer.Exit(1)
         return _uv_install_cmd_and_env(python)
     raise NotImplementedError(f"Installer {installer} is not implemented.")
