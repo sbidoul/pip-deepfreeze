@@ -80,7 +80,7 @@ Using `pip <https://pypi.org/project/pip/>`__:
 Quick start
 -----------
 
-.. image:: https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/a148bcce2920025a30bcc16cfb6dbc2b9a1ca68d/docs/synopsis.png
+.. image:: https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/2fc2fa9804a53fe5041a43d4f9f609f63807c723/docs/synopsis.png
    :alt: pip-deepfreeze synopsis
 
 Make sure your application declares its direct dependencies in `pyproject.toml
