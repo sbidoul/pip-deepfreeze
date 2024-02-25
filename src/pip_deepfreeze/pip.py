@@ -6,7 +6,6 @@ import sys
 import textwrap
 from enum import Enum
 from functools import lru_cache
-from importlib.resources import path as resource_path
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, TypedDict, cast
 
@@ -14,6 +13,7 @@ import typer
 from packaging.utils import NormalizedName
 from packaging.version import Version
 
+from .compat import importlib_resources
 from .installed_dist import (
     EnvInfoInstalledDistribution,
     InstalledDistributions,
@@ -194,7 +194,9 @@ def pip_upgrade_project(
 
 
 def _pip_list__env_info_json(python: str) -> InstalledDistributions:
-    with resource_path("pip_deepfreeze", "pip-list-json.py") as pip_list_json:
+    with importlib_resources.as_file(
+        importlib_resources.files("pip_deepfreeze").joinpath("pip-list-json.py")
+    ) as pip_list_json:
         json_dists = json.loads(check_output([python, str(pip_list_json)]))
         dists = [EnvInfoInstalledDistribution(json_dist) for json_dist in json_dists]
         return {dist.name: dist for dist in dists}
@@ -325,7 +327,7 @@ def pip_fixup_vcs_direct_urls(python: str) -> None:
     # caches wheels that are built from a git ref that is not a commit
     # (it could cache it under a modified link where the git ref is replaced
     # by the commit id).
-    with resource_path(
-        "pip_deepfreeze", "fixup-vcs-direct-urls.py"
+    with importlib_resources.as_file(
+        importlib_resources.files("pip_deepfreeze").joinpath("fixup-vcs-direct-urls.py")
     ) as fixup_vcs_direct_urls:
         check_call([python, fixup_vcs_direct_urls])

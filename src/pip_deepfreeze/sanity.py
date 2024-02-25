@@ -4,12 +4,12 @@ import subprocess
 import sys
 from functools import lru_cache
 from importlib.metadata import version
-from importlib.resources import path as resource_path
 from typing import Optional, Tuple, TypedDict, cast
 
 import typer
 from packaging.version import Version
 
+from .compat import importlib_resources
 from .utils import log_error, log_warning
 
 
@@ -26,7 +26,9 @@ class EnvInfo(TypedDict, total=False):
 
 @lru_cache
 def _get_env_info(python: str) -> EnvInfo:
-    with resource_path("pip_deepfreeze", "env-info-json.py") as env_info_json_script:
+    with importlib_resources.as_file(
+        importlib_resources.files("pip_deepfreeze").joinpath("env-info-json.py")
+    ) as env_info_json_script:
         try:
             env_info_json = subprocess.check_output(
                 [python, str(env_info_json_script)], text=True
