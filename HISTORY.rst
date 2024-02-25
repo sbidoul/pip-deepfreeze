@@ -1,5 +1,17 @@
-1.8.0 (2024-02-23)
-==================
+2.0 (2024-02-25)
+================
+
+Features
+--------
+
+- Allow to declare minimum pip-deepfreeze version in ``pyproject.toml``.
+  ``pip-deepfreeze`` verifies its version according to ``tool.pip-deepfreeze.min_version``,
+  so a project can ensure all contributors have the minmum required version. (`#95 <https://github.com/sbidoul/pip-deepfreeze/issues/95>`_)
+- Always install ``uv`` as a dependency. Consequently, the ``uv`` extra is removed. (`#143 <https://github.com/sbidoul/pip-deepfreeze/issues/143>`_)
+
+
+1.8 (2024-02-23)
+================
 
 Features
 --------
@@ -18,8 +30,8 @@ Bugfixes
   <https://github.com/sbidoul/pip-deepfreeze/issues/138>`_)
 
 
-1.7.0 (2024-02-22)
-==================
+1.7 (2024-02-22)
+================
 
 Features
 --------
@@ -30,8 +42,8 @@ Features
   to use. (`#135 <https://github.com/sbidoul/pip-deepfreeze/issues/135>`_)
 
 
-1.6.0 (2024-01-10)
-==================
+1.6 (2024-01-10)
+================
 
 Bugfixes
 --------
@@ -52,8 +64,8 @@ Features
   (`#132 <https://github.com/sbidoul/pip-deepfreeze/issues/132>`_)
 
 
-1.4.0 (2023-10-08)
-==================
+1.4 (2023-10-08)
+================
 
 Features
 --------
@@ -120,8 +132,8 @@ Misc
   <https://github.com/sbidoul/pip-deepfreeze/issues/62>`_)
 
 
-1.2.0 (2023-04-10)
-==================
+1.2 (2023-04-10)
+================
 
 Features
 --------
