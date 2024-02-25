@@ -49,7 +49,7 @@ def sync(
         None,
         "--extras",
         "-x",
-        metavar="EXTRAS",
+        metavar="EXTRA1,EXTRA2,...",
         help=(
             "Comma separated list of extras "
             "to install and freeze to requirements-{EXTRA}.txt."
@@ -101,7 +101,7 @@ def tree(
         None,
         "--extras",
         "-x",
-        metavar="EXTRAS",
+        metavar="EXTRA1,EXTRA2,...",
         help="Extras of project to consider when looking for dependencies.",
     ),
 ) -> None:
