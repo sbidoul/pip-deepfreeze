@@ -384,6 +384,7 @@ Most options can get default values from a ``[tool.pip-deepfreeze]`` section of 
 Example:
 
 .. code:: toml
+
    [tool.pip-deepfreeze]
    min_version = "2.0"
 
