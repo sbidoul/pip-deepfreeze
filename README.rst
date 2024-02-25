@@ -8,14 +8,14 @@ A simple pip freeze workflow for Python application developers.
 .. image:: https://img.shields.io/pypi/v/pip-deepfreeze?label=pypi%20package
    :target: https://pypi.org/project/pip-deepfreeze/
    :alt: PyPI
-
 .. image:: https://img.shields.io/pypi/l/pip-deepfreeze
+   :target: https://github.com/sbidoul/pip-deepfreeze/blob/master/LICENSE.txt
    :alt: PyPI - License
-
 .. image:: https://img.shields.io/pypi/pyversions/pip-deepfreeze
+   :target: https://pypi.org/project/pip-deepfreeze/
    :alt: PyPI - Python Version
-
 .. image:: https://img.shields.io/github/actions/workflow/status/sbidoul/pip-deepfreeze/ci.yml?label=CI
+   :target: https://github.com/sbidoul/pip-deepfreeze/actions
    :alt: GitHub Actions Workflow Status
 
 .. contents:: Table of contents
