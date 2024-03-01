@@ -1,3 +1,0 @@
-Change ``--installer=uv`` to ``--installer=uvpip``. This is a breaking change that
-we do while this is young, to avoid possible confusion in the future with other ``uv``
-install mechanisms that are on their roadmap.

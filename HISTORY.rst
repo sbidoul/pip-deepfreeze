@@ -1,3 +1,14 @@
+2.1 (2024-03-01)
+================
+
+Deprecations and Removals
+-------------------------
+
+- Change ``--installer=uv`` to ``--installer=uvpip``. This is a breaking change that
+  we do while this is young, to avoid possible confusion in the future with other ``uv``
+  install mechanisms that are on their roadmap. (`#144 <https://github.com/sbidoul/pip-deepfreeze/issues/144>`_)
+
+
 2.0 (2024-02-25)
 ================
 
