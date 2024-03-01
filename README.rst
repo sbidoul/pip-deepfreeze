@@ -110,9 +110,9 @@ in a fresh virtualenv).
 
 .. note::
 
-   ``pip-deepfreeze`` has experimental support for the `uv
+   ``pip-deepfreeze`` has experimental support for the `uv pip
    <https://github.com/astral-sh/uv>`_ installer. To use it, run ``pip-df sync
-   --installer=uv``.
+   --installer=uvpip``.
 
 When you add or remove dependencies of your project, run ``pip-df sync`` again
 to update your environment and ``requirements.txt``.
@@ -355,7 +355,7 @@ pip-df sync
                                      dependencies of the project. If not
                                      specified, ask confirmation.
 
-     --installer [pip|uv]
+     --installer [pip|uvpip]
 
      --help                          Show this message and exit.
 
@@ -396,7 +396,7 @@ Example:
    [tool.pip-deepfreeze.sync]
    extras = "test,doc"
    post_sync_commands = ["pip-preserve-requirements requirements*.txt"]
-   installer = "uv"
+   installer = "uvpip"
 
 Other tools
 -----------
