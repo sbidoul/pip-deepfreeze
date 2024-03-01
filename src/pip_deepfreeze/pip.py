@@ -54,7 +54,7 @@ class PipInspectReport(TypedDict, total=False):
 
 class Installer(str, Enum):
     pip = "pip"
-    uv = "uv"
+    uvpip = "uvpip"
 
 
 def _pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
@@ -74,7 +74,7 @@ def _install_cmd_and_env(
 ) -> Tuple[List[str], Dict[str, str]]:
     if installer == Installer.pip:
         return _pip_install_cmd_and_env(python)
-    elif installer == Installer.uv:
+    elif installer == Installer.uvpip:
         if get_python_version_info(python) < (3, 7):
             log_error("The 'uv' installer requires Python 3.7 or later.")
             raise typer.Exit(1)
