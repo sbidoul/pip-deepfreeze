@@ -88,9 +88,20 @@ Make sure your application declares its direct dependencies in `pyproject.toml
 <https://packaging.python.org/en/latest/specifications/declaring-project-metadata/>`_,
 or any other mechanism supported by your PEP 517/660 compliant build backend.
 
-Create and activate a virtual environment using your favorite tool. Run
-``pip list`` to make sure ``pip``, ``setuptools`` and ``wheel`` are installed
-in the virtualenv.
+Create and activate a virtual environment using your favorite tool.
+
+.. note::
+
+   When you install ``pip-deepfreeze``, it also installs ``pip`` so you don't need to
+   install ``pip`` separately in your virtual environment (for instance, you may use
+   ``python3 -m venv --without-pip`` to create it). However, if your virtual environment
+   uses a Python version that is not supported by ``pip-deepfreeze``'s bundled copy of
+   ``pip``, you will need to install ``pip`` in the target virtual environment.
+
+.. note::
+
+   When using ``pip`` older than 23.1, you may need to also install ``setuptools`` and
+   ``wheel`` in the virtual environment for best results.
 
 To install your project in editable mode in the active virtual
 environment, go to your project root directory and run:
