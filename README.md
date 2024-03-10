@@ -81,7 +81,7 @@ pip install --user pip-deepfreeze
 
 ## Quick start
 
-![pip-deepfreeze synopsis](https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/2fc2fa9804a53fe5041a43d4f9f609f63807c723/docs/synopsis.png)
+![pip-deepfreeze synopsis](https://raw.githubusercontent.com/sbidoul/pip-deepfreeze/41e960aecd1b142bad648d438143f55b6f50bba5/docs/synopsis.png)
 
 Make sure your application declares its direct dependencies in
 [pyproject.toml](https://packaging.python.org/en/latest/specifications/declaring-project-metadata/),
