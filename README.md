@@ -430,6 +430,7 @@ Several other tools exist with a similar or overlapping scope as
   opinionated than `pip-tools` and `pipdeptree`, as it always does an
   editable install and it uses the build backend to obtain the top level
   dependencies.
+- [uv](https://pypi.org/project/uv/)
 - [PDM](https://pypi.org/project/pdm/)
 - [Poetry](https://python-poetry.org/)
 - [pipenv](https://pipenv.pypa.io/en/latest/)
