@@ -61,7 +61,7 @@ def _pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
     return [*get_pip_command(python), "install"], {}
 
 
-def _uv_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
+def _uv_pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
     return [sys.executable, "-m", "uv", "pip", "install", "--python", python], {}
 
 
@@ -74,7 +74,7 @@ def _install_cmd_and_env(
         if get_python_version_info(python) < (3, 7):
             log_error("The 'uv' installer requires Python 3.7 or later.")
             raise typer.Exit(1)
-        return _uv_install_cmd_and_env(python)
+        return _uv_pip_install_cmd_and_env(python)
     raise NotImplementedError(f"Installer {installer} is not implemented.")
 
 
