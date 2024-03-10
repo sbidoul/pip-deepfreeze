@@ -89,7 +89,6 @@ jobs:
           ${{ matrix.python }} -m pip install -U pip setuptools wheel virtualenv tox tox-gh-actions
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: "${{ matrix.python }} -m tox"
-      - name: "Codecov"
-        run: |
-          ${{ matrix.python }} -m pip install codecov
-          codecov --token ${{ secrets.CODECOV_TOKEN }}
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
