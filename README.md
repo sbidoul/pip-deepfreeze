@@ -9,11 +9,17 @@ A simple pip freeze workflow for Python application developers.
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pip-deepfreeze)](https://pypi.org/project/pip-deepfreeze/)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sbidoul/pip-deepfreeze/ci.yml?label=CI)](https://github.com/sbidoul/pip-deepfreeze/actions)
 
-<div class="contents">
-
 Table of contents
 
-</div>
+- [About](#about)
+- [Intallation](#installation)
+- [Quick Start](#quick-start)
+- [How to](#how-to)
+- [FAQ](#faq)
+- [CLI Reference](#cli-reference)
+- [Other tools](#other-tools)
+- [Development](#development)
+- [Contributing](#contributing)
 
 ## About
 
@@ -246,7 +252,7 @@ not honor it. What is going on?
 >
 >     pip-df sync --update DEPENDENCY1,DEPENDENCY2,...
 
-<span class="title-ref">pip-deepfreeze</span> erroneously complains
+`pip-deepfreez` erroneously complains
 python is not running in a virtualenv.
 
 > The most probable cause is that you used an older version of
@@ -428,7 +434,7 @@ Several other tools exist with a similar or overlapping scope as
 - [Poetry](https://python-poetry.org/)
 - [pipenv](https://pipenv.pypa.io/en/latest/)
 - [pipdeptree](https://pypi.org/project/pipdeptree/). Works similarly as
-  <span class="title-ref">pip-df tree</span>.
+  `pip-df tree`.
 
 ## Development
 
