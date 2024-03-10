@@ -455,10 +455,11 @@ repository.
 
 To release:
 
-- Select the next version number of the form `X.Y.Z`.
-- `towncrier --version vX.Y.Z`.
-- Inspect and commit the updated `HISTORY.rst`.
-- `git tag vX.Y.Z ; git push --tags`.
+- Select the next version number of the form `X.Y(.Z)`.
+- `towncrier --version X.Y(.Z)`.
+- Inspect and commit the updated `CHANGELOG.md`.
+- On GitHub, create a new release. Choose a tag of the form `vX.Y(.Z)`. Click `Generate
+  release notes` and copy over the content from `CHANGELOG.md`.
 
 ## Contributing
 
