@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "pip-deepfreeze"
 description = "A simple pip freeze workflow for Python application developers."
-readme = "README.rst"
+readme = "README.md"
 authors = [{name = "Stéphane Bidoul", email = "stephane.bidoul@gmail.com"}]
 license = "MIT"
 classifiers = [
