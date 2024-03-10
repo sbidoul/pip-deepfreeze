@@ -191,7 +191,7 @@ Refreshing all pinned dependencies.
 Using another package index than PyPI.
 
 > Create a file named `constraints.txt` in your project root, and add
-> pip options to it, such as `--extra-index-url` or `--find-links`. You
+> pip options to it, such as `--index-url` or `--find-links`. You
 > can add any option that [pip supports in requirements
 > files](https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format).
 
