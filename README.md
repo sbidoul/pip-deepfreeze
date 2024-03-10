@@ -33,8 +33,8 @@ This includes:
 - updating the environment with new dependencies as the project evolves,
 - uninstalling unused dependencies,
 - refreshing dependencies,
-- maintaining pinned in `requirements.txt` lock files,
-- pinning versions for extras in `requirements-{extra}.txt` lock files,
+- maintaining pinned dependencies in `requirements.txt` lock files,
+- maintaining pinned optional dependencies in `requirements-{extra}.txt` lock files,
 - displaying installed dependencies as a tree.
 
 A few characteristics of this project:
