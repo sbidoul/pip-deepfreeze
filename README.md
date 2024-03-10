@@ -435,7 +435,8 @@ Several other tools exist with a similar or overlapping scope as
 - [Poetry](https://python-poetry.org/)
 - [pipenv](https://pipenv.pypa.io/en/latest/)
 - [pipdeptree](https://pypi.org/project/pipdeptree/). Works similarly as
-  `pip-df tree`.
+  `pip-df tree`. It is convenient to have a tree command in pip-deepfreeze, that
+  shares the exact same notion of top level dependencies.
 
 ## Development
 
