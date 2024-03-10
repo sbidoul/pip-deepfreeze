@@ -62,11 +62,7 @@ def _pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
 
 
 def _uv_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
-    # TODO when https://github.com/astral-sh/uv/issues/1396 is implemented,
-    # we will not need to return the VIRTUAL_ENV environment variable.
-    return [sys.executable, "-m", "uv", "pip", "install"], {
-        "VIRTUAL_ENV": str(Path(python).parent.parent)
-    }
+    return [sys.executable, "-m", "uv", "pip", "install", "--python", python], {}
 
 
 def _install_cmd_and_env(
