@@ -49,7 +49,7 @@ pip-deepfreeze = "pip_deepfreeze.__main__:main"
 [project.urls]
 "Source" = "https://github.com/sbidoul/pip-deepfreeze/"
 "Bug Reports" = "https://github.com/sbidoul/pip-deepfreeze/issues"
-"Changelog" = "https://github.com/sbidoul/pip-deepfreeze/blob/master/HISTORY.rst"
+"Changelog" = "https://github.com/sbidoul/pip-deepfreeze/blob/master/CHANGELOG.md"
 
 [tool.hatch.version]
 source = "vcs"
@@ -57,10 +57,11 @@ source = "vcs"
 [tool.towncrier]
 package = "pip_deepfreeze"
 package_dir = "src"
-filename = "HISTORY.rst"
+filename = "CHANGELOG.md"
 directory = "news"
-issue_format = "`#{issue} <https://github.com/sbidoul/pip-deepfreeze/issues/{issue}>`_"
-title_format = "{version} ({project_date})"
+underlines = ["", "", ""]
+issue_format = "[#{issue}](https://github.com/sbidoul/pip-deepfreeze/issues/{issue})"
+title_format = "## {version} ({project_date})"
 
 [tool.ruff]
 fix = true
