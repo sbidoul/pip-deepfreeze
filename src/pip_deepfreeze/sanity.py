@@ -60,7 +60,7 @@ def get_pip_command(python: str) -> Tuple[str, ...]:
             f"Please install pip in the target environment."
         )
         raise typer.Exit(1)
-    return (sys.executable, "-m", "pip", "--python", python)
+    return (sys.executable, "-m", "pip", "--python", python, "--no-input")
 
 
 @lru_cache
