@@ -1,3 +1,15 @@
+v2.2 (2024-03-10)
+=================
+
+Features
+--------
+
+- Pass ``--no-input`` to pip commands, to avoid silently blocking on user input. (`#131 <https://github.com/sbidoul/pip-deepfreeze/issues/131>`_)
+- Use ``uv``'s ``--python`` option to select the interpreter, instead of passing it as a
+  ``VIRTUAL_ENV`` environment variable. This is more explicit and hopefully more resilient
+  to changes in ``uv``'s Python detection logic. (`#145 <https://github.com/sbidoul/pip-deepfreeze/issues/145>`_)
+
+
 2.1 (2024-03-01)
 ================
 
