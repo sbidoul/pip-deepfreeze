@@ -34,12 +34,6 @@ jobs:
             python: python
           # macos
           - os: "macos-latest"
-            python-version: "3.6"
-            python: python
-          - os: "macos-latest"
-            python-version: "3.7"
-            python: python
-          - os: "macos-latest"
             python-version: "3.8"
             python: python
           - os: "macos-latest"
