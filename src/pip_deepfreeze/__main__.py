@@ -62,6 +62,14 @@ def sync(
             "If not specified, ask confirmation."
         ),
     ),
+    pre_sync_commands: List[str] = typer.Option(
+        [],
+        "--pre-sync-command",
+        help=(
+            "Command to run before the sync operation. "
+            "Can be specified multiple times."
+        ),
+    ),
     post_sync_commands: List[str] = typer.Option(
         [],
         "--post-sync-command",
@@ -89,6 +97,7 @@ def sync(
         extras=[canonicalize_name(extra) for extra in comma_split(extras)],
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
+        pre_sync_commands=pre_sync_commands,
         post_sync_commands=post_sync_commands,
         installer=installer,
     )

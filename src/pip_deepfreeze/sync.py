@@ -59,9 +59,13 @@ def sync(
     extras: List[NormalizedName],
     uninstall_unneeded: Optional[bool],
     project_root: Path,
+    pre_sync_commands: Sequence[str] = (),
     post_sync_commands: Sequence[str] = (),
     installer: Installer = Installer.pip,
 ) -> None:
+    # run pre-sync commands
+    run_commands(pre_sync_commands, project_root, "pre-sync")
+    # sync
     project_name = get_project_name(python, project_root)
     project_name_with_extras = make_project_name_with_extras(project_name, extras)
     constraints_path = _constraints_path(project_root)

@@ -388,7 +388,7 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
     assert "pkgc==0.0.2\n" in requirements_c_txt
 
 
-def test_post_sync_command(virtualenv_python, testpkgs, tmp_path):
+def test_pre_post_sync_command(virtualenv_python, testpkgs, tmp_path):
     (tmp_path / "constraints.txt").write_text(
         textwrap.dedent(
             f"""\
@@ -414,6 +414,8 @@ def test_post_sync_command(virtualenv_python, testpkgs, tmp_path):
             "--python",
             virtualenv_python,
             "sync",
+            "--pre-sync-command",
+            "echo pre-sync-cmd-1",
             "--post-sync-command",
             "echo post-sync-cmd-1",
             "--post-sync-command",
@@ -424,6 +426,7 @@ def test_post_sync_command(virtualenv_python, testpkgs, tmp_path):
         check=True,
         capture_output=True,
     )
+    assert res.stdout.startswith("pre-sync-cmd-1\n")
     assert res.stdout.endswith("post-sync-cmd-1\npost-sync-cmd-2\n")
     res = subprocess.run(
         [
