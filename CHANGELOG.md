@@ -6,6 +6,14 @@ the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
+## 2.3 (2024-07-02)
+
+
+### Features
+
+- Add support for pre-sync commands. ([#152](https://github.com/sbidoul/pip-deepfreeze/issues/152))
+
+
 ## 2.2 (2024-03-10)
 
 
