@@ -92,11 +92,11 @@ class UvpipInstaller(Installer):
 
 
 def pip_upgrade_project(
+    installer: Installer,
     python: str,
     constraints_filename: Path,
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
-    installer: Installer | None = None,
     installer_options: Optional[List[str]] = None,
 ) -> None:
     """Upgrade a project.
@@ -125,8 +125,6 @@ def pip_upgrade_project(
     update the version specifier in requirements.txt, and reinstalling the project with
     this function.
     """
-    if installer is None:
-        installer = PipInstaller()
     constraints_without_editables_filename = get_temp_path_in_dir(
         dir=project_root, prefix="requirements.", suffix=".txt.df"
     )

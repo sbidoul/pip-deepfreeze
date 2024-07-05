@@ -6,7 +6,13 @@ import pytest
 from typer.testing import CliRunner
 
 from pip_deepfreeze.__main__ import app
-from pip_deepfreeze.pip import pip_freeze, pip_list
+from pip_deepfreeze.pip import (
+    Installer,
+    PipInstaller,
+    UvpipInstaller,
+    pip_freeze,
+    pip_list,
+)
 from pip_deepfreeze.sync import sync
 
 
@@ -134,8 +140,12 @@ def test_editable_default_install(virtualenv_python, editable_foobar_path):
     assert "-e " in "\n".join(pip_freeze(virtualenv_python))
 
 
-def test_sync_project_root(virtualenv_python, editable_foobar_path):
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
+def test_sync_project_root(
+    installer: Installer, virtualenv_python, editable_foobar_path
+):
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
@@ -177,7 +187,8 @@ def test_sync_editable_dep(virtualenv_python, tmp_path):
     assert "-e " in requirements_path.read_text(), requirements_path.read_text()
 
 
-def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
+def test_sync_uninstall(installer: Installer, virtualenv_python, tmp_path, testpkgs):
     setup_py = tmp_path / "setup.py"
     setup_py.write_text(
         textwrap.dedent(
@@ -192,6 +203,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
     in_reqs = tmp_path / "constraints.txt"
     in_reqs.write_text(f"--no-index\n-f {testpkgs}")
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
@@ -212,6 +224,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
     )
     # sync with uninstall=False, pkga remains
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
@@ -222,6 +235,7 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
     assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
     # sync with uninstall=True, pkga removed
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
@@ -233,7 +247,10 @@ def test_sync_uninstall(virtualenv_python, tmp_path, testpkgs):
 
 
 @pytest.mark.xfail(reason="https://github.com/sbidoul/pip-deepfreeze/issues/24")
-def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
+def test_sync_update_new_dep(
+    installer: Installer, virtualenv_python, testpkgs, tmp_path
+):
     """Test that a preinstalled dependency is updated when project is not installed
     before sync.
 
@@ -241,10 +258,7 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
     """
     subprocess.check_call(
         [
-            virtualenv_python,
-            "-m",
-            "pip",
-            "install",
+            *installer.install_cmd(virtualenv_python),
             "--no-index",
             "-f",
             testpkgs,
@@ -270,6 +284,7 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
         )
     )
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=["pkgc"],
@@ -281,7 +296,10 @@ def test_sync_update_new_dep(virtualenv_python, testpkgs, tmp_path):
 
 
 @pytest.mark.xfail(reason="https://github.com/sbidoul/pip-deepfreeze/issues/24")
-def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
+def test_sync_update_all_new_dep(
+    installer: Installer, virtualenv_python, testpkgs, tmp_path
+):
     """Test that a preinstalled dependency is updated when project is not installed
     before sync.
 
@@ -289,10 +307,7 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
     """
     subprocess.check_call(
         [
-            virtualenv_python,
-            "-m",
-            "pip",
-            "install",
+            *installer.install_cmd(virtualenv_python),
             "--no-index",
             "-f",
             testpkgs,
@@ -318,6 +333,7 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
         )
     )
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=True,
         to_upgrade=[],
@@ -328,7 +344,8 @@ def test_sync_update_all_new_dep(virtualenv_python, testpkgs, tmp_path):
     assert "pkgc==0.0.3" in "\n".join(pip_freeze(virtualenv_python))
 
 
-def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
+def test_sync_extras(installer: Installer, virtualenv_python, testpkgs, tmp_path):
     (tmp_path / "setup.py").write_text(
         textwrap.dedent(
             """\
@@ -353,6 +370,7 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
         )
     )
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],
@@ -371,6 +389,7 @@ def test_sync_extras(virtualenv_python, testpkgs, tmp_path):
     # now sync again with a different frozen extra dependency
     (tmp_path / "requirements-c.txt").write_text("pkgc==0.0.2")
     sync(
+        installer,
         virtualenv_python,
         upgrade_all=False,
         to_upgrade=[],

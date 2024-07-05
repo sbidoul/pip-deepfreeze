@@ -6,7 +6,6 @@ from packaging.utils import NormalizedName
 
 from .pip import (
     Installer,
-    InstallerFlavor,
     pip_fixup_vcs_direct_urls,
     pip_freeze_dependencies_by_extra,
     pip_uninstall,
@@ -54,6 +53,7 @@ def _constraints_path(project_root: Path) -> Path:
 
 
 def sync(
+    installer: Installer,
     python: str,
     upgrade_all: bool,
     to_upgrade: List[str],
@@ -62,9 +62,7 @@ def sync(
     project_root: Path,
     pre_sync_commands: Sequence[str] = (),
     post_sync_commands: Sequence[str] = (),
-    installer_flavor: InstallerFlavor = InstallerFlavor.pip,
 ) -> None:
-    installer = Installer.create(installer_flavor, python)
     # run pre-sync commands
     run_commands(pre_sync_commands, project_root, "pre-sync")
     # sync
@@ -88,11 +86,11 @@ def sync(
             else:
                 print(req_line.raw_line, file=constraints)
     pip_upgrade_project(
+        installer,
         python,
         merged_constraints_path,
         project_root,
         extras=extras,
-        installer=installer,
         installer_options=installer_options,
     )
     # freeze dependencies

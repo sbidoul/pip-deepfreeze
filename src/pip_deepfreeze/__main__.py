@@ -7,7 +7,7 @@ import typer
 from packaging.utils import canonicalize_name
 from packaging.version import Version
 
-from .pip import InstallerFlavor
+from .pip import Installer, InstallerFlavor
 from .pyproject_toml import load_pyproject_toml
 from .sanity import check_env
 from .sync import sync as sync_operation
@@ -91,6 +91,7 @@ def sync(
     constraints. Optionally uninstall unneeded dependencies.
     """
     sync_operation(
+        Installer.create(flavor=installer, python=ctx.obj.python),
         ctx.obj.python,
         upgrade_all,
         comma_split(to_upgrade),
@@ -99,7 +100,6 @@ def sync(
         project_root=ctx.obj.project_root,
         pre_sync_commands=pre_sync_commands,
         post_sync_commands=post_sync_commands,
-        installer_flavor=installer,
     )
 
 
