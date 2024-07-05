@@ -8,6 +8,7 @@ from typer.testing import CliRunner
 from pip_deepfreeze.__main__ import app
 from pip_deepfreeze.pip import (
     Installer,
+    InstallerFlavor,
     PipInstaller,
     UvpipInstaller,
     pip_freeze,
@@ -131,13 +132,31 @@ def editable_foobar_path(tmp_path):
     return tmp_path
 
 
-def test_editable_default_install(virtualenv_python, editable_foobar_path):
+@pytest.mark.parametrize(
+    "installer_flavor", [InstallerFlavor.pip, InstallerFlavor.uvpip]
+)
+def test_editable_default_install(
+    installer_flavor: InstallerFlavor, virtualenv_python, editable_foobar_path
+):
     subprocess.check_call(
-        [sys.executable, "-m", "pip_deepfreeze", "--python", virtualenv_python, "sync"],
+        [
+            sys.executable,
+            "-m",
+            "pip_deepfreeze",
+            "--python",
+            virtualenv_python,
+            "sync",
+            "--installer",
+            installer_flavor.value,
+        ],
         cwd=editable_foobar_path,
     )
     # installed editable by default
-    assert "-e " in "\n".join(pip_freeze(virtualenv_python))
+    assert "-e " in "\n".join(
+        pip_freeze(
+            Installer.create(installer_flavor, virtualenv_python), virtualenv_python
+        )
+    )
 
 
 @pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
@@ -211,7 +230,7 @@ def test_sync_uninstall(installer: Installer, virtualenv_python, tmp_path, testp
         uninstall_unneeded=False,
         project_root=tmp_path,
     )
-    assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
+    assert "pkga==" in "\n".join(pip_freeze(installer, virtualenv_python))
     # remove dependency on pkga
     setup_py.write_text(
         textwrap.dedent(
@@ -232,7 +251,7 @@ def test_sync_uninstall(installer: Installer, virtualenv_python, tmp_path, testp
         uninstall_unneeded=False,
         project_root=tmp_path,
     )
-    assert "pkga==" in "\n".join(pip_freeze(virtualenv_python))
+    assert "pkga==" in "\n".join(pip_freeze(installer, virtualenv_python))
     # sync with uninstall=True, pkga removed
     sync(
         installer,
@@ -243,7 +262,7 @@ def test_sync_uninstall(installer: Installer, virtualenv_python, tmp_path, testp
         uninstall_unneeded=True,
         project_root=tmp_path,
     )
-    assert "pkga==" not in "\n".join(pip_freeze(virtualenv_python))
+    assert "pkga==" not in "\n".join(pip_freeze(installer, virtualenv_python))
 
 
 @pytest.mark.xfail(reason="https://github.com/sbidoul/pip-deepfreeze/issues/24")

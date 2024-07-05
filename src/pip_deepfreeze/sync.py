@@ -95,7 +95,7 @@ def sync(
     )
     # freeze dependencies
     frozen_reqs_by_extra, unneeded_reqs = pip_freeze_dependencies_by_extra(
-        python, project_root, extras
+        installer, python, project_root, extras
     )
     for extra, frozen_reqs in frozen_reqs_by_extra.items():
         frozen_requirements_path = make_frozen_requirements_path(project_root, extra)
@@ -149,6 +149,7 @@ def sync(
                 f"are also installed: {unneeded_reqs_str}"
             )
     # fixup VCS direct_url.json (see fixup-vcs-direct-urls.py for details on why)
-    pip_fixup_vcs_direct_urls(python)
+    if not installer.has_metadata_cache():
+        pip_fixup_vcs_direct_urls(python)
     # run post-sync commands
     run_commands(post_sync_commands, project_root, "post-sync")

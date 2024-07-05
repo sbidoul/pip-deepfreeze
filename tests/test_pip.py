@@ -28,20 +28,20 @@ from pip_deepfreeze.pip import (
         (["pkgb==0.0.0"], ["pkga==0.0.0", "pkgb==0.0.0"]),
     ],
 )
-def test_pip_freeze(to_install, expected, virtualenv_python, testpkgs):
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
+def test_pip_freeze(
+    to_install, expected, installer: Installer, virtualenv_python, testpkgs
+):
     subprocess.call(
         [
-            virtualenv_python,
-            "-m",
-            "pip",
-            "install",
+            *installer.install_cmd(virtualenv_python),
             "--no-index",
             "--find-links",
             testpkgs,
             *to_install,
         ]
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == expected
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == expected
 
 
 @pytest.mark.parametrize(
@@ -54,8 +54,15 @@ def test_pip_freeze(to_install, expected, virtualenv_python, testpkgs):
         (["pkgb"], ["pkgc"], [["pkga==0.0.0", "pkgb==0.0.0"], ["pkgc==0.0.3"]]),
     ],
 )
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
 def test_pip_freeze_dependencies(
-    install_requires, other_installs, expected, virtualenv_python, testpkgs, tmp_path
+    install_requires,
+    other_installs,
+    expected,
+    installer: Installer,
+    virtualenv_python,
+    testpkgs,
+    tmp_path,
 ):
     # note: complex dependency situations are tested in test_list_installed_depends.py
     (tmp_path / "setup.py").write_text(
@@ -84,7 +91,7 @@ def test_pip_freeze_dependencies(
             *other_installs,
         ]
     )
-    res = pip_freeze_dependencies(virtualenv_python, tmp_path)
+    res = pip_freeze_dependencies(installer, virtualenv_python, tmp_path)
     unneeded_reqs = res[-1]
     unneeded_reqs[:] = list(_freeze_filter(unneeded_reqs))
     assert list(res) == expected
@@ -122,12 +129,14 @@ def test_pip_freeze_dependencies(
         ([], {}, ["pkga"], ["a"], [{None: []}, ["pkga==0.0.0"]]),
     ],
 )
+@pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
 def test_pip_freeze_dependencies_by_extra(
     install_requires,
     extras_require,
     other_installs,
     freeze_extras,
     expected,
+    installer: Installer,
     virtualenv_python,
     testpkgs,
     tmp_path,
@@ -163,7 +172,9 @@ def test_pip_freeze_dependencies_by_extra(
             *other_installs,
         ]
     )
-    res = pip_freeze_dependencies_by_extra(virtualenv_python, tmp_path, freeze_extras)
+    res = pip_freeze_dependencies_by_extra(
+        installer, virtualenv_python, tmp_path, freeze_extras
+    )
     unneeded_reqs = res[-1]
     unneeded_reqs[:] = list(_freeze_filter(unneeded_reqs))
     assert list(res) == expected
@@ -197,7 +208,7 @@ def test_pip_uninstall(
             ]
         )
     pip_uninstall(installer, virtualenv_python, to_uninstall)
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == expected
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == expected
 
 
 def _freeze_filter(reqs: Iterable[str]) -> Iterator[str]:
@@ -231,19 +242,25 @@ def test_pip_upgrade_project(
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == ["pkgc==0.0.1"]
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
+        "pkgc==0.0.1"
+    ]
     # Upgrade pkgc by adding a different constraint.
     constraints.write_text(f"--no-index\n--find-links {testpkgs}\npkgc<=0.0.2")
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == ["pkgc==0.0.2"]
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
+        "pkgc==0.0.2"
+    ]
     # Upgrade pkgc to latest version by removing it from constraints.
     constraints.write_text(f"--no-index\n--find-links {testpkgs}")
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == ["pkgc==0.0.3"]
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
+        "pkgc==0.0.3"
+    ]
     # Remove dependency from setup.py but it is still in frozen requirements,
     # the upgrade procedure does not remove it.
     (tmp_path / "setup.py").write_text(
@@ -262,14 +279,18 @@ def test_pip_upgrade_project(
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == ["pkgc==0.0.3"]
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
+        "pkgc==0.0.3"
+    ]
     # Remove dependency from frozen requirements, check the upgrade procedure
     # does not remove it (it is now an unrelated package which we leave alone).
     constraints.write_text(f"--no-index\n--find-links {testpkgs}")
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == ["pkgc==0.0.3"]
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
+        "pkgc==0.0.3"
+    ]
 
 
 @pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
@@ -292,7 +313,7 @@ def test_pip_upgrade_constraint_not_a_dep(
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == []
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == []
 
 
 @pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
@@ -322,7 +343,7 @@ def test_pip_upgrade_vcs_url(
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == [
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
         "toml @ git+https://github.com/uiri/toml"
         "@4935f616ef78c35a968b2473e806d7049eba9af1"
     ]
@@ -336,7 +357,7 @@ def test_pip_upgrade_vcs_url(
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == [
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
         "toml @ git+https://github.com/uiri/toml"
         "@4935f616ef78c35a968b2473e806d7049eba9af1"
     ]
@@ -350,7 +371,7 @@ def test_pip_upgrade_vcs_url(
     pip_upgrade_project(
         installer, virtualenv_python, constraints, project_root=tmp_path
     )
-    assert list(_freeze_filter(pip_freeze(virtualenv_python))) == [
+    assert list(_freeze_filter(pip_freeze(installer, virtualenv_python))) == [
         "toml @ git+https://github.com/uiri/toml"
         "@a86fc1fbd650a19eba313c3f642c9e2c679dc8d6"
     ]

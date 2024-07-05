@@ -64,6 +64,14 @@ class Installer(ABC):
     @abstractmethod
     def uninstall_cmd(self, python: str) -> List[str]: ...
 
+    @abstractmethod
+    def freeze_cmd(self, python: str) -> List[str]: ...
+
+    @abstractmethod
+    def has_metadata_cache(self) -> bool:
+        """Whether the installer caches metadata preparation results."""
+        ...
+
     @classmethod
     def create(cls, flavor: InstallerFlavor, python: str) -> "Installer":
         if flavor == InstallerFlavor.pip:
@@ -82,6 +90,12 @@ class PipInstaller(Installer):
     def uninstall_cmd(self, python: str) -> List[str]:
         return [*get_pip_command(python), "uninstall", "--yes"]
 
+    def freeze_cmd(self, python: str) -> List[str]:
+        return [*get_pip_command(python), "freeze", "--all"]
+
+    def has_metadata_cache(self) -> bool:
+        return False
+
 
 class UvpipInstaller(Installer):
     def install_cmd(self, python: str) -> List[str]:
@@ -89,6 +103,12 @@ class UvpipInstaller(Installer):
 
     def uninstall_cmd(self, python: str) -> List[str]:
         return [sys.executable, "-m", "uv", "pip", "uninstall", "--python", python]
+
+    def freeze_cmd(self, python: str) -> List[str]:
+        return [sys.executable, "-m", "uv", "pip", "freeze", "--python", python]
+
+    def has_metadata_cache(self) -> bool:
+        return True
 
 
 def pip_upgrade_project(
@@ -151,7 +171,9 @@ def pip_upgrade_project(
     # 2. get installed frozen dependencies of project
     installed_reqs = {
         get_req_name(req_line): normalize_req_line(req_line)
-        for req_line in pip_freeze_dependencies(python, project_root, extras)[0]
+        for req_line in pip_freeze_dependencies(
+            installer, python, project_root, extras
+        )[0]
     }
     assert all(installed_reqs.keys())  # XXX user error instead?
     # 3. uninstall dependencies that do not match constraints
@@ -235,14 +257,18 @@ def pip_list(python: str) -> InstalledDistributions:
         return _pip_list__env_info_json(python)
 
 
-def pip_freeze(python: str) -> Iterable[str]:
+def pip_freeze(installer: Installer, python: str) -> Iterable[str]:
     """Run pip freeze."""
-    cmd = [*get_pip_command(python), "freeze", "--all"]
+    cmd = installer.freeze_cmd(python)
+    log_debug(f"Running {shlex.join(cmd)}")
     return check_output(cmd).splitlines()
 
 
 def pip_freeze_dependencies(
-    python: str, project_root: Path, extras: Optional[Sequence[NormalizedName]] = None
+    installer: Installer,
+    python: str,
+    project_root: Path,
+    extras: Optional[Sequence[NormalizedName]] = None,
 ) -> Tuple[List[str], List[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
@@ -254,7 +280,7 @@ def pip_freeze_dependencies(
     """
     project_name = get_project_name(python, project_root)
     dependencies_names = list_installed_depends(pip_list(python), project_name, extras)
-    frozen_reqs = pip_freeze(python)
+    frozen_reqs = pip_freeze(installer, python)
     dependencies_reqs = []
     unneeded_reqs = []
     for frozen_req in frozen_reqs:
@@ -271,7 +297,10 @@ def pip_freeze_dependencies(
 
 
 def pip_freeze_dependencies_by_extra(
-    python: str, project_root: Path, extras: Sequence[NormalizedName]
+    installer: Installer,
+    python: str,
+    project_root: Path,
+    extras: Sequence[NormalizedName],
 ) -> Tuple[Dict[Optional[NormalizedName], List[str]], List[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
@@ -285,7 +314,7 @@ def pip_freeze_dependencies_by_extra(
     dependencies_by_extras = list_installed_depends_by_extra(
         pip_list(python), project_name
     )
-    frozen_reqs = pip_freeze(python)
+    frozen_reqs = pip_freeze(installer, python)
     dependencies_reqs = {}  # type: Dict[Optional[NormalizedName], List[str]]
     for extra in extras:
         if extra not in dependencies_by_extras:
