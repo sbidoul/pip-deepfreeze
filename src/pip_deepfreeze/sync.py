@@ -53,6 +53,7 @@ def _constraints_path(project_root: Path) -> Path:
 
 
 def sync(
+    installer: Installer,
     python: str,
     upgrade_all: bool,
     to_upgrade: List[str],
@@ -61,7 +62,6 @@ def sync(
     project_root: Path,
     pre_sync_commands: Sequence[str] = (),
     post_sync_commands: Sequence[str] = (),
-    installer: Installer = Installer.pip,
 ) -> None:
     # run pre-sync commands
     run_commands(pre_sync_commands, project_root, "pre-sync")
@@ -86,16 +86,16 @@ def sync(
             else:
                 print(req_line.raw_line, file=constraints)
     pip_upgrade_project(
+        installer,
         python,
         merged_constraints_path,
         project_root,
         extras=extras,
-        installer=installer,
         installer_options=installer_options,
     )
     # freeze dependencies
     frozen_reqs_by_extra, unneeded_reqs = pip_freeze_dependencies_by_extra(
-        python, project_root, extras
+        installer, python, project_root, extras
     )
     for extra, frozen_reqs in frozen_reqs_by_extra.items():
         frozen_requirements_path = make_frozen_requirements_path(project_root, extra)
@@ -141,7 +141,7 @@ def sync(
             prompted = True
         if uninstall_unneeded:
             log_info(f"Uninstalling unneeded distributions: {unneeded_reqs_str}")
-            pip_uninstall(python, unneeded_req_names)
+            pip_uninstall(installer, python, unneeded_req_names)
         elif not prompted:
             log_debug(
                 f"The following distributions "
@@ -149,6 +149,7 @@ def sync(
                 f"are also installed: {unneeded_reqs_str}"
             )
     # fixup VCS direct_url.json (see fixup-vcs-direct-urls.py for details on why)
-    pip_fixup_vcs_direct_urls(python)
+    if not installer.has_metadata_cache():
+        pip_fixup_vcs_direct_urls(python)
     # run post-sync commands
     run_commands(post_sync_commands, project_root, "post-sync")
