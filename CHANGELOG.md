@@ -6,16 +6,20 @@ the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
-## 2.3 (2024-07-02)
+## 2.4 (2024-07-05)
 
+### Features
+
+- Use ``uv`` for freeze and uninstall operations too when ``uvpip`` has been selected. ([#156](https://github.com/sbidoul/pip-deepfreeze/issues/156))
+- Don't do the direct url fixup optimization hack when ``uvpip`` has been selected. ([#156](https://github.com/sbidoul/pip-deepfreeze/issues/156))
+
+## 2.3 (2024-07-02)
 
 ### Features
 
 - Add support for pre-sync commands. ([#152](https://github.com/sbidoul/pip-deepfreeze/issues/152))
 
-
 ## 2.2 (2024-03-10)
-
 
 ### Features
 
@@ -23,7 +27,6 @@ the upcoming release can be found in
 - Use `uv`'s `--python` option to select the interpreter, instead of passing it as a
   `VIRTUAL_ENV` environment variable. This is more explicit and hopefully more resilient
   to changes in `uv`'s Python detection logic. ([#145](https://github.com/sbidoul/pip-deepfreeze/issues/145))
-
 
 ## 2.1 (2024-03-01)
 
