@@ -1,8 +1,8 @@
 import json
-import os
 import shlex
 import sys
 import textwrap
+from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, TypedDict, cast
@@ -52,30 +52,43 @@ class PipInspectReport(TypedDict, total=False):
     environment: Dict[str, str]
 
 
-class Installer(str, Enum):
+class InstallerFlavor(str, Enum):
     pip = "pip"
     uvpip = "uvpip"
 
 
-def _pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
-    return [*get_pip_command(python), "install"], {}
+class Installer(ABC):
+    @abstractmethod
+    def install_cmd(self, python: str) -> List[str]: ...
+
+    @abstractmethod
+    def uninstall_cmd(self, python: str) -> List[str]: ...
+
+    @classmethod
+    def create(cls, flavor: InstallerFlavor, python: str) -> "Installer":
+        if flavor == InstallerFlavor.pip:
+            return PipInstaller()
+        elif flavor == InstallerFlavor.uvpip:
+            if get_python_version_info(python) < (3, 7):
+                log_error("The 'uv' installer requires Python 3.7 or later.")
+                raise typer.Exit(1)
+            return UvpipInstaller()
 
 
-def _uv_pip_install_cmd_and_env(python: str) -> Tuple[List[str], Dict[str, str]]:
-    return [sys.executable, "-m", "uv", "pip", "install", "--python", python], {}
+class PipInstaller(Installer):
+    def install_cmd(self, python: str) -> List[str]:
+        return [*get_pip_command(python), "install"]
+
+    def uninstall_cmd(self, python: str) -> List[str]:
+        return [*get_pip_command(python), "uninstall", "--yes"]
 
 
-def _install_cmd_and_env(
-    installer: Installer, python: str
-) -> Tuple[List[str], Dict[str, str]]:
-    if installer == Installer.pip:
-        return _pip_install_cmd_and_env(python)
-    elif installer == Installer.uvpip:
-        if get_python_version_info(python) < (3, 7):
-            log_error("The 'uv' installer requires Python 3.7 or later.")
-            raise typer.Exit(1)
-        return _uv_pip_install_cmd_and_env(python)
-    raise NotImplementedError(f"Installer {installer} is not implemented.")
+class UvpipInstaller(Installer):
+    def install_cmd(self, python: str) -> List[str]:
+        return [sys.executable, "-m", "uv", "pip", "install", "--python", python]
+
+    def uninstall_cmd(self, python: str) -> List[str]:
+        return [sys.executable, "-m", "uv", "pip", "uninstall", "--python", python]
 
 
 def pip_upgrade_project(
@@ -83,7 +96,7 @@ def pip_upgrade_project(
     constraints_filename: Path,
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
-    installer: Installer = Installer.pip,
+    installer: Installer | None = None,
     installer_options: Optional[List[str]] = None,
 ) -> None:
     """Upgrade a project.
@@ -112,6 +125,8 @@ def pip_upgrade_project(
     update the version specifier in requirements.txt, and reinstalling the project with
     this function.
     """
+    if installer is None:
+        installer = PipInstaller()
     constraints_without_editables_filename = get_temp_path_in_dir(
         dir=project_root, prefix="requirements.", suffix=".txt.df"
     )
@@ -152,11 +167,11 @@ def pip_upgrade_project(
     if to_uninstall:
         to_uninstall_str = ",".join(to_uninstall)
         log_info(f"Uninstalling dependencies to update: {to_uninstall_str}")
-        pip_uninstall(python, to_uninstall)
+        pip_uninstall(installer, python, to_uninstall)
     # 4. install project with constraints
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd, env = _install_cmd_and_env(installer, python)
+    cmd = installer.install_cmd(python)
     if installer_options:
         cmd.extend(installer_options)
     cmd.extend(
@@ -181,7 +196,7 @@ def pip_upgrade_project(
         log_debug(textwrap.indent(constraints, prefix="  "))
     else:
         log_debug(f"with empty {constraints_without_editables_filename}.")
-    check_call(cmd, env=dict(os.environ, **env))
+    check_call(cmd)
 
 
 def _pip_list__env_info_json(python: str) -> InstalledDistributions:
@@ -301,12 +316,15 @@ def pip_freeze_dependencies_by_extra(
     return dependencies_reqs, unneeded_reqs
 
 
-def pip_uninstall(python: str, requirements: Iterable[str]) -> None:
+def pip_uninstall(
+    installer: Installer, python: str, requirements: Iterable[str]
+) -> None:
     """Uninstall packages."""
     reqs = list(requirements)
     if not reqs:
         return
-    cmd = [*get_pip_command(python), "uninstall", "--yes", *reqs]
+    cmd = [*installer.uninstall_cmd(python), *reqs]
+    log_debug(f"Running {shlex.join(cmd)}")
     check_call(cmd)
 
 

@@ -6,6 +6,7 @@ from packaging.utils import NormalizedName
 
 from .pip import (
     Installer,
+    InstallerFlavor,
     pip_fixup_vcs_direct_urls,
     pip_freeze_dependencies_by_extra,
     pip_uninstall,
@@ -61,8 +62,9 @@ def sync(
     project_root: Path,
     pre_sync_commands: Sequence[str] = (),
     post_sync_commands: Sequence[str] = (),
-    installer: Installer = Installer.pip,
+    installer_flavor: InstallerFlavor = InstallerFlavor.pip,
 ) -> None:
+    installer = Installer.create(installer_flavor, python)
     # run pre-sync commands
     run_commands(pre_sync_commands, project_root, "pre-sync")
     # sync
@@ -141,7 +143,7 @@ def sync(
             prompted = True
         if uninstall_unneeded:
             log_info(f"Uninstalling unneeded distributions: {unneeded_reqs_str}")
-            pip_uninstall(python, unneeded_req_names)
+            pip_uninstall(installer, python, unneeded_req_names)
         elif not prompted:
             log_debug(
                 f"The following distributions "
