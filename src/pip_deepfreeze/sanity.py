@@ -49,10 +49,11 @@ def get_pip_version(python: str) -> Version:
 
 @lru_cache
 def get_pip_command(python: str) -> Tuple[str, ...]:
+    pip_options = ("--no-input",)
     env_pip_version = _get_env_info(python).get("pip_version")
     if env_pip_version:
         # pip is installed in the target environment, let's use it
-        return (python, "-m", "pip")
+        return (python, "-m", "pip", *pip_options)
     if not local_pip_compatible(python):
         log_error(
             f"pip is not available to {python}, and the pip version. "
@@ -60,7 +61,7 @@ def get_pip_command(python: str) -> Tuple[str, ...]:
             f"Please install pip in the target environment."
         )
         raise typer.Exit(1)
-    return (sys.executable, "-m", "pip", "--python", python, "--no-input")
+    return (sys.executable, "-m", "pip", "--python", python, *pip_options)
 
 
 @lru_cache
