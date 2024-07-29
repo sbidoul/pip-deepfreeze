@@ -29,7 +29,7 @@ def virtualenv_python(tmp_path, testpkgs):
             testpkgs,
             "-U",
             "pip",
-            "setuptools",
+            "setuptools<71",  # https://github.com/pypa/setuptools/issues/4516
             "wheel",
         ]
     )
