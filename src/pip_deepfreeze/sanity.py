@@ -102,21 +102,45 @@ def check_env(python: str) -> bool:
         or (
             # pip not installed in target python env and local pip is not compatible
             # with target python, so we'll need pkg_resources to inspect with
-            # env-info-json.py
+            # pip-list-json.py
             not pip_version and not local_pip_compatible(python)
         )
     ):
         setuptools_install_cmd = shlex.join(
-            [python, "-m", "pip", "install", "setuptools"]
+            [python, "-m", "pip", "install", "setuptools<71"]
         )
         pip_upgrade_cmd = shlex.join(
-            [python, "-m", "pip", "install", "--upgrade", "pip"]
+            [python, "-m", "pip", "install", "--upgrade", "pip>=22.2"]
         )
         log_error(
             f"pkg_resources is not available to {python}. It is currently "
             f"required by pip-deepfreeze unless you have pip>=22.2. "
             f"You can either upgrade pip with '{pip_upgrade_cmd}' or "
             f"installs pkg_resources with '{setuptools_install_cmd}'."
+        )
+        return False
+    setuptools_version = env_info.get("setuptools_version")
+    if (
+        setuptools_version
+        and Version(setuptools_version) >= Version("71")
+        and pip_version
+        and Version(pip_version) < Version("22.2")
+    ):
+        # In setuptools>=71, pkg_resources.working_set reports setuptools'
+        # vendored dependencies, so we can't rely on it to inspect the
+        # environment.
+        # https://github.com/pypa/setuptools/issues/4516
+        setuptools_downgrade_cmd = shlex.join(
+            [python, "-m", "pip", "install", "setuptools<71"]
+        )
+        pip_upgrade_cmd = shlex.join(
+            [python, "-m", "pip", "install", "--upgrade", "pip>=22.2"]
+        )
+        log_error(
+            f"setuptools>=71 has a version of pkg_resources that cannot be "
+            f"used to reliably inspect the environment. You need to downgrade "
+            f"setuptools with '{setuptools_downgrade_cmd}' or upgrade pip with "
+            f"'{pip_upgrade_cmd}'."
         )
         return False
     # Testing for pip must be done after testing for pkg_resources, because

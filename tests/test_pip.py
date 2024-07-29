@@ -1,4 +1,5 @@
 import subprocess
+import sys
 import textwrap
 from typing import Iterable, Iterator
 
@@ -378,7 +379,18 @@ def test_pip_upgrade_vcs_url(
 
 
 @pytest.mark.parametrize(
-    "pip_list_function", (_pip_list__env_info_json, _pip_list__pip_inspect, pip_list)
+    "pip_list_function",
+    (
+        pytest.param(
+            _pip_list__env_info_json,
+            marks=pytest.mark.skipif(
+                sys.version_info >= (3, 12),
+                reason="All pip versions that support Python 3.12 have pip inspect",
+            ),
+        ),
+        _pip_list__pip_inspect,
+        pip_list,
+    ),
 )
 def test_pip_list(virtualenv_python, testpkgs, pip_list_function):
     subprocess.check_call(
