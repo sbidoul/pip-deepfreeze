@@ -61,6 +61,22 @@ class Installer(ABC):
     @abstractmethod
     def install_cmd(self, python: str) -> List[str]: ...
 
+    def editable_install_cmd(
+        self,
+        python: str,
+        project_root: Path,
+        project_name: str,
+        extras: Optional[Sequence[NormalizedName]],
+    ) -> List[str]:
+        cmd = self.install_cmd(python)
+        cmd.append("-e")
+        if extras:
+            extras_str = ",".join(extras)
+            cmd.append(f"{project_root}[{extras_str}]")
+        else:
+            cmd.append(f"{project_root}")
+        return cmd
+
     @abstractmethod
     def uninstall_cmd(self, python: str) -> List[str]: ...
 
@@ -100,6 +116,18 @@ class PipInstaller(Installer):
 class UvpipInstaller(Installer):
     def install_cmd(self, python: str) -> List[str]:
         return [sys.executable, "-m", "uv", "pip", "install", "--python", python]
+
+    def editable_install_cmd(
+        self,
+        python: str,
+        project_root: Path,
+        project_name: str,
+        extras: Optional[Sequence[NormalizedName]],
+    ) -> List[str]:
+        cmd = super().editable_install_cmd(python, project_root, project_name, extras)
+        # https://github.com/astral-sh/uv/issues/5484
+        cmd.append(f"--refresh-package={project_name}")
+        return cmd
 
     def uninstall_cmd(self, python: str) -> List[str]:
         return [sys.executable, "-m", "uv", "pip", "uninstall", "--python", python]
@@ -191,7 +219,7 @@ def pip_upgrade_project(
     # 4. install project with constraints
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd = installer.install_cmd(python)
+    cmd = installer.editable_install_cmd(python, project_root, project_name, extras)
     if installer_options:
         cmd.extend(installer_options)
     cmd.extend(
@@ -201,12 +229,6 @@ def pip_upgrade_project(
             *editable_constraints,
         ]
     )
-    cmd.append("-e")
-    if extras:
-        extras_str = ",".join(extras)
-        cmd.append(f"{project_root}[{extras_str}]")
-    else:
-        cmd.append(f"{project_root}")
     log_debug(f"Running {shlex.join(cmd)}")
     constraints = constraints_without_editables_filename.read_text(
         encoding="utf-8"
