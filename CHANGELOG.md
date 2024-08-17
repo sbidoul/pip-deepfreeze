@@ -6,6 +6,14 @@ the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
+## 2.5 (2024-08-17)
+
+### Bugfixes
+
+- Also pass `--no-input` to pip when it is installed in the target venv. ([#158](https://github.com/sbidoul/pip-deepfreeze/issues/158))
+- Ensure we don't use setuptools>=71 ([#159](https://github.com/sbidoul/pip-deepfreeze/pull/159))
+- Force refresh of project metadata when using `uv` ([#160](https://github.com/sbidoul/pip-deepfreeze/pull/160))
+
 ## 2.4 (2024-07-05)
 
 ### Features
