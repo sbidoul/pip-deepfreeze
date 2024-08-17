@@ -28,7 +28,7 @@ requires-python = ">=3.8"
 dependencies=[
     "httpx",
     "packaging >=23",
-    "typer[all] >=0.3.2",
+    "typer >=0.12.1",
     # installers
     "pip >=22.2",
     "uv >=0.2.37",
