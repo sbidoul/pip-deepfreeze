@@ -1,6 +1,6 @@
 import sys
 
-__all__ = ["tomllib", "importlib_resources"]
+__all__ = ["importlib_resources", "tomllib"]
 
 
 if sys.version_info >= (3, 11):
