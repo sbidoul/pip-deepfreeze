@@ -6,6 +6,14 @@ the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
+## 3.0 (2024-11-30)
+
+### Features
+
+- Make `uv` and optional dependency again. Since `uv` is meant to be install
+  globally, this makes more sense, and also easier to benefit from `uv` upgrades.
+  ([#162](https://github.com/sbidoul/pip-deepfreeze/issues/162))
+
 ## 2.5 (2024-08-17)
 
 ### Bugfixes
