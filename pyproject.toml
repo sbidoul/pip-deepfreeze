@@ -31,7 +31,6 @@ dependencies=[
     "typer >=0.12.1",
     # installers
     "pip >=22.2",
-    "uv >=0.2.37",
     # compat
     "importlib_resources>=1.3 ; python_version<'3.9'",
     "tomli ; python_version<'3.11'",
@@ -41,6 +40,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 "test" = ["pytest", "pytest-cov", "pytest-xdist", "virtualenv", "setuptools", "wheel"]
 "mypy" = ["mypy", "types-toml", "types-setuptools"]
+"uv" = ["uv >=0.4.10"]
 
 [project.scripts]
 pip-df = "pip_deepfreeze.__main__:main"

@@ -4,6 +4,7 @@ import subprocess
 import sys
 from functools import lru_cache
 from importlib.metadata import version
+from shutil import which
 from typing import Optional, Tuple, TypedDict, cast
 
 import typer
@@ -45,6 +46,20 @@ def get_pip_version(python: str) -> Version:
     if pip_version:
         return Version(pip_version)
     return Version(version("pip"))
+
+
+@lru_cache
+def get_uv_cmd() -> Tuple[str, ...]:
+    try:
+        import uv  # type: ignore[import-not-found]
+    except ImportError as e:
+        uv = which("uv")
+        if not uv:
+            log_error("uv is not installed.")
+            raise typer.Exit(1) from e
+        return (uv,)
+    else:
+        return (sys.executable, "-m", "uv")
 
 
 @lru_cache

@@ -1,6 +1,5 @@
 import json
 import shlex
-import sys
 import textwrap
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -33,6 +32,7 @@ from .sanity import (
     get_pip_command,
     get_pip_version,
     get_python_version_info,
+    get_uv_cmd,
 )
 from .utils import (
     check_call,
@@ -115,7 +115,7 @@ class PipInstaller(Installer):
 
 class UvpipInstaller(Installer):
     def install_cmd(self, python: str) -> List[str]:
-        return [sys.executable, "-m", "uv", "pip", "install", "--python", python]
+        return [*get_uv_cmd(), "pip", "install", "--python", python]
 
     def editable_install_cmd(
         self,
@@ -130,10 +130,10 @@ class UvpipInstaller(Installer):
         return cmd
 
     def uninstall_cmd(self, python: str) -> List[str]:
-        return [sys.executable, "-m", "uv", "pip", "uninstall", "--python", python]
+        return [*get_uv_cmd(), "pip", "uninstall", "--python", python]
 
     def freeze_cmd(self, python: str) -> List[str]:
-        return [sys.executable, "-m", "uv", "pip", "freeze", "--python", python]
+        return [*get_uv_cmd(), "pip", "freeze", "--python", python]
 
     def has_metadata_cache(self) -> bool:
         return True
