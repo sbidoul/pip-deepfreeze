@@ -46,22 +46,22 @@ jobs:
           - os: ubuntu-20.04
             python-version: "3.6"
             python: python
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             python-version: "3.7"
             python: python
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             python-version: "3.8"
             python: python
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             python-version: "3.9"
             python: python
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             python-version: "3.10"
             python: python
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             python-version: "3.11"
             python: python
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             python-version: "3.12"
             python: python
     steps:
