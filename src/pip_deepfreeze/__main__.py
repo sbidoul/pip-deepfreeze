@@ -66,8 +66,7 @@ def sync(
         [],
         "--pre-sync-command",
         help=(
-            "Command to run before the sync operation. "
-            "Can be specified multiple times."
+            "Command to run before the sync operation. Can be specified multiple times."
         ),
     ),
     post_sync_commands: List[str] = typer.Option(
