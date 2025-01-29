@@ -23,8 +23,9 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies=[
     "httpx",
     "packaging >=23",
@@ -32,7 +33,6 @@ dependencies=[
     # installers
     "pip >=22.2",
     # compat
-    "importlib_resources>=1.3 ; python_version<'3.9'",
     "tomli ; python_version<'3.11'",
 ]
 dynamic = ["version"]
@@ -71,7 +71,6 @@ exclude = [
     "tests/test_pip_list_json.py",
     "tests/test_env_info_json.py",
 ]
-target-version = "py38"
 
 [tool.ruff.lint]
 select = [

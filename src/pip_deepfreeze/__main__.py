@@ -1,7 +1,7 @@
 import importlib.metadata
 import shutil
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 import typer
 from packaging.utils import canonicalize_name
@@ -62,7 +62,7 @@ def sync(
             "If not specified, ask confirmation."
         ),
     ),
-    pre_sync_commands: List[str] = typer.Option(
+    pre_sync_commands: list[str] = typer.Option(
         [],
         "--pre-sync-command",
         help=(
@@ -70,7 +70,7 @@ def sync(
             "Can be specified multiple times."
         ),
     ),
-    post_sync_commands: List[str] = typer.Option(
+    post_sync_commands: list[str] = typer.Option(
         [],
         "--post-sync-command",
         help=(
@@ -129,7 +129,7 @@ def project_root_callback(ctx: typer.Context, param: Any, value: Path) -> Path:
     return value
 
 
-def _find_python_from(pythons: List[str]) -> str:
+def _find_python_from(pythons: list[str]) -> str:
     for python in pythons:
         python_abspath = shutil.which(python)
         if python_abspath:

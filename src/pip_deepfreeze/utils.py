@@ -4,9 +4,10 @@ import re
 import shlex
 import subprocess
 import tempfile
+from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import IO, Any, Dict, Iterable, Iterator, List, Optional, Sequence, Union
+from typing import IO, Any, Optional, Union
 
 import httpx
 import typer
@@ -84,7 +85,7 @@ def log_error(msg: str) -> None:
 def check_call(
     cmd: Sequence[Union[str, Path]],
     cwd: Optional[Path] = None,
-    env: Optional[Dict[str, str]] = None,
+    env: Optional[dict[str, str]] = None,
 ) -> int:
     try:
         return subprocess.check_call(cmd, cwd=cwd, env=env)
@@ -97,7 +98,7 @@ def check_call(
 def check_output(
     cmd: Sequence[Union[str, Path]],
     cwd: Optional[Path] = None,
-    env: Optional[Dict[str, str]] = None,
+    env: Optional[dict[str, str]] = None,
 ) -> str:
     try:
         return subprocess.check_output(cmd, cwd=cwd, text=True, env=env)
@@ -107,7 +108,7 @@ def check_output(
         raise typer.Exit(1) from e
 
 
-def comma_split(s: Optional[str]) -> List[str]:
+def comma_split(s: Optional[str]) -> list[str]:
     if not s:
         return []
     s = s.strip()

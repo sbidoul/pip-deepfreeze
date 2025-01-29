@@ -1,4 +1,5 @@
-from typing import Dict, Optional, Sequence, Set
+from collections.abc import Sequence
+from typing import Optional
 
 from packaging.requirements import Requirement
 from packaging.utils import NormalizedName, canonicalize_name
@@ -11,7 +12,7 @@ def list_installed_depends(
     installed_dists: InstalledDistributions,
     project_name: NormalizedName,
     extras: Optional[Sequence[NormalizedName]] = None,
-) -> Set[NormalizedName]:
+) -> set[NormalizedName]:
     """List installed dependencies of an installed project.
 
     Return canonicalized distribution names, excluding the project
@@ -56,9 +57,9 @@ def list_installed_depends(
 def list_installed_depends_by_extra(
     installed_dists: InstalledDistributions,
     project_name: NormalizedName,
-) -> Dict[Optional[NormalizedName], Set[NormalizedName]]:
+) -> dict[Optional[NormalizedName], set[NormalizedName]]:
     """Get installed dependencies of a project, grouped by extra."""
-    res = {}  # type: Dict[Optional[NormalizedName], Set[NormalizedName]]
+    res: dict[Optional[NormalizedName], set[NormalizedName]] = {}
     base_depends = list_installed_depends(installed_dists, project_name)
     res[None] = base_depends
     for extra in installed_dists[project_name].extra_requires:

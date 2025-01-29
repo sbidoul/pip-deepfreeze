@@ -4,7 +4,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 try:
     import importlib.metadata as importlib_metadata
@@ -77,7 +77,7 @@ def fixup_vcs_direct_url(dist: importlib_metadata.Distribution) -> None:
     direct_url_path.write_text(json.dumps(direct_url), encoding="utf-8")
 
 
-def fixup_direct_urls(names: List[str]) -> None:
+def fixup_direct_urls(names: list[str]) -> None:
     for dist in importlib_metadata.distributions():
         fixup_vcs_direct_url(dist)
 

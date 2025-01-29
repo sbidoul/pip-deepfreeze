@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Optional
 
 import typer
 from packaging.requirements import Requirement
@@ -10,7 +10,7 @@ from .pip import pip_list
 from .project_name import get_project_name
 from .utils import make_project_name_with_extras
 
-NodeKey = Tuple[NormalizedName, Tuple[NormalizedName, ...]]
+NodeKey = tuple[NormalizedName, tuple[NormalizedName, ...]]
 
 
 def _req_name_with_extras(req: Requirement) -> str:
@@ -23,7 +23,7 @@ class Node:
     def __init__(self, req: Requirement, dist: Optional[InstalledDistribution]):
         self.req = req
         self.dist = dist
-        self.children: List[Node] = []
+        self.children: list[Node] = []
 
     @staticmethod
     def key(req: Requirement) -> NodeKey:
@@ -33,9 +33,9 @@ class Node:
         )
 
     def print(self) -> None:
-        seen: Set[Node] = set()
+        seen: set[Node] = set()
 
-        def _print(indent: List[str], node: Node) -> None:
+        def _print(indent: list[str], node: Node) -> None:
             # inspired by https://stackoverflow.com/a/59109706
             SPACE = "    "
             BRANCH = "│   "
@@ -75,10 +75,10 @@ class Node:
         return version
 
 
-def tree(python: str, project_root: Path, extras: List[NormalizedName]) -> None:
+def tree(python: str, project_root: Path, extras: list[NormalizedName]) -> None:
     project_name = get_project_name(python, project_root)
     installed_dists = pip_list(python)
-    nodes: Dict[NodeKey, Node] = {}
+    nodes: dict[NodeKey, Node] = {}
 
     def add(req: Requirement) -> Node:
         key = Node.key(req)

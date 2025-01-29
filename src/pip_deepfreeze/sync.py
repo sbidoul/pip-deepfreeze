@@ -1,5 +1,6 @@
+from collections.abc import Sequence
 from pathlib import Path
-from typing import List, Optional, Sequence
+from typing import Optional
 
 import typer
 from packaging.utils import NormalizedName
@@ -56,8 +57,8 @@ def sync(
     installer: Installer,
     python: str,
     upgrade_all: bool,
-    to_upgrade: List[str],
-    extras: List[NormalizedName],
+    to_upgrade: list[str],
+    extras: list[NormalizedName],
     uninstall_unneeded: Optional[bool],
     project_root: Path,
     pre_sync_commands: Sequence[str] = (),

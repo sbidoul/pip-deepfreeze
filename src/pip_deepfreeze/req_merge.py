@@ -1,5 +1,6 @@
+from collections.abc import Iterable, Iterator
 from pathlib import Path
-from typing import Iterable, Iterator, Optional
+from typing import Optional
 
 from packaging.utils import canonicalize_name
 

@@ -1,5 +1,6 @@
+from collections.abc import MutableMapping
 from pathlib import Path
-from typing import Any, MutableMapping, Optional
+from typing import Any, Optional
 
 from .compat import tomllib
 

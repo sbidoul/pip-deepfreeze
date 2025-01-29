@@ -1,0 +1,2 @@
+Drop python 3.8 support for the `pip-deepfreeze` command. Virtual environments
+for Python 2.7, 3.6, 3.7 and 3.8 continue to be supported.

@@ -1,5 +1,6 @@
 import re
-from typing import Iterable, List, Optional
+from collections.abc import Iterable
+from typing import Optional
 
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import NormalizedName, canonicalize_name
@@ -30,7 +31,7 @@ def get_req_name(requirement: str) -> Optional[NormalizedName]:
     return canonicalize_name(name)
 
 
-def get_req_names(requirements: Iterable[str]) -> List[NormalizedName]:
+def get_req_names(requirements: Iterable[str]) -> list[NormalizedName]:
     req_names = []
     for requirement in requirements:
         req_name = get_req_name(requirement)
