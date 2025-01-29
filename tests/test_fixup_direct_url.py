@@ -25,11 +25,11 @@ def test_fixup_vcs_direct_url_branch_fake_commit(virtualenv_python: str) -> None
     frozen = "\n".join(pip_freeze(installer, virtualenv_python))
     assert "git+https://github.com/PyPA/pip-test-package" in frozen
     # fake commit NOT in direct_url.json
-    assert f"git+https://github.com/PyPA/pip-test-package@{'f'*40}" not in frozen
+    assert f"git+https://github.com/PyPA/pip-test-package@{'f' * 40}" not in frozen
     pip_fixup_vcs_direct_urls(virtualenv_python)
     frozen = "\n".join(pip_freeze(installer, virtualenv_python))
     # fake commit in direct_url.json
-    assert f"git+https://github.com/PyPA/pip-test-package@{'f'*40}" in frozen
+    assert f"git+https://github.com/PyPA/pip-test-package@{'f' * 40}" in frozen
 
 
 @pytest.mark.parametrize("installer", [PipInstaller(), UvpipInstaller()])
