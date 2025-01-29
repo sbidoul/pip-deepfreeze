@@ -5,7 +5,7 @@ import sys
 from functools import lru_cache
 from importlib.metadata import version
 from shutil import which
-from typing import Optional, Tuple, TypedDict, cast
+from typing import Optional, TypedDict, cast
 
 import typer
 from packaging.version import Version
@@ -49,7 +49,7 @@ def get_pip_version(python: str) -> Version:
 
 
 @lru_cache
-def get_uv_cmd() -> Tuple[str, ...]:
+def get_uv_cmd() -> tuple[str, ...]:
     try:
         import uv  # type: ignore[import-not-found]
     except ImportError as e:
@@ -63,7 +63,7 @@ def get_uv_cmd() -> Tuple[str, ...]:
 
 
 @lru_cache
-def get_pip_command(python: str) -> Tuple[str, ...]:
+def get_pip_command(python: str) -> tuple[str, ...]:
     pip_options = ("--no-input",)
     env_pip_version = _get_env_info(python).get("pip_version")
     if env_pip_version:
@@ -80,7 +80,7 @@ def get_pip_command(python: str) -> Tuple[str, ...]:
 
 
 @lru_cache
-def get_python_version_info(python: str) -> Tuple[int, ...]:
+def get_python_version_info(python: str) -> tuple[int, ...]:
     python_version = _get_env_info(python).get("python_version")
     assert python_version
     return tuple(map(int, python_version.split(".", 1)))

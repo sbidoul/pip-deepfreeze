@@ -2,9 +2,10 @@ import json
 import shlex
 import textwrap
 from abc import ABC, abstractmethod
+from collections.abc import Iterable, Sequence
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, TypedDict, cast
+from typing import Any, Optional, TypedDict, cast
 
 import typer
 from packaging.utils import NormalizedName
@@ -48,8 +49,8 @@ from .utils import (
 
 class PipInspectReport(TypedDict, total=False):
     version: str
-    installed: List[Dict[str, Any]]
-    environment: Dict[str, str]
+    installed: list[dict[str, Any]]
+    environment: dict[str, str]
 
 
 class InstallerFlavor(str, Enum):
@@ -59,7 +60,7 @@ class InstallerFlavor(str, Enum):
 
 class Installer(ABC):
     @abstractmethod
-    def install_cmd(self, python: str) -> List[str]: ...
+    def install_cmd(self, python: str) -> list[str]: ...
 
     def editable_install_cmd(
         self,
@@ -67,7 +68,7 @@ class Installer(ABC):
         project_root: Path,
         project_name: str,
         extras: Optional[Sequence[NormalizedName]],
-    ) -> List[str]:
+    ) -> list[str]:
         cmd = self.install_cmd(python)
         cmd.append("-e")
         if extras:
@@ -78,10 +79,10 @@ class Installer(ABC):
         return cmd
 
     @abstractmethod
-    def uninstall_cmd(self, python: str) -> List[str]: ...
+    def uninstall_cmd(self, python: str) -> list[str]: ...
 
     @abstractmethod
-    def freeze_cmd(self, python: str) -> List[str]: ...
+    def freeze_cmd(self, python: str) -> list[str]: ...
 
     @abstractmethod
     def has_metadata_cache(self) -> bool:
@@ -100,13 +101,13 @@ class Installer(ABC):
 
 
 class PipInstaller(Installer):
-    def install_cmd(self, python: str) -> List[str]:
+    def install_cmd(self, python: str) -> list[str]:
         return [*get_pip_command(python), "install"]
 
-    def uninstall_cmd(self, python: str) -> List[str]:
+    def uninstall_cmd(self, python: str) -> list[str]:
         return [*get_pip_command(python), "uninstall", "--yes"]
 
-    def freeze_cmd(self, python: str) -> List[str]:
+    def freeze_cmd(self, python: str) -> list[str]:
         return [*get_pip_command(python), "freeze", "--all"]
 
     def has_metadata_cache(self) -> bool:
@@ -114,7 +115,7 @@ class PipInstaller(Installer):
 
 
 class UvpipInstaller(Installer):
-    def install_cmd(self, python: str) -> List[str]:
+    def install_cmd(self, python: str) -> list[str]:
         return [*get_uv_cmd(), "pip", "install", "--python", python]
 
     def editable_install_cmd(
@@ -123,16 +124,16 @@ class UvpipInstaller(Installer):
         project_root: Path,
         project_name: str,
         extras: Optional[Sequence[NormalizedName]],
-    ) -> List[str]:
+    ) -> list[str]:
         cmd = super().editable_install_cmd(python, project_root, project_name, extras)
         # https://github.com/astral-sh/uv/issues/5484
         cmd.append(f"--refresh-package={project_name}")
         return cmd
 
-    def uninstall_cmd(self, python: str) -> List[str]:
+    def uninstall_cmd(self, python: str) -> list[str]:
         return [*get_uv_cmd(), "pip", "uninstall", "--python", python]
 
-    def freeze_cmd(self, python: str) -> List[str]:
+    def freeze_cmd(self, python: str) -> list[str]:
         return [*get_uv_cmd(), "pip", "freeze", "--python", python]
 
     def has_metadata_cache(self) -> bool:
@@ -145,7 +146,7 @@ def pip_upgrade_project(
     constraints_filename: Path,
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
-    installer_options: Optional[List[str]] = None,
+    installer_options: Optional[list[str]] = None,
 ) -> None:
     """Upgrade a project.
 
@@ -291,7 +292,7 @@ def pip_freeze_dependencies(
     python: str,
     project_root: Path,
     extras: Optional[Sequence[NormalizedName]] = None,
-) -> Tuple[List[str], List[str]]:
+) -> tuple[list[str], list[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
     Return the list of installed direct and indirect dependencies of the
@@ -323,7 +324,7 @@ def pip_freeze_dependencies_by_extra(
     python: str,
     project_root: Path,
     extras: Sequence[NormalizedName],
-) -> Tuple[Dict[Optional[NormalizedName], List[str]], List[str]]:
+) -> tuple[dict[Optional[NormalizedName], list[str]], list[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
     Return the list of installed direct and indirect dependencies of the
@@ -337,7 +338,7 @@ def pip_freeze_dependencies_by_extra(
         pip_list(python), project_name
     )
     frozen_reqs = pip_freeze(installer, python)
-    dependencies_reqs = {}  # type: Dict[Optional[NormalizedName], List[str]]
+    dependencies_reqs: dict[Optional[NormalizedName], list[str]] = {}
     for extra in extras:
         if extra not in dependencies_by_extras:
             log_warning(f"{extra} is not an extra of {project_name}")

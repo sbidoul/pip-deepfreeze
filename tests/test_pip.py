@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import textwrap
-from typing import Iterable, Iterator
+from collections.abc import Iterable, Iterator
 
 import pytest
 from packaging.requirements import Requirement
