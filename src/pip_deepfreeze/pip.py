@@ -4,6 +4,7 @@ import textwrap
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from enum import Enum
+from importlib import resources as importlib_resources
 from pathlib import Path
 from typing import Any, Optional, TypedDict, cast
 
@@ -11,7 +12,6 @@ import typer
 from packaging.utils import NormalizedName
 from packaging.version import Version
 
-from .compat import importlib_resources
 from .installed_dist import (
     EnvInfoInstalledDistribution,
     InstalledDistributions,

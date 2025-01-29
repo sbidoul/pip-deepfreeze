@@ -3,6 +3,7 @@ import shlex
 import subprocess
 import sys
 from functools import lru_cache
+from importlib import resources as importlib_resources
 from importlib.metadata import version
 from shutil import which
 from typing import Optional, TypedDict, cast
@@ -10,7 +11,6 @@ from typing import Optional, TypedDict, cast
 import typer
 from packaging.version import Version
 
-from .compat import importlib_resources
 from .utils import log_error, log_warning
 
 
