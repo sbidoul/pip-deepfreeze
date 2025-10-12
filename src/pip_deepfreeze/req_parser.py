@@ -1,6 +1,5 @@
 import re
 from collections.abc import Iterable
-from typing import Optional
 
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.utils import NormalizedName, canonicalize_name
@@ -13,15 +12,15 @@ _egg_name_regex = re.compile(
 )
 
 
-def _get_egg_name(requirement: str) -> Optional[str]:
+def _get_egg_name(requirement: str) -> str | None:
     mo = _egg_name_regex.search(requirement)
     if not mo:
         return None
     return mo.group(1)
 
 
-def get_req_name(requirement: str) -> Optional[NormalizedName]:
-    name: Optional[str] = None
+def get_req_name(requirement: str) -> NormalizedName | None:
+    name: str | None = None
     try:
         name = Requirement(requirement).name
     except InvalidRequirement:

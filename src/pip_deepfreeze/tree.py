@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Optional
 
 import typer
 from packaging.requirements import Requirement
@@ -20,7 +19,7 @@ def _req_name_with_extras(req: Requirement) -> str:
 
 
 class Node:
-    def __init__(self, req: Requirement, dist: Optional[InstalledDistribution]):
+    def __init__(self, req: Requirement, dist: InstalledDistribution | None):
         self.req = req
         self.dist = dist
         self.children: list[Node] = []
@@ -51,14 +50,14 @@ class Node:
                 return
             pointers = [TEE] * (len(node.children) - 1) + [LAST]
             for pointer, child in zip(
-                pointers, sorted(node.children, key=lambda n: str(n.req))
+                pointers, sorted(node.children, key=lambda n: str(n.req)), strict=False
             ):
                 if indent:
                     if indent[-1] == TEE:
-                        _print(indent[:-1] + [BRANCH, pointer], child)
+                        _print([*indent[:-1], BRANCH, pointer], child)
                     else:
                         assert indent[-1] == LAST
-                        _print(indent[:-1] + [SPACE, pointer], child)
+                        _print([*indent[:-1], SPACE, pointer], child)
                 else:
                     _print([pointer], child)
 

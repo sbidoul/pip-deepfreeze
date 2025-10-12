@@ -6,7 +6,7 @@ from collections.abc import Iterable, Sequence
 from enum import Enum
 from importlib import resources as importlib_resources
 from pathlib import Path
-from typing import Any, Optional, TypedDict, cast
+from typing import Any, TypedDict, cast
 
 import typer
 from packaging.utils import NormalizedName
@@ -67,7 +67,7 @@ class Installer(ABC):
         python: str,
         project_root: Path,
         project_name: str,
-        extras: Optional[Sequence[NormalizedName]],
+        extras: Sequence[NormalizedName] | None,
     ) -> list[str]:
         cmd = self.install_cmd(python)
         cmd.append("-e")
@@ -123,7 +123,7 @@ class UvpipInstaller(Installer):
         python: str,
         project_root: Path,
         project_name: str,
-        extras: Optional[Sequence[NormalizedName]],
+        extras: Sequence[NormalizedName] | None,
     ) -> list[str]:
         cmd = super().editable_install_cmd(python, project_root, project_name, extras)
         # https://github.com/astral-sh/uv/issues/5484
@@ -145,8 +145,8 @@ def pip_upgrade_project(
     python: str,
     constraints_filename: Path,
     project_root: Path,
-    extras: Optional[Sequence[NormalizedName]] = None,
-    installer_options: Optional[list[str]] = None,
+    extras: Sequence[NormalizedName] | None = None,
+    installer_options: list[str] | None = None,
 ) -> None:
     """Upgrade a project.
 
@@ -291,7 +291,7 @@ def pip_freeze_dependencies(
     installer: Installer,
     python: str,
     project_root: Path,
-    extras: Optional[Sequence[NormalizedName]] = None,
+    extras: Sequence[NormalizedName] | None = None,
 ) -> tuple[list[str], list[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
@@ -324,7 +324,7 @@ def pip_freeze_dependencies_by_extra(
     python: str,
     project_root: Path,
     extras: Sequence[NormalizedName],
-) -> tuple[dict[Optional[NormalizedName], list[str]], list[str]]:
+) -> tuple[dict[NormalizedName | None, list[str]], list[str]]:
     """Run pip freeze, returning only dependencies of the project.
 
     Return the list of installed direct and indirect dependencies of the
@@ -338,7 +338,7 @@ def pip_freeze_dependencies_by_extra(
         pip_list(python), project_name
     )
     frozen_reqs = pip_freeze(installer, python)
-    dependencies_reqs: dict[Optional[NormalizedName], list[str]] = {}
+    dependencies_reqs: dict[NormalizedName | None, list[str]] = {}
     for extra in extras:
         if extra not in dependencies_by_extras:
             log_warning(f"{extra} is not an extra of {project_name}")

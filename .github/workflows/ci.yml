@@ -70,9 +70,12 @@ jobs:
           - os: ubuntu-24.04
             python-version: "3.13"
             python: python
+          - os: ubuntu-24.04
+            python-version: "3.14"
+            python: python
     steps:
-      - uses: "actions/checkout@v4"
-      - uses: "actions/setup-python@v5"
+      - uses: "actions/checkout@v5"
+      - uses: "actions/setup-python@v6"
         with:
           python-version: "${{ matrix.python-version }}"
         # use system python because setup-python@v4 doesn't work on 2.7

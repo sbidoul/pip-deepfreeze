@@ -25,11 +25,12 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies=[
     "httpx",
     "packaging >=23",
     "typer >=0.12.1",
+    "click >= 8.2",
     # installers
     "pip >=22.2",
     # compat
@@ -90,3 +91,9 @@ combine-as-imports = true
 [tool.mypy]
 strict = true
 show_error_codes = true
+exclude = [
+    # It's getting hard to have correct typing on scripts that must be
+    # compatible with Python 2, so ignore these.
+    "src/pip_deepfreeze/pip-list-json.py",
+    "src/pip_deepfreeze/env-info-json.py",
+]

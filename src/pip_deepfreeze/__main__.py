@@ -1,7 +1,7 @@
 import importlib.metadata
 import shutil
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import typer
 from packaging.utils import canonicalize_name
@@ -137,7 +137,7 @@ def _find_python_from(pythons: list[str]) -> str:
     raise typer.Exit(1)
 
 
-def _find_python(python: Optional[str]) -> str:
+def _find_python(python: str | None) -> str:
     if python:
         return _find_python_from([python])
     return _find_python_from(["py", "python"])
@@ -153,7 +153,7 @@ def _version(value: Any) -> None:
 @app.callback()
 def callback(
     ctx: typer.Context,
-    python: Optional[str] = typer.Option(
+    python: str | None = typer.Option(
         None,
         "--python",
         "--py",
@@ -178,7 +178,7 @@ def callback(
         resolve_path=True,
         help="The project root directory.",
     ),
-    min_version: Optional[str] = typer.Option(
+    min_version: str | None = typer.Option(
         None,
         "--min-version",
         metavar="VERSION",

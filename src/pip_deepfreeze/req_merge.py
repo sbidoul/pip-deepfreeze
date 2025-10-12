@@ -1,6 +1,5 @@
 from collections.abc import Iterable, Iterator
 from pathlib import Path
-from typing import Optional
 
 from packaging.utils import canonicalize_name
 
@@ -13,7 +12,7 @@ def prepare_frozen_reqs_for_upgrade(
     frozen_requirements_paths: Iterable[Path],
     constraints_path: Path,
     upgrade_all: bool = False,
-    to_upgrade: Optional[Iterable[str]] = None,
+    to_upgrade: Iterable[str] | None = None,
 ) -> Iterator[ParsedLine]:
     """Merge frozen requirements and constraints.
 
