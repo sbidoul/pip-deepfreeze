@@ -6,6 +6,22 @@ the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
+## 3.1 (2025-10-12)
+
+### Features
+
+- Add `--build-contraints` option to the sync command. This accepts a pip-style
+  requirements file to be used as contraints when preparing build environments.
+  This is only supported with the `uvpip` installer for now. ([#169](https://github.com/sbidoul/pip-deepfreeze/issues/169))
+
+### Deprecations and Removals
+
+- Drop python 3.8 and 3.9 support for the `pip-deepfreeze` command. Virtual
+  environments for Python 2.7, 3.6, 3.7, 3.8 and 3.9 continue to be supported.
+  ([#165](https://github.com/sbidoul/pip-deepfreeze/issues/165),
+  [#170](https://github.com/sbidoul/pip-deepfreeze/issues/170))
+
+
 ## 3.0 (2024-11-30)
 
 ### Features
