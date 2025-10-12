@@ -7,7 +7,7 @@ import tempfile
 from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import IO, Any, Optional, Union
+from typing import IO, Any
 
 import httpx
 import typer
@@ -34,7 +34,7 @@ def open_with_rollback(
             f.close()
             with open(temp_filename) as fafter:
                 after = fafter.read()
-            before = None  # type: Optional[str]
+            before = None
             if filename.exists():
                 with open(filename) as fbefore:
                     before = fbefore.read()
@@ -83,9 +83,9 @@ def log_error(msg: str) -> None:
 
 
 def check_call(
-    cmd: Sequence[Union[str, Path]],
-    cwd: Optional[Path] = None,
-    env: Optional[dict[str, str]] = None,
+    cmd: Sequence[str | Path],
+    cwd: Path | None = None,
+    env: dict[str, str] | None = None,
 ) -> int:
     try:
         return subprocess.check_call(cmd, cwd=cwd, env=env)
@@ -96,9 +96,9 @@ def check_call(
 
 
 def check_output(
-    cmd: Sequence[Union[str, Path]],
-    cwd: Optional[Path] = None,
-    env: Optional[dict[str, str]] = None,
+    cmd: Sequence[str | Path],
+    cwd: Path | None = None,
+    env: dict[str, str] | None = None,
 ) -> str:
     try:
         return subprocess.check_output(cmd, cwd=cwd, text=True, env=env)
@@ -108,7 +108,7 @@ def check_output(
         raise typer.Exit(1) from e
 
 
-def comma_split(s: Optional[str]) -> list[str]:
+def comma_split(s: str | None) -> list[str]:
     if not s:
         return []
     s = s.strip()
@@ -119,7 +119,7 @@ def comma_split(s: Optional[str]) -> list[str]:
 
 
 def make_project_name_with_extras(
-    project_name: str, extras: Optional[Iterable[str]]
+    project_name: str, extras: Iterable[str] | None
 ) -> str:
     if not extras:
         return project_name
@@ -183,7 +183,7 @@ def run_commands(commands: Sequence[str], cwd: Path, command_type: str) -> None:
             )
 
 
-def make_frozen_requirements_path(project_root: Path, extra: Optional[str]) -> Path:
+def make_frozen_requirements_path(project_root: Path, extra: str | None) -> Path:
     if extra:
         return project_root / f"requirements-{extra}.txt"
     else:

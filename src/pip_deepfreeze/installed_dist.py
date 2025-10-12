@@ -1,5 +1,5 @@
 from abc import ABC, abstractproperty
-from typing import Any, Optional
+from typing import Any
 
 from packaging.requirements import Requirement
 from packaging.utils import NormalizedName, canonicalize_name
@@ -37,7 +37,7 @@ class InstalledDistribution(ABC):
         return version
 
     @property
-    def direct_url(self) -> Optional[DirectUrl]:
+    def direct_url(self) -> DirectUrl | None:
         direct_url = self.data.get("direct_url")
         if direct_url is None:
             return None

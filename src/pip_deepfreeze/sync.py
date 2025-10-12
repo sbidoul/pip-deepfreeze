@@ -1,6 +1,5 @@
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Optional
 
 import typer
 from packaging.utils import NormalizedName
@@ -59,7 +58,7 @@ def sync(
     upgrade_all: bool,
     to_upgrade: list[str],
     extras: list[NormalizedName],
-    uninstall_unneeded: Optional[bool],
+    uninstall_unneeded: bool | None,
     project_root: Path,
     pre_sync_commands: Sequence[str] = (),
     post_sync_commands: Sequence[str] = (),

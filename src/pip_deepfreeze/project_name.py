@@ -10,7 +10,6 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Optional
 
 from packaging.utils import NormalizedName, canonicalize_name
 
@@ -32,7 +31,7 @@ def get_project_name(python: str, project_root: Path) -> NormalizedName:
     return canonicalize_name(name)
 
 
-def _get_build_backend(pyproject_toml: Optional[PyProjectToml]) -> Optional[str]:
+def _get_build_backend(pyproject_toml: PyProjectToml | None) -> str | None:
     if not pyproject_toml:
         return None
     build_backend = pyproject_toml.get("build-system", {}).get("build-backend", None)
@@ -42,8 +41,8 @@ def _get_build_backend(pyproject_toml: Optional[PyProjectToml]) -> Optional[str]
 
 
 def get_project_name_from_setup_cfg(
-    project_root: Path, pyproject_toml: Optional[PyProjectToml]
-) -> Optional[str]:
+    project_root: Path, pyproject_toml: PyProjectToml | None
+) -> str | None:
     log_info(".", nl=False)
     if _get_build_backend(pyproject_toml) not in (
         None,
@@ -63,8 +62,8 @@ def get_project_name_from_setup_cfg(
 
 
 def get_project_name_from_pyproject_toml_flit(
-    pyproject_toml: Optional[PyProjectToml],
-) -> Optional[str]:
+    pyproject_toml: PyProjectToml | None,
+) -> str | None:
     log_info(".", nl=False)
     if _get_build_backend(pyproject_toml) not in (
         "flit_core.buildapi",
@@ -81,8 +80,8 @@ def get_project_name_from_pyproject_toml_flit(
 
 
 def get_project_name_from_pyproject_toml_pep621(
-    pyproject_toml: Optional[PyProjectToml],
-) -> Optional[str]:
+    pyproject_toml: PyProjectToml | None,
+) -> str | None:
     log_info(".", nl=False)
     if not pyproject_toml:
         return None

@@ -1,5 +1,4 @@
 from collections.abc import Sequence
-from typing import Optional
 
 from packaging.requirements import Requirement
 from packaging.utils import NormalizedName, canonicalize_name
@@ -11,7 +10,7 @@ from .utils import make_project_name_with_extras
 def list_installed_depends(
     installed_dists: InstalledDistributions,
     project_name: NormalizedName,
-    extras: Optional[Sequence[NormalizedName]] = None,
+    extras: Sequence[NormalizedName] | None = None,
 ) -> set[NormalizedName]:
     """List installed dependencies of an installed project.
 
@@ -57,9 +56,9 @@ def list_installed_depends(
 def list_installed_depends_by_extra(
     installed_dists: InstalledDistributions,
     project_name: NormalizedName,
-) -> dict[Optional[NormalizedName], set[NormalizedName]]:
+) -> dict[NormalizedName | None, set[NormalizedName]]:
     """Get installed dependencies of a project, grouped by extra."""
-    res: dict[Optional[NormalizedName], set[NormalizedName]] = {}
+    res: dict[NormalizedName | None, set[NormalizedName]] = {}
     base_depends = list_installed_depends(installed_dists, project_name)
     res[None] = base_depends
     for extra in installed_dists[project_name].extra_requires:

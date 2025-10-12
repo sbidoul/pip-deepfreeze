@@ -6,7 +6,7 @@ from functools import lru_cache
 from importlib import resources as importlib_resources
 from importlib.metadata import version
 from shutil import which
-from typing import Optional, TypedDict, cast
+from typing import TypedDict, cast
 
 import typer
 from packaging.version import Version
@@ -15,13 +15,13 @@ from .utils import log_error, log_warning
 
 
 class EnvInfo(TypedDict, total=False):
-    in_virtualenv: Optional[bool]
-    include_system_site_packages: Optional[bool]
-    has_pkg_resources: Optional[bool]
-    has_importlib_metadata: Optional[bool]
-    pip_version: Optional[str]
-    setuptools_version: Optional[str]
-    wheel_version: Optional[str]
+    in_virtualenv: bool | None
+    include_system_site_packages: bool | None
+    has_pkg_resources: bool | None
+    has_importlib_metadata: bool | None
+    pip_version: str | None
+    setuptools_version: str | None
+    wheel_version: str | None
     python_version: str
 
 

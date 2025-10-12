@@ -4,7 +4,6 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Union
 
 try:
     import importlib.metadata as importlib_metadata
@@ -29,7 +28,7 @@ def _canonicalize_name(name: str) -> str:
 
 def find_direct_url_path(
     dist: importlib_metadata.Distribution,
-) -> Union[Path, None]:
+) -> Path | None:
     canonical_name = _canonicalize_name(dist.metadata["Name"])
     package_paths = importlib_metadata.files(canonical_name)
     if not package_paths:
