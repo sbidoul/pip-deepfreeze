@@ -62,6 +62,7 @@ def sync(
     project_root: Path,
     pre_sync_commands: Sequence[str] = (),
     post_sync_commands: Sequence[str] = (),
+    build_contraints: Path | None = None,
 ) -> None:
     # run pre-sync commands
     run_commands(pre_sync_commands, project_root, "pre-sync")
@@ -92,6 +93,7 @@ def sync(
         project_root,
         extras=extras,
         installer_options=installer_options,
+        build_contraints=build_contraints,
     )
     # freeze dependencies
     frozen_reqs_by_extra, unneeded_reqs = pip_freeze_dependencies_by_extra(

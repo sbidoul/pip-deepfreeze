@@ -314,14 +314,14 @@ environment?
 ```
 Usage: pip-df [OPTIONS] COMMAND [ARGS]...
 
-A simple pip freeze workflow for Python application developers.
+  A simple pip freeze workflow for Python application developers.
 
 Options:
   -p, --python, --py PYTHON     The python executable to use. Determines the
                                 python environment to work on. Defaults to the
                                 'py' or 'python' executable found in PATH.
   -r, --project-root DIRECTORY  The project root directory.  [default: .]
-  --min-version      VERSION    Minimum version of pip-deepfreeze required.
+  --min-version VERSION         Minimum version of pip-deepfreeze required.
   --version                     Show the version and exit.
   -v, --verbose
   --install-completion          Install completion for the current shell.
@@ -339,14 +339,13 @@ Commands:
 ```
 Usage: pip-df sync [OPTIONS]
 
-  Install/update the environment to match the project requirements, and lock new
-  dependencies.
+  Install/update the environment to match the project requirements.
 
   Install/reinstall the project. Install/update dependencies to the latest
   allowed version according to pinned dependencies in requirements.txt or
-  constraints in constraints.txt. On demand update of dependencies to to
-  the latest version that matches constraints. Optionally uninstall unneeded
-  dependencies.
+  constraints in constraints.txt/requirements.txt.in. On demand update of
+  dependencies to to the latest version that matches constraints. Optionally
+  uninstall unneeded dependencies.
 
 Options:
   -u, --update DEP1,DEP2,...      Make sure selected dependencies are upgraded
@@ -354,24 +353,21 @@ Options:
                                   version. If DEP is not part of your
                                   application dependencies anymore, this
                                   option has no effect.
-
   --update-all                    Upgrade (or downgrade) all dependencies of
                                   your application to the latest allowed
                                   version.
-
-  -x, --extras EXTRA1,EXTRA2,... Comma separated list of extras to install
+  -x, --extras EXTRA1,EXTRA2,...  Comma separated list of extras to install
                                   and freeze to requirements-{EXTRA}.txt.
-
-  --post-sync-command TEXT        Command to run after the sync operation is
-                                  complete. Can be specified multiple times.
-
   --uninstall-unneeded / --no-uninstall-unneeded
                                   Uninstall distributions that are not
                                   dependencies of the project. If not
                                   specified, ask confirmation.
-
-  --installer [pip|uvpip]
-
+  --pre-sync-command TEXT         Command to run before the sync operation.
+                                  Can be specified multiple times.
+  --post-sync-command TEXT        Command to run after the sync operation is
+                                  complete. Can be specified multiple times.
+  --installer [pip|uvpip]         [default: pip]
+  --build-contraints FILE
   --help                          Show this message and exit.
 ```
 
@@ -383,11 +379,9 @@ Usage: pip-df tree [OPTIONS]
   Print the installed dependencies of the project as a tree.
 
 Options:
-  -x, --extras EXTRA1,EXTRA2,...  Extras of project to consider when looking for
-                                  dependencies.
-
-  --help                          Show this message and exit.
-```
+  -x, --extras EXTRA1,EXTRA2,...  Extras of project to consider when looking
+                                  for dependencies.
+  --help                          Show this message and exit.```
 
 ## Configuration
 

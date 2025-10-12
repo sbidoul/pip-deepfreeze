@@ -80,6 +80,12 @@ def sync(
     installer: InstallerFlavor = typer.Option(
         "pip",
     ),
+    build_contraints: Path | None = typer.Option(
+        None,
+        dir_okay=False,
+        file_okay=True,
+        exists=True,
+    ),
 ) -> None:
     """Install/update the environment to match the project requirements.
 
@@ -99,6 +105,7 @@ def sync(
         project_root=ctx.obj.project_root,
         pre_sync_commands=pre_sync_commands,
         post_sync_commands=post_sync_commands,
+        build_contraints=build_contraints,
     )
 
 
