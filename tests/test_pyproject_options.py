@@ -29,7 +29,7 @@ def test_options_loaded_from_pyproject_toml_project_root(
     )
     sync_operation_mock = create_autospec(sync)
     monkeypatch.setattr("pip_deepfreeze.__main__.sync_operation", sync_operation_mock)
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
     result = runner.invoke(app, ["-r", str(tmp_path), "sync"], obj=MainOptions())
     assert result.exit_code == 0
     assert sync_operation_mock.call_args.kwargs["extras"] == ["a", "b"]
@@ -60,7 +60,7 @@ def test_options_loaded_from_pyproject_toml_cwd(
     sync_operation_mock = create_autospec(sync)
     monkeypatch.setattr("pip_deepfreeze.__main__.sync_operation", sync_operation_mock)
     monkeypatch.chdir(tmp_path)
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
     result = runner.invoke(app, ["sync"], obj=MainOptions())
     assert result.exit_code == 0
     assert sync_operation_mock.call_args.kwargs["extras"] == ["a", "b"]

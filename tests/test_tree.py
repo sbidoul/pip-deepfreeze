@@ -28,7 +28,7 @@ def test_tree(virtualenv_python, testpkgs, tmp_path):
             tmp_path,
         ]
     )
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
     result = runner.invoke(
         app,
         ["-p", virtualenv_python, "-r", tmp_path, "tree"],
@@ -74,7 +74,7 @@ def test_tree_extras(virtualenv_python, testpkgs, tmp_path):
             str(tmp_path) + "[c]",
         ]
     )
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
     result = runner.invoke(
         app,
         ["-p", virtualenv_python, "-r", tmp_path, "tree", "-x", "c"],
