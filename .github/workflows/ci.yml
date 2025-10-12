@@ -21,70 +21,64 @@ jobs:
         include:
           # windows
           - os: "windows-latest"
-            python-version: "3.6"
-            python: python
-          - os: "windows-latest"
-            python-version: "3.7"
-            python: python
-          - os: "windows-latest"
-            python-version: "3.8"
-            python: python
-          - os: "windows-latest"
             python-version: "3.9"
             python: python
           - os: "windows-latest"
-            python-version: "3.12"
+            python-version: "3.14"
             python: python
           # macos
           - os: "macos-latest"
             python-version: "3.9"
             python: python
           - os: "macos-latest"
-            python-version: "3.13"
+            python-version: "3.14"
             python: python
           # ubuntu
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             python-version: "2.7"
             python: python2.7
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             python-version: "3.6"
             python: python
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             python-version: "3.7"
             python: python
-          - os: ubuntu-24.04
+          - os: ubuntu-latest
             python-version: "3.8"
             python: python
-          - os: ubuntu-24.04
+          - os: ubuntu-latest
             python-version: "3.9"
             python: python
-          - os: ubuntu-24.04
+          - os: ubuntu-latest
             python-version: "3.10"
             python: python
-          - os: ubuntu-24.04
+          - os: ubuntu-latest
             python-version: "3.11"
             python: python
-          - os: ubuntu-24.04
+          - os: ubuntu-latest
             python-version: "3.12"
             python: python
-          - os: ubuntu-24.04
+          - os: ubuntu-latest
             python-version: "3.13"
             python: python
-          - os: ubuntu-24.04
+          - os: ubuntu-latest
             python-version: "3.14"
             python: python
     steps:
       - uses: "actions/checkout@v5"
+      # On Windows, we use the official setup-python action.
+      # On macOS and Linux, we use mise to install Python versions so we can
+      # test with old unsupported Pythons.
       - uses: "actions/setup-python@v6"
         with:
           python-version: "${{ matrix.python-version }}"
-        # use system python because setup-python@v4 doesn't work on 2.7
-        if: matrix.python-version != '2.7'
-      - name: Install pip
-        run: |-
-          curl -O https://bootstrap.pypa.io/pip/${{ matrix.python-version }}/get-pip.py
-          ${{ matrix.python }} get-pip.py
-        if: matrix.python-version == '2.7'
+        if: matrix.os == 'windows-latest'
+      - uses: jdx/mise-action@v3
+        with:
+          mise_toml: |
+            [tools]
+            python = "${{ matrix.python-version }}"
+        if: matrix.os != 'windows-latest'
       - name: "Install dependencies"
         run: |
           ${{ matrix.python }} -VV
