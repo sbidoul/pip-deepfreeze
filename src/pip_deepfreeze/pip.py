@@ -60,7 +60,9 @@ class InstallerFlavor(str, Enum):
 
 class Installer(ABC):
     @abstractmethod
-    def install_cmd(self, python: str) -> list[str]: ...
+    def install_cmd(
+        self, python: str, build_contraints: Path | None = None
+    ) -> list[str]: ...
 
     def editable_install_cmd(
         self,
@@ -68,8 +70,9 @@ class Installer(ABC):
         project_root: Path,
         project_name: str,
         extras: Sequence[NormalizedName] | None,
+        build_contraints: Path | None = None,
     ) -> list[str]:
-        cmd = self.install_cmd(python)
+        cmd = self.install_cmd(python, build_contraints)
         cmd.append("-e")
         if extras:
             extras_str = ",".join(extras)
@@ -101,7 +104,12 @@ class Installer(ABC):
 
 
 class PipInstaller(Installer):
-    def install_cmd(self, python: str) -> list[str]:
+    def install_cmd(
+        self, python: str, build_contraints: Path | None = None
+    ) -> list[str]:
+        if build_contraints:
+            log_error("The 'pip' installer does not support build contraints.")
+            raise typer.Exit(1)
         return [*get_pip_command(python), "install"]
 
     def uninstall_cmd(self, python: str) -> list[str]:
@@ -115,8 +123,13 @@ class PipInstaller(Installer):
 
 
 class UvpipInstaller(Installer):
-    def install_cmd(self, python: str) -> list[str]:
-        return [*get_uv_cmd(), "pip", "install", "--python", python]
+    def install_cmd(
+        self, python: str, build_contraints: Path | None = None
+    ) -> list[str]:
+        cmd = [*get_uv_cmd(), "pip", "install", "--python", python]
+        if build_contraints:
+            cmd.extend(["--build-constraints", str(build_contraints)])
+        return cmd
 
     def editable_install_cmd(
         self,
@@ -124,8 +137,11 @@ class UvpipInstaller(Installer):
         project_root: Path,
         project_name: str,
         extras: Sequence[NormalizedName] | None,
+        build_contraints: Path | None = None,
     ) -> list[str]:
-        cmd = super().editable_install_cmd(python, project_root, project_name, extras)
+        cmd = super().editable_install_cmd(
+            python, project_root, project_name, extras, build_contraints
+        )
         # https://github.com/astral-sh/uv/issues/5484
         cmd.append(f"--refresh-package={project_name}")
         return cmd
@@ -147,6 +163,7 @@ def pip_upgrade_project(
     project_root: Path,
     extras: Sequence[NormalizedName] | None = None,
     installer_options: list[str] | None = None,
+    build_contraints: Path | None = None,
 ) -> None:
     """Upgrade a project.
 
@@ -220,7 +237,9 @@ def pip_upgrade_project(
     # 4. install project with constraints
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
-    cmd = installer.editable_install_cmd(python, project_root, project_name, extras)
+    cmd = installer.editable_install_cmd(
+        python, project_root, project_name, extras, build_contraints
+    )
     if installer_options:
         cmd.extend(installer_options)
     cmd.extend(
