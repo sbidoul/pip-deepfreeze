@@ -1,7 +1,7 @@
 import importlib.metadata
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import typer
 from packaging.utils import canonicalize_name
@@ -25,74 +25,92 @@ class MainOptions:
 @app.command()
 def sync(
     ctx: typer.Context,
-    to_upgrade: str = typer.Option(
-        None,
-        "--update",
-        "-u",
-        metavar="DEP1,DEP2,...",
-        help=(
-            "Make sure selected dependencies are upgraded (or downgraded) to "
-            "the latest allowed version. If DEP is not part of your application "
-            "dependencies anymore, this option has no effect."
+    to_upgrade: Annotated[
+        str | None,
+        typer.Option(
+            "--update",
+            "-u",
+            metavar="DEP1,DEP2,...",
+            help=(
+                "Make sure selected dependencies are upgraded (or downgraded) to "
+                "the latest allowed version. If DEP is not part of your application "
+                "dependencies anymore, this option has no effect."
+            ),
         ),
-    ),
-    upgrade_all: bool = typer.Option(
-        False,
-        "--update-all",
-        help=(
-            "Upgrade (or downgrade) all dependencies of your application to "
-            "the latest allowed version."
+    ] = None,
+    upgrade_all: Annotated[
+        bool,
+        typer.Option(
+            "--update-all",
+            help=(
+                "Upgrade (or downgrade) all dependencies of your application to "
+                "the latest allowed version."
+            ),
+            show_default=False,
         ),
-        show_default=False,
-    ),
-    extras: str = typer.Option(
-        None,
-        "--extras",
-        "-x",
-        metavar="EXTRA1,EXTRA2,...",
-        help=(
-            "Comma separated list of extras "
-            "to install and freeze to requirements-{EXTRA}.txt."
+    ] = False,
+    extras: Annotated[
+        str | None,
+        typer.Option(
+            "--extras",
+            "-x",
+            metavar="EXTRA1,EXTRA2,...",
+            help=(
+                "Comma separated list of extras "
+                "to install and freeze to requirements-{EXTRA}.txt."
+            ),
         ),
-    ),
-    uninstall_unneeded: bool = typer.Option(
-        None,
-        help=(
-            "Uninstall distributions that are not dependencies of the project. "
-            "If not specified, ask confirmation."
+    ] = None,
+    uninstall_unneeded: Annotated[
+        bool | None,
+        typer.Option(
+            help=(
+                "Uninstall distributions that are not dependencies of the project. "
+                "If not specified, ask confirmation."
+            ),
         ),
-    ),
-    pre_sync_commands: list[str] = typer.Option(
-        [],
-        "--pre-sync-command",
-        help=(
-            "Command to run before the sync operation. Can be specified multiple times."
+    ] = None,
+    pre_sync_commands: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--pre-sync-command",
+            help=(
+                "Command to run before the sync operation. "
+                "Can be specified multiple times."
+            ),
         ),
-    ),
-    post_sync_commands: list[str] = typer.Option(
-        [],
-        "--post-sync-command",
-        help=(
-            "Command to run after the sync operation is complete. "
-            "Can be specified multiple times."
+    ] = None,
+    post_sync_commands: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--post-sync-command",
+            help=(
+                "Command to run after the sync operation is complete. "
+                "Can be specified multiple times."
+            ),
         ),
-    ),
-    installer: InstallerFlavor = typer.Option(
-        "pip",
-    ),
-    build_constraints: Path | None = typer.Option(
-        None,
-        dir_okay=False,
-        file_okay=True,
-        exists=True,
-    ),
-    build_contraints: Path | None = typer.Option(
-        None,
-        dir_okay=False,
-        file_okay=True,
-        exists=True,
-        hidden=True,
-    ),
+    ] = None,
+    installer: Annotated[
+        InstallerFlavor,
+        typer.Option(),
+    ] = InstallerFlavor.pip,
+    build_constraints: Annotated[
+        Path | None,
+        typer.Option(
+            dir_okay=False,
+            file_okay=True,
+            exists=True,
+        ),
+    ] = None,
+    build_contraints: Annotated[  # backward compatibility with a typo
+        Path | None,
+        typer.Option(
+            dir_okay=False,
+            file_okay=True,
+            exists=True,
+            hidden=True,
+        ),
+    ] = None,
 ) -> None:
     """Install/update the environment to match the project requirements.
 
@@ -114,8 +132,8 @@ def sync(
         extras=[canonicalize_name(extra) for extra in comma_split(extras)],
         uninstall_unneeded=uninstall_unneeded,
         project_root=ctx.obj.project_root,
-        pre_sync_commands=pre_sync_commands,
-        post_sync_commands=post_sync_commands,
+        pre_sync_commands=pre_sync_commands or [],
+        post_sync_commands=post_sync_commands or [],
         build_constraints=build_constraints or build_contraints,
     )
 
@@ -123,13 +141,15 @@ def sync(
 @app.command()
 def tree(
     ctx: typer.Context,
-    extras: str = typer.Option(
-        None,
-        "--extras",
-        "-x",
-        metavar="EXTRA1,EXTRA2,...",
-        help="Extras of project to consider when looking for dependencies.",
-    ),
+    extras: Annotated[
+        str | None,
+        typer.Option(
+            "--extras",
+            "-x",
+            metavar="EXTRA1,EXTRA2,...",
+            help="Extras of project to consider when looking for dependencies.",
+        ),
+    ] = None,
 ) -> None:
     """Print the installed dependencies of the project as a tree."""
     tree_operation(
@@ -171,45 +191,61 @@ def _version(value: Any) -> None:
 @app.callback()
 def callback(
     ctx: typer.Context,
-    python: str | None = typer.Option(
-        None,
-        "--python",
-        "--py",
-        "-p",
-        show_default=False,
-        metavar="PYTHON",
-        help=(
-            "The python executable to use. Determines the python environment to "
-            "work on. Defaults to the 'py' or 'python' executable found in PATH."
+    python: Annotated[
+        str | None,
+        typer.Option(
+            "--python",
+            "--py",
+            "-p",
+            show_default=False,
+            metavar="PYTHON",
+            help=(
+                "The python executable to use. Determines the python environment to "
+                "work on. Defaults to the 'py' or 'python' executable found in PATH."
+            ),
         ),
-    ),
-    project_root: Path = typer.Option(
-        ".",
-        "--project-root",
-        "-r",
-        # Process this parameter first so we can load default values from pyproject.toml
-        is_eager=True,
-        callback=project_root_callback,
-        exists=True,
-        dir_okay=True,
-        file_okay=False,
-        resolve_path=True,
-        help="The project root directory.",
-    ),
-    min_version: str | None = typer.Option(
-        None,
-        "--min-version",
-        metavar="VERSION",
-        help="Minimum version of pip-deepfreeze required.",
-    ),
-    version: bool = typer.Option(
-        None,
-        "--version",
-        callback=_version,
-        help="Show the version and exit.",
-        is_eager=True,
-    ),
-    verbose: bool = typer.Option(False, "--verbose", "-v", show_default=False),
+    ] = None,
+    project_root: Annotated[
+        Path,
+        typer.Option(
+            "--project-root",
+            "-r",
+            # Process this parameter first so we can load default values from
+            # pyproject.toml
+            is_eager=True,
+            callback=project_root_callback,
+            exists=True,
+            dir_okay=True,
+            file_okay=False,
+            resolve_path=True,
+            help="The project root directory.",
+        ),
+    ] = Path("."),
+    min_version: Annotated[
+        str | None,
+        typer.Option(
+            "--min-version",
+            metavar="VERSION",
+            help="Minimum version of pip-deepfreeze required.",
+        ),
+    ] = None,
+    version: Annotated[
+        bool,
+        typer.Option(
+            "--version",
+            callback=_version,
+            help="Show the version and exit.",
+            is_eager=True,
+        ),
+    ] = False,
+    verbose: Annotated[
+        bool,
+        typer.Option(
+            "--verbose",
+            "-v",
+            show_default=False,
+        ),
+    ] = False,
 ) -> None:
     """A simple pip freeze workflow for Python application developers."""
     if min_version:
