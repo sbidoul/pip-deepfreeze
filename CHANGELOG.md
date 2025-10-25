@@ -6,6 +6,17 @@ the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
+## 3.2 (2025-10-25)
+
+### Features
+
+- Support build constraints with pip >= 25.3. ([#175](https://github.com/sbidoul/pip-deepfreeze/issues/175))
+
+### Bugfixes
+
+- Fix typo in ``--build-constraints`` option. ([#173](https://github.com/sbidoul/pip-deepfreeze/issues/173))
+
+
 ## 3.1 (2025-10-12)
 
 ### Features
