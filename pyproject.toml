@@ -78,9 +78,6 @@ select = [
     "E", "F", "W", "C90", "B", "I", "UP", "RUF"
 ]
 
-[tool.ruff.lint.per-file-ignores]
-"__main__.py" = ["B008"]
-
 [tool.ruff.lint.mccabe]
 max-complexity = 13
 
