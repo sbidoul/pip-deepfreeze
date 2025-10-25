@@ -107,10 +107,14 @@ class PipInstaller(Installer):
     def install_cmd(
         self, python: str, build_constraints: Path | None = None
     ) -> list[str]:
+        cmd = [*get_pip_command(python), "install"]
         if build_constraints:
-            log_error("The 'pip' installer does not support build constraints.")
-            raise typer.Exit(1)
-        return [*get_pip_command(python), "install"]
+            pip_version = get_pip_version(python)
+            if pip_version < Version("25.3"):
+                log_error(f"pip {pip_version} does not support build constraints.")
+                raise typer.Exit(1)
+            cmd.extend(["--build-constraint", str(build_constraints)])
+        return cmd
 
     def uninstall_cmd(self, python: str) -> list[str]:
         return [*get_pip_command(python), "uninstall", "--yes"]
