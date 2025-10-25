@@ -12,7 +12,7 @@ from .pyproject_toml import load_pyproject_toml
 from .sanity import check_env
 from .sync import sync as sync_operation
 from .tree import tree as tree_operation
-from .utils import comma_split, increase_verbosity, log_debug, log_error
+from .utils import comma_split, increase_verbosity, log_debug, log_error, log_warning
 
 app = typer.Typer()
 
@@ -80,11 +80,18 @@ def sync(
     installer: InstallerFlavor = typer.Option(
         "pip",
     ),
+    build_constraints: Path | None = typer.Option(
+        None,
+        dir_okay=False,
+        file_okay=True,
+        exists=True,
+    ),
     build_contraints: Path | None = typer.Option(
         None,
         dir_okay=False,
         file_okay=True,
         exists=True,
+        hidden=True,
     ),
 ) -> None:
     """Install/update the environment to match the project requirements.
@@ -95,6 +102,10 @@ def sync(
     update of dependencies to to the latest version that matches
     constraints. Optionally uninstall unneeded dependencies.
     """
+    if build_contraints:
+        log_warning(
+            "--build-contraints is deprecated, use --build-constraints instead."
+        )
     sync_operation(
         Installer.create(flavor=installer, python=ctx.obj.python),
         ctx.obj.python,
@@ -105,7 +116,7 @@ def sync(
         project_root=ctx.obj.project_root,
         pre_sync_commands=pre_sync_commands,
         post_sync_commands=post_sync_commands,
-        build_contraints=build_contraints,
+        build_constraints=build_constraints or build_contraints,
     )
 
 
