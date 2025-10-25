@@ -11,7 +11,7 @@ the upcoming release can be found in
 ### Features
 
 - Add `--build-contraints` option to the sync command. This accepts a pip-style
-  requirements file to be used as contraints when preparing build environments.
+  requirements file to be used as constraints when preparing build environments.
   This is only supported with the `uvpip` installer for now. ([#169](https://github.com/sbidoul/pip-deepfreeze/issues/169))
 
 ### Deprecations and Removals

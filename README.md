@@ -367,7 +367,7 @@ Options:
   --post-sync-command TEXT        Command to run after the sync operation is
                                   complete. Can be specified multiple times.
   --installer [pip|uvpip]         [default: pip]
-  --build-contraints FILE
+  --build-constraints FILE
   --help                          Show this message and exit.
 ```
 
