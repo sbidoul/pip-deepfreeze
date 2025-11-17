@@ -24,7 +24,7 @@ repos:
         additional_dependencies: ["httpx", "packaging", "typer>=0.3.2"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.14.1
+    rev: v0.14.5
     hooks:
       - id: ruff
       - id: ruff-format
