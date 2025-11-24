@@ -65,7 +65,7 @@ jobs:
             python-version: "3.14"
             python: python
     steps:
-      - uses: "actions/checkout@v5"
+      - uses: "actions/checkout@v6"
       # On Windows, we use the official setup-python action.
       # On macOS and Linux, we use mise to install Python versions so we can
       # test with old unsupported Pythons.
