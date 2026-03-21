@@ -28,7 +28,7 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies=[
     "httpx",
-    "packaging >=23",
+    "packaging >=26",  # TODO 26.1, hopefully
     "typer >=0.12.1",
     "click >= 8.2",
     # installers

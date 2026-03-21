@@ -92,6 +92,25 @@ class Installer(ABC):
         """Whether the installer caches metadata preparation results."""
         ...
 
+    @abstractmethod
+    def lock(
+        self,
+        *,
+        python: str,
+        project_root: Path,
+        constraints: Path | None = None,
+        build_constraints: Path | None = None,
+    ) -> None: ...
+
+    @abstractmethod
+    def sync(
+        self,
+        *,
+        python: str,
+        project_root: Path,
+        extras: Sequence[NormalizedName] | None,
+    ) -> None: ...
+
     @classmethod
     def create(cls, flavor: InstallerFlavor, python: str) -> "Installer":
         if flavor == InstallerFlavor.pip:
@@ -125,6 +144,27 @@ class PipInstaller(Installer):
     def has_metadata_cache(self) -> bool:
         return False
 
+    def lock(
+        self,
+        *,
+        python: str,
+        project_root: Path,
+        constraints: Path | None = None,
+        build_constraints: Path | None = None,
+    ) -> None:
+        # TODO use pip lock -e .[extras] -c constraints --build-constraints
+        # build_constraints
+        raise NotImplementedError
+
+    def sync(
+        self,
+        *,
+        python: str,
+        project_root: Path,
+        extras: Sequence[NormalizedName] | None,
+    ) -> None:
+        raise NotImplementedError
+
 
 class UvpipInstaller(Installer):
     def install_cmd(
@@ -148,6 +188,7 @@ class UvpipInstaller(Installer):
         )
         # https://github.com/astral-sh/uv/issues/5484
         cmd.append(f"--refresh-package={project_name}")
+        cmd.append("--strict")
         return cmd
 
     def uninstall_cmd(self, python: str) -> list[str]:
@@ -158,6 +199,72 @@ class UvpipInstaller(Installer):
 
     def has_metadata_cache(self) -> bool:
         return True
+
+    def lock(
+        self,
+        *,
+        python: str,
+        project_root: Path,
+        constraints: Path | None = None,
+        build_constraints: Path | None = None,
+    ) -> None:
+        """Lock project to pylock.toml."""
+        pylock_tmp = get_temp_path_in_dir(project_root, "pylock.", suffix=".df.toml")
+        pylock_tmp.unlink()  # because it's empty and uv will try to parse it
+        cmd = [
+            *get_uv_cmd(),
+            "pip",
+            "compile",
+            "--python",
+            python,
+            "--format",
+            "pylock.toml",
+            "--output-file",
+            str(pylock_tmp),
+            "--custom-compile-command",
+            "pip-deepfreeze sync",
+            "--all-extras",
+            # XXX --all-groups
+        ]
+        if constraints:
+            cmd.extend(["--constraints", str(constraints)])
+        if build_constraints:
+            cmd.extend(["--build-constraints", str(build_constraints)])
+        cmd.append("pyproject.toml")
+        log_debug(f"Running {shlex.join(cmd)}")
+        check_output(
+            cmd, cwd=project_root
+        )  # use check_output because https://github.com/astral-sh/uv/issues/15309
+        pylock_tmp.rename(project_root / "pylock.toml")
+
+    def sync(
+        self,
+        *,
+        python: str,
+        project_root: Path,
+        extras: Sequence[NormalizedName] | None,
+    ) -> None:
+        project_name = get_project_name(python, project_root)
+        sync_cmd = [
+            *get_uv_cmd(),
+            "--preview-feature=pylock",
+            "pip",
+            "sync",
+            "--python",
+            python,
+            "pylock.toml",
+        ]
+        if extras:
+            for extra in extras:
+                sync_cmd.extend(("--extra", extra))
+        log_debug(f"Running {shlex.join(sync_cmd)}")
+        check_call(sync_cmd, cwd=project_root)
+        editable_install_cmd = [
+            *self.editable_install_cmd(python, project_root, project_name, extras),
+            "--exact",  # --uninstall-unneeded always on
+        ]
+        log_debug(f"Running {shlex.join(editable_install_cmd)}")
+        check_call(editable_install_cmd, cwd=project_root)
 
 
 def pip_upgrade_project(
