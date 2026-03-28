@@ -5,6 +5,7 @@ import shlex
 import subprocess
 import tempfile
 from collections.abc import Iterable, Iterator, Sequence
+from functools import partial
 from pathlib import Path
 from subprocess import CalledProcessError
 from typing import IO, Any
@@ -158,7 +159,7 @@ def get_temp_path_in_dir(dir: Path, prefix: str, suffix: str) -> Path:
         dir=dir, prefix=prefix, suffix=suffix, delete=False
     ) as tf:
         path = Path(tf.name)
-        atexit.register(path.unlink)
+        atexit.register(partial(path.unlink, missing_ok=True))
         return path
 
 

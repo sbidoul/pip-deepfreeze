@@ -27,6 +27,7 @@ except ImportError:
 
 try:
     warnings.filterwarnings(action="ignore", category=DeprecationWarning)
+    warnings.filterwarnings(action="ignore", category=UserWarning)
     import pkg_resources  # noqa
     warnings.resetwarnings()
 except ImportError:

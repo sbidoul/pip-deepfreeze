@@ -10,7 +10,7 @@ from packaging.version import Version
 from .pip import Installer, InstallerFlavor
 from .pyproject_toml import load_pyproject_toml
 from .sanity import check_env
-from .sync import sync as sync_operation
+from .sync import LockFormat, lock_and_sync, sync as sync_operation
 from .tree import tree as tree_operation
 from .utils import comma_split, increase_verbosity, log_debug, log_error, log_warning
 
@@ -61,6 +61,10 @@ def sync(
             ),
         ),
     ] = None,
+    lock_format: Annotated[
+        LockFormat,
+        typer.Option(),
+    ] = LockFormat.requirements_txt,
     uninstall_unneeded: Annotated[
         bool | None,
         typer.Option(
@@ -116,7 +120,8 @@ def sync(
 
     Install/reinstall the project. Install/update dependencies to the
     latest allowed version according to pinned dependencies in
-    requirements.txt or constraints in constraints.txt/requirements.txt.in. On demand
+    requirements.txt/pylock.toml or constraints in
+    constraints.txt/requirements.txt.in. On demand
     update of dependencies to to the latest version that matches
     constraints. Optionally uninstall unneeded dependencies.
     """
@@ -124,18 +129,34 @@ def sync(
         log_warning(
             "--build-contraints is deprecated, use --build-constraints instead."
         )
-    sync_operation(
-        Installer.create(flavor=installer, python=ctx.obj.python),
-        ctx.obj.python,
-        upgrade_all,
-        comma_split(to_upgrade),
-        extras=[canonicalize_name(extra) for extra in comma_split(extras)],
-        uninstall_unneeded=uninstall_unneeded,
-        project_root=ctx.obj.project_root,
-        pre_sync_commands=pre_sync_commands or [],
-        post_sync_commands=post_sync_commands or [],
-        build_constraints=build_constraints or build_contraints,
-    )
+    if lock_format == LockFormat.requirements_txt:
+        sync_operation(
+            Installer.create(flavor=installer, python=ctx.obj.python),
+            ctx.obj.python,
+            upgrade_all,
+            comma_split(to_upgrade),
+            extras=[canonicalize_name(extra) for extra in comma_split(extras)],
+            uninstall_unneeded=uninstall_unneeded,
+            project_root=ctx.obj.project_root,
+            pre_sync_commands=pre_sync_commands or [],
+            post_sync_commands=post_sync_commands or [],
+            build_constraints=build_constraints or build_contraints,
+        )
+    elif lock_format == LockFormat.pylock_toml:
+        lock_and_sync(
+            Installer.create(flavor=installer, python=ctx.obj.python),
+            ctx.obj.python,
+            upgrade_all,
+            comma_split(to_upgrade),
+            extras=[canonicalize_name(extra) for extra in comma_split(extras)],
+            uninstall_unneeded=uninstall_unneeded,
+            project_root=ctx.obj.project_root,
+            pre_sync_commands=pre_sync_commands or [],
+            post_sync_commands=post_sync_commands or [],
+            build_constraints=build_constraints or build_contraints,
+        )
+    else:
+        raise NotImplementedError
 
 
 @app.command()

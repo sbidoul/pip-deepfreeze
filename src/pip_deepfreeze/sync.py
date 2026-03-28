@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from enum import Enum
 from pathlib import Path
 
 import typer
@@ -12,6 +13,7 @@ from .pip import (
     pip_upgrade_project,
 )
 from .project_name import get_project_name
+from .pylock import pylock_to_requirements_txt
 from .req_file_parser import OptionsLine, parse as parse_req_file
 from .req_merge import prepare_frozen_reqs_for_upgrade
 from .req_parser import get_req_name, get_req_names
@@ -20,6 +22,7 @@ from .utils import (
     get_temp_path_in_dir,
     log_debug,
     log_info,
+    log_warning,
     make_frozen_requirements_path,
     make_frozen_requirements_paths,
     make_project_name_with_extras,
@@ -27,6 +30,11 @@ from .utils import (
     open_with_rollback,
     run_commands,
 )
+
+
+class LockFormat(str, Enum):
+    requirements_txt = "requirements.txt"
+    pylock_toml = "pylock.toml"
 
 
 def _req_line_sort_key(req_line: str) -> str:
@@ -153,5 +161,80 @@ def sync(
     # fixup VCS direct_url.json (see fixup-vcs-direct-urls.py for details on why)
     if not installer.has_metadata_cache():
         pip_fixup_vcs_direct_urls(python)
+    # run post-sync commands
+    run_commands(post_sync_commands, project_root, "post-sync")
+
+
+def lock_and_sync(
+    installer: Installer,
+    python: str,
+    upgrade_all: bool,
+    to_upgrade: list[str],
+    extras: list[NormalizedName],
+    uninstall_unneeded: bool | None,
+    project_root: Path,
+    pre_sync_commands: Sequence[str] = (),
+    post_sync_commands: Sequence[str] = (),
+    build_constraints: Path | None = None,
+) -> None:
+    # run pre-sync commands
+    run_commands(pre_sync_commands, project_root, "pre-sync")
+    # compute some paths and prepare temporary files
+    constraints_path = _constraints_path(project_root)
+    pylock_path = project_root / "pylock.toml"
+    pylock_as_requirements_path = get_temp_path_in_dir(
+        dir=project_root, prefix="reqirements-from-pylock.", suffix=".txt.df"
+    )
+    merged_constraints_path = get_temp_path_in_dir(
+        dir=project_root, prefix="requirements.", suffix=".txt.df"
+    )
+    if pylock_path.is_file():
+        # convert pylock to requirements.txt so our merge algo can be reused
+        pylock_to_requirements_txt(python, pylock_path, pylock_as_requirements_path)
+        frozen_req_paths = [pylock_as_requirements_path]
+        frozen_req_paths_to_remove = None
+    else:
+        # if no pylock.toml, use existing requirements.txt
+        frozen_req_paths = list(make_frozen_requirements_paths(project_root, extras))
+        if frozen_req_paths:
+            log_info(f"Using {frozen_req_paths} as pylock.toml seed")
+        frozen_req_paths_to_remove = frozen_req_paths
+    # merge lock file and constraints as a new requirements.txt format constraints file
+    with merged_constraints_path.open(mode="w", encoding="utf-8") as constraints:
+        for req_line in prepare_frozen_reqs_for_upgrade(
+            frozen_req_paths,
+            constraints_path,
+            upgrade_all,
+            to_upgrade,
+        ):
+            if isinstance(req_line, OptionsLine):
+                log_warning(f"Ignored option line {req_line}")
+            else:
+                print(req_line.raw_line, file=constraints)
+    # lock
+    installer.lock(
+        python=python,
+        project_root=project_root,
+        constraints=merged_constraints_path,
+        build_constraints=build_constraints,
+    )
+    # we have a pylock.toml, remove legacy requirements*.txt
+    if frozen_req_paths_to_remove:
+        readable_frozen_req_paths_to_remove = ", ".join(
+            str(p.relative_to(Path.cwd())) for p in frozen_req_paths_to_remove
+        )
+        log_warning(
+            f"Removing {readable_frozen_req_paths_to_remove} "
+            "as we now have a pylock.toml"
+        )
+        for p in frozen_req_paths_to_remove:
+            p.unlink()
+    # sync
+    if uninstall_unneeded is not True:
+        log_warning(
+            "--no-uninstall-unneeded option ignored, "
+            "unneeded dependencies will be uninstalled unconditionally"
+        )
+    installer.sync(python=python, project_root=project_root, extras=extras)
     # run post-sync commands
     run_commands(post_sync_commands, project_root, "post-sync")
