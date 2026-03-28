@@ -68,7 +68,6 @@ class Installer(ABC):
         self,
         python: str,
         project_root: Path,
-        project_name: str,
         extras: Sequence[NormalizedName] | None,
         build_constraints: Path | None = None,
     ) -> list[str]:
@@ -139,15 +138,14 @@ class UvpipInstaller(Installer):
         self,
         python: str,
         project_root: Path,
-        project_name: str,
         extras: Sequence[NormalizedName] | None,
         build_constraints: Path | None = None,
     ) -> list[str]:
         cmd = super().editable_install_cmd(
-            python, project_root, project_name, extras, build_constraints
+            python, project_root, extras, build_constraints
         )
         # https://github.com/astral-sh/uv/issues/5484
-        cmd.append(f"--refresh-package={project_name}")
+        cmd.append(f"--refresh-package={get_project_name(python, project_root)}")
         return cmd
 
     def uninstall_cmd(self, python: str) -> list[str]:
@@ -242,7 +240,7 @@ def pip_upgrade_project(
     project_name = get_project_name(python, project_root)
     log_info(f"Installing/updating {project_name}")
     cmd = installer.editable_install_cmd(
-        python, project_root, project_name, extras, build_constraints
+        python, project_root, extras, build_constraints
     )
     if installer_options:
         cmd.extend(installer_options)
